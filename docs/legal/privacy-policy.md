@@ -26,6 +26,8 @@ If you add a photo, the app reads it through the iOS photo picker, makes a small
 
 When you export a document (PDF, Word, Rich Text, plain text or web page), print, create a backup file, or import an existing resume from a PDF or pasted text, the file is created or read on your device and given to the iOS share sheet, the Files app or the printer you choose. Where it goes after that is your choice. We do not receive it.
 
+On iPhones and iPads that support Apple Intelligence, the app can offer writing help for a summary or a bullet point. The text you choose is processed by the on-device language model that is part of iOS. It is not sent to Ecom Swift LLC, to Google or to any other server by the app. On other devices this option does not appear. When you paste a job ad to compare it with your resume, the comparison runs on your device and the ad is not saved.
+
 ## 3. Information we receive
 
 **From the app:** none. We do not receive your content, your identity or your usage of the app.
