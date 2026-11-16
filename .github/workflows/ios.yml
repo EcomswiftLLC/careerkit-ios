@@ -67,6 +67,27 @@ jobs:
             | tee build/uitests.log | tail -n 120
         shell: bash
 
+      - name: UI screenshots (iPad, dark mode)
+        if: always()
+        continue-on-error: true
+        env:
+          TEST_RUNNER_CAREERKIT_SHOT_DIR: /tmp/careerkit-shots-ipad-dark
+        run: |
+          set -o pipefail
+          DEST=$(xcrun simctl list devices available | grep -E "iPad Pro 13-inch|iPad Pro \(13-inch\)|iPad Air 13-inch" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/' || true)
+          if [ -z "$DEST" ]; then DEST=$(xcrun simctl list devices available | grep -E "iPad" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/' || true); fi
+          echo "Simulator: $DEST"
+          xcrun simctl boot "$DEST" || true
+          xcrun simctl ui "$DEST" appearance dark || true
+          xcodebuild test \
+            -project CareerKit.xcodeproj \
+            -scheme CareerKit \
+            -destination "id=$DEST" \
+            -only-testing:CareerKitUITests \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build/uitests-ipad-dark.log | tail -n 60
+        shell: bash
+
       - name: Release build check
         if: always()
         continue-on-error: true
@@ -114,6 +135,14 @@ jobs:
         with:
           name: screenshots
           path: /tmp/careerkit-shots
+          if-no-files-found: ignore
+
+      - name: Upload iPad dark screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-ipad-dark
+          path: /tmp/careerkit-shots-ipad-dark
           if-no-files-found: ignore
 
       - name: Upload logs
