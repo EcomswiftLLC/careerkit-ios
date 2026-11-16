@@ -29,6 +29,8 @@ jobs:
         run: xcodebuild -resolvePackageDependencies -project CareerKit.xcodeproj -scheme CareerKit
 
       - name: Build and test
+        env:
+          TEST_RUNNER_CAREERKIT_DUMP_DIR: /tmp/careerkit-renders
         run: |
           set -o pipefail
           mkdir -p build
@@ -43,12 +45,28 @@ jobs:
             | tee build/xcodebuild.log | tail -n 200
         shell: bash
 
+      - name: Rasterize rendered PDFs
+        if: always()
+        run: |
+          if [ -d /tmp/careerkit-renders ]; then
+            brew install poppler >/dev/null 2>&1 || true
+            cd /tmp/careerkit-renders
+            for f in *.pdf; do pdftoppm -r 80 -png "$f" "${f%.pdf}" || true; done
+            ls | wc -l
+          fi
+
+      - name: Upload renders
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: renders
+          path: /tmp/careerkit-renders
+          if-no-files-found: ignore
+
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: |
-            build/xcodebuild.log
-            build/TestResults.xcresult
+          path: build/xcodebuild.log
           if-no-files-found: ignore
