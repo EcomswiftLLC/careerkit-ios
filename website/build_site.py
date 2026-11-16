@@ -189,7 +189,7 @@ FAQ = [
     ("Do I need an account?",
      "<p>No. There is no sign-in and no sign-up.</p>"),
     ("Where are my documents stored?",
-     "<p>On your device, in the app's own storage. We do not upload them and we cannot see them. A PDF you export goes where you send it, such as the Files app or the share sheet.</p>"),
+     "<p>On your device, in the app's own storage. We do not upload them and we cannot see them. A file you export (PDF, Word, Rich Text, plain text or web page) goes where you send it, such as the Files app or the share sheet. If you import an existing resume, the file is read on your device and is not uploaded.</p>"),
     ("Will an applicant tracking system accept my resume?",
      "<p>Nobody can promise that. Employers use many different systems and each one reads a resume in its own way. The ATS check in CareerKit flags common formatting problems and explains each finding, so use it as a checklist and not as a verdict.</p>"),
     ("Does it work offline?",
@@ -199,7 +199,7 @@ FAQ = [
     ("Which devices does it run on?",
      "<p>iPhone and iPad with iOS or iPadOS 17 or later.</p>"),
     ("How do I delete my data?",
-     "<p>Open the Profile tab and choose Delete all local data. The app offers to save a backup file first. Deleting the app also removes its data. PDFs you already exported stay wherever you saved them.</p>"),
+     "<p>Open the Profile tab and choose Delete all local data. The app offers to save a backup file first. Deleting the app also removes its data. Files you already exported stay wherever you saved them.</p>"),
     ("When can I download it?",
      "<p>CareerKit is not released yet. This page will link to the App Store listing once the app is live.</p>"),
     ("Who makes CareerKit?",
@@ -216,7 +216,7 @@ def jsonld_app():
         "url": BASE,
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "iOS 17.0 or later, iPadOS 17.0 or later",
-        "description": "A free resume and cover letter maker for iPhone and iPad with 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance and PDF export. Supported by ads. Documents stay on the device.",
+        "description": "A free resume and cover letter maker for iPhone and iPad with 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance, a job ad keyword check, resume import and export to PDF, Word, Rich Text, plain text and web page. Supported by ads. Documents stay on the device.",
         "image": BASE + "assets/icon-512.png",
         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
         "publisher": {"@type": "Organization", "name": "Ecom Swift LLC", "url": "https://www.ecomswiftllc.com/",
@@ -229,7 +229,7 @@ def jsonld_app():
             "10 cover letter templates",
             "ATS check with general guidance",
             "Several resumes in one place",
-            "PDF export with selectable text",
+            "Export to PDF, Word, Rich Text, plain text and web page", "Import an existing resume from a PDF or pasted text", "Job ad keyword check",
             "Works without an account",
         ],
     }
@@ -246,7 +246,7 @@ def jsonld_faq():
 
 def build_index():
     title = "Resume Builder: CareerKit | Free resume maker for iPhone and iPad"
-    desc = "Free resume and cover letter maker for iPhone and iPad. 30 templates, general ATS guidance and PDF export. Your documents stay on your device. Coming soon."
+    desc = "Free resume and cover letter maker for iPhone and iPad. 30 templates, general ATS guidance, job ad keyword check and export to PDF or Word. Your documents stay on your device. Coming soon."
     faq_html = "\n".join(
         f'        <details><summary>{html.escape(q)}</summary><div class="answer">{a}</div></details>' for q, a in FAQ)
     structures = [
@@ -266,7 +266,7 @@ def build_index():
       <div>
         <img class="appicon" src="assets/icon-512.png" width="512" height="512" alt="CareerKit app icon: a folded page corner and a rising stroke forming the letter K, on forest green">
         <h1 id="h1">A resume and cover letter, finished on your phone.</h1>
-        <p class="lede">CareerKit gives you 30 resume templates, 10 matching cover letter templates and a clean PDF export. It is free, there is no account, and your documents stay on your device.</p>
+        <p class="lede">CareerKit gives you 30 resume templates, 10 matching cover letter templates and export to PDF, Word and more. It is free, there is no account, and your documents stay on your device.</p>
         <p class="status">Coming soon to the App Store</p>
         <p class="small hero-note">The app has not been released yet, so there is no download link. Questions before launch are welcome on the <a href="support/">support page</a>.</p>
       </div>
@@ -292,7 +292,7 @@ def build_index():
           <div><dt>Cover letters that match</dt><dd>Ten cover letter templates share the design of a matching resume, so the two documents look like a set.</dd></div>
           <div><dt>Check the layout</dt><dd>The ATS check reads your resume and points out common formatting problems. It is general guidance and not a score from any employer system.</dd></div>
           <div><dt>Keep several resumes</dt><dd>Keep one version for each kind of job. Duplicate, rename or archive them from My Resumes, and compare two versions side by side. Pick A4 or US Letter.</dd></div>
-          <div><dt>Export a PDF</dt><dd>Share it, save it to Files or print it. The text in the PDF is selectable, and email, phone and web addresses are links.</dd></div>
+          <div><dt>Export your way</dt><dd>Choose PDF, Word (.docx), Rich Text, plain text or a web page. Share it, save it to Files or print the PDF. The text in the PDF is selectable, and email, phone and web addresses are links.</dd></div>
         </dl>
       </div>
     </div>
@@ -402,10 +402,10 @@ def build_support():
         ("I want to change my ad or tracking choice",
          "<p>Open the Profile tab and look for the Ad privacy choices row, which appears where the law requires it. You can also change tracking in iOS Settings under Privacy and Security, then Tracking, and reset your advertising identifier there.</p>"),
         ("I deleted the app and my resumes are gone",
-         "<p>Documents are stored only on your device, so deleting the app deletes them, and we cannot recover them. Keep a PDF of anything important. A full backup of your device may still contain the app's data if you made one before deleting it.</p>"),
+         "<p>Documents are stored only on your device, so deleting the app deletes them, and we cannot recover them. Keep an exported copy of anything important. A full backup of your device may still contain the app's data if you made one before deleting it.</p>"),
         ("How do I delete all of my data?",
          "<p>Open the Profile tab and choose Delete all local data. We hold no personal data about your use of the app, so there is nothing to delete on our side.</p>"),
-        ("Something looks wrong in a template or the PDF",
+        ("Something looks wrong in a template or an exported file",
          "<p>Tell us the template name, the page size you chose (A4 or US Letter), what you expected and what you got. A screenshot of the problem helps. Please do not send a full resume with real personal details unless we ask for it.</p>"),
         ("I have an idea for a template or a feature",
          "<p>Send it. We read every message, though we cannot promise to build every idea.</p>"),

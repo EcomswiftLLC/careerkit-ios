@@ -54,6 +54,7 @@ struct JobMatchSection: View {
                 }
                 .buttonStyle(.ckPrimary)
                 .disabled(trimmedJob.isEmpty || isComparing)
+                .accessibilityIdentifier("ats.jobMatch.compare")
 
                 if !jobText.isEmpty || result != nil {
                     Button {
@@ -106,6 +107,7 @@ struct JobMatchSection: View {
                 .foregroundStyle(CK.Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("ats.jobMatch.summary")
 
             if result.hasTerms {
                 Text("Terms are ranked by how often the ad uses them and whether they appear in its requirements. This is a wording check, not a score from any employer's system.")
@@ -212,6 +214,8 @@ struct JobMatchSection: View {
 
     private func compare() {
         guard let resume = store.resume(id: resumeID) else { return }
+        // Hide the keyboard so the results are visible.
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         let job: String = jobText
         isComparing = true
         compareToken += 1

@@ -9,7 +9,7 @@ Bundle id `com.ecomswift.careerkit`, iOS 17+, Swift 5.10, SwiftUI, XcodeGen (`pr
    Do not import StoreKit anywhere. Do not mention prices, "premium", "pro", "unlock forever".
 2. **AdMob is the only monetisation.** Two placements only:
    - Adaptive banner on browse screens (Home, My Resumes, Templates, Cover Letters, Profile). Never on the editor, never on the preview/export screens, never next to a primary button.
-   - Rewarded video: exporting a finished document (PDF to Files, Share sheet, Print) needs one completed rewarded video. One reward = one export of that document. Everything else (create, edit, preview, drafts, cover letters, ATS check) is free with no ad.
+   - Rewarded video: exporting a finished document (PDF, Word, Rich Text, plain text or web page, to Files, Share sheet or Print for PDF) needs one completed rewarded video. One reward = one export of that document. Everything else (create, edit, preview, drafts, cover letters, ATS check) is free with no ad.
 3. No interstitials, no app-open ads. User must opt in to the rewarded ad. Reward only in the official earned-reward callback.
 4. Development uses Google test ad unit IDs through `Config/*.xcconfig` -> Info.plist keys `GADApplicationIdentifier`, `CKBannerAdUnitID`, `CKRewardedAdUnitID`. Never hardcode ids in Swift.
 5. No paid AI API. No network is needed for core use. No account. Documents stay on device.

@@ -24,7 +24,7 @@ When you use CareerKit you may enter your name, contact details, work history, e
 
 If you add a photo, the app reads it through the iOS photo picker, makes a smaller copy and stores that copy inside the resume on your device.
 
-When you export a PDF, print, or create a backup file, the file is created on your device and given to the iOS share sheet, the Files app or the printer you choose. Where it goes after that is your choice. We do not receive it.
+When you export a document (PDF, Word, Rich Text, plain text or web page), print, create a backup file, or import an existing resume from a PDF or pasted text, the file is created or read on your device and given to the iOS share sheet, the Files app or the printer you choose. Where it goes after that is your choice. We do not receive it.
 
 ## 3. Information we receive
 
@@ -65,7 +65,7 @@ A rewarded video is shown only if you choose to watch it. Watching one to the en
 
 - To delete everything CareerKit stores, open the Profile tab in the app and choose Delete all local data. The app offers to save a backup file first, then asks you to confirm. This removes all resumes, cover letters and drafts stored by the app.
 - Deleting the app from your device also removes its stored data.
-- Files you exported or shared (PDFs, backup files) are outside the app. You manage and delete them where you saved or sent them.
+- Files you exported or shared (PDF, Word, text and web page files, backup files) are outside the app. You manage and delete them where you saved or sent them.
 - Your device's own backup (for example iCloud Backup or a computer backup) may contain a copy of the app's data according to your Apple settings. That copy is controlled by you and Apple, not by us.
 - We hold no personal data about you from your use of the app, so there is nothing on our side to delete. For advertising data held by Google, use Google's controls (https://myadcenter.google.com) or contact Google.
 

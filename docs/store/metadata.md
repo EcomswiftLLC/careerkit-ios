@@ -24,21 +24,21 @@ CV Maker & Job Applications
 Limit 100 bytes. No spaces after commas. Words already in the name or subtitle (resume, builder, careerkit, cv, maker, job, applications) are left out because Apple indexes them already. No competitor or third-party trademarks. Apple combines single words into phrases, so "cover letter" and "curriculum vitae" are stored as two-word phrases the user can still search either way.
 
 ```
-cover letter,template,pdf,ats,curriculum vitae,interview,hiring,biodata,student,fresher,format
+cover letter,template,pdf,word,docx,ats,keywords,curriculum vitae,student,fresher,import
 ```
 
 ## Promotional Text
 Limit 170 characters. Can be changed at any time without a new build.
 
 ```
-Pick from 30 templates, fill in your details, add a matching cover letter and export a PDF. Free with ads, editing works offline, and your documents stay on your device.
+Pick from 30 templates, import your old resume, match it to a job ad, then export to PDF or Word. Free with ads, works offline, and your documents stay on your device.
 ```
 
 ## Description
 Limit 4000 characters. Plain text only (App Store Connect does not render formatting).
 
 ```
-Resume Builder: CareerKit helps you make a clear, well-formatted resume and cover letter on your iPhone or iPad. Choose a template, type in your details, watch the page update, and export a PDF when you are ready.
+Resume Builder: CareerKit helps you make a clear, well-formatted resume and cover letter on your iPhone or iPad. Choose a template, type in your details, watch the page update, and export to PDF or Word when you are ready.
 
 WHAT IS INSIDE
 
@@ -56,7 +56,11 @@ Several resumes in one place. Keep a version for each kind of job, then duplicat
 
 A4 or US Letter page size.
 
-PDF export with selectable text. Share it, save it to Files or print it. A backup option saves a copy of everything to one file you can keep anywhere.
+EXPORT YOUR WAY: PDF with selectable text, Word (.docx), Rich Text, plain text for online forms, or a web page. Share a file, save it to Files or print the PDF. A backup option saves a copy of everything to one file you can keep anywhere.
+
+IMPORT YOUR OLD RESUME: bring in a PDF or paste the text, check what was found section by section, and carry on editing in a template you like. Text-based PDFs work best. Scanned pages are not read.
+
+JOB AD KEYWORD CHECK: paste a job ad and see which of its key terms your resume already uses and which it leaves out. It is a reading aid, not a score. Add only what is true for you.
 
 Writing, editing and previewing work offline. There is no account to create, and your resumes and letters are stored on your device only.
 
@@ -81,7 +85,7 @@ Questions or ideas? Visit https://ecomswiftllc.github.io/careerkit/support/ or w
 Limit 4000 characters. Version 1.0.0.
 
 ```
-First release. 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance, and PDF export. Free, with ads.
+First release. 30 resume templates, 10 matching cover letter templates, full style controls, an ATS check with general guidance, a job ad keyword check, resume import, and export to PDF, Word, Rich Text, plain text and web page. Free, with ads.
 ```
 
 ## Category
@@ -151,7 +155,7 @@ google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0
 ```
 Thank you for reviewing CareerKit. No sign-in or demo account is needed. There is no account system.
 
-What the app does: builds resumes and cover letters on device and exports them as PDF files. All documents stay on the device.
+What the app does: builds resumes and cover letters on device and exports them as PDF, Word, Rich Text, plain text or web page files. All documents stay on the device.
 
 Ads: the app is free and uses Google AdMob only. There are no purchases and no StoreKit. Two placements exist.
 1. A banner on browse screens (Home, My Resumes, Templates, Cover Letters, Profile). Never in the editor or on the preview and export screens.
@@ -168,7 +172,7 @@ How to test:
 3. Edit any field. The preview updates. No ad is shown while editing.
 4. Open the ATS check from the resume to see general guidance. It is not a score from any employer system.
 5. Create a cover letter from the Cover Letters tab.
-6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an ad to export, let the video finish, then choose Share, Save to Files or Print.
+6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an ad to export, let the video finish, pick a file type (PDF, Word, Rich Text, plain text or web page), then choose Share, Save to Files or Print (Print is for PDF).
 7. Profile > Delete all local data (two confirmation steps, with an option to export a backup first) removes every resume and letter from the device.
 
 If no rewarded video is available when you test (new ad units can have no fill for the first days, and fill varies by region), the sheet offers Export without video after about 20 seconds at most. Tap it to finish the export.

@@ -129,6 +129,7 @@ struct ResumeImportFlow: View {
             }
             .buttonStyle(.ckSecondary)
             .disabled(trimmedPaste.isEmpty || isReading)
+            .accessibilityIdentifier("import.continueWithText")
         }
         .padding(CK.Space.m)
         .background(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).fill(CK.Palette.surface))
@@ -226,6 +227,7 @@ struct ResumeImportFlow: View {
     }
 
     private func continueWithPaste() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         let text: String = pastedText
         run {
             try ResumeImporter.draft(fromPastedText: text)
@@ -294,6 +296,7 @@ struct ResumeImportReviewView: View {
                         .ckTitleFont(28)
                         .foregroundStyle(CK.Palette.ink)
                         .accessibilityAddTraits(.isHeader)
+                        .accessibilityIdentifier("import.review.title")
                     Text("Remove anything that does not belong and fix the details below. Every word stays editable in the editor afterwards.")
                         .font(CK.Font.callout)
                         .foregroundStyle(CK.Palette.graphite)

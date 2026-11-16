@@ -13,7 +13,7 @@ By downloading or using CareerKit you agree to these terms. If you do not agree,
 
 ## 1. What CareerKit is
 
-CareerKit is a tool for writing resumes and cover letters on an iPhone or iPad and exporting them as PDF files. It includes resume templates, cover letter templates, and an ATS check that gives general guidance about how a resume is laid out.
+CareerKit is a tool for writing resumes and cover letters on an iPhone or iPad and exporting them as PDF, Word, Rich Text, plain text or web page files. It can also read an existing resume from a PDF or pasted text, and compare your resume with a job ad you paste. It includes resume templates, cover letter templates, and an ATS check that gives general guidance about how a resume is laid out.
 
 ## 2. Licence
 
@@ -53,7 +53,7 @@ We may update, change or stop the app, or change these terms. If we change these
 
 ## 9. Disclaimer of warranties
 
-CareerKit is provided "as is" and "as available". To the fullest extent the law allows, we make no warranties of any kind, express or implied, including fitness for a particular purpose, accuracy, and uninterrupted or error-free operation. Rendering of a document can vary between devices, fonts and printers, so check your PDF before sending it.
+CareerKit is provided "as is" and "as available". To the fullest extent the law allows, we make no warranties of any kind, express or implied, including fitness for a particular purpose, accuracy, and uninterrupted or error-free operation. Rendering of a document can vary between devices, fonts and printers, so check your exported file before sending it.
 
 ## 10. Limitation of liability
 

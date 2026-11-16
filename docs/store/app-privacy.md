@@ -8,7 +8,7 @@ These are the exact answers to enter in App Store Connect > App Privacy. `Source
 |---|---|
 | Resume and cover letter content (name, contact details, work history, education, skills, optional photo) | Stored on the device only, in the app's own storage. Never sent to Ecom Swift LLC or anyone else. Not collected. |
 | Photo chosen for a resume | Read through the system photo picker, downsized, stored inside the resume on the device. Not collected. |
-| PDF exports and backup files | Created on the device and handed to the share sheet, Files or Print. The user decides where they go. Not collected. |
+| Exported files (PDF, Word, Rich Text, plain text, web page), imported PDFs and backup files | Created or read on the device and handed to the share sheet, Files or Print. The user decides where they go. Not collected. |
 | Export unlock record | A document id and a time, stored on the device only, used to allow one export. Not collected. |
 | Account data | None. There is no account. |
 | Analytics, crash reporting | None from the app. No analytics SDK. |

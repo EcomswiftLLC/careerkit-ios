@@ -223,6 +223,7 @@ struct ExportFlowSheet: View {
         .accessibilityLabel(Text(option.displayName))
         .accessibilityValue(Text(option.shortDescription))
         .accessibilityAddTraits(selected ? AccessibilityTraits.isSelected : AccessibilityTraits.isButton)
+        .accessibilityIdentifier("export.format.\(option.rawValue)")
     }
 
     private func select(_ option: DocumentExportFormat) {
@@ -638,6 +639,8 @@ struct ExportFlowSheet: View {
     }
 
     private func handle(_ outcome: ExportOutcome) {
+        // Review prompt bookkeeping (Sources/App/ReviewPrompt.swift). Never shows anything by itself here.
+        ReviewPromptCenter.shared.exportFinished(outcome)
         switch outcome {
         case .completed:
             // The grant is used up only now that the system reported a finished export.

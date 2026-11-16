@@ -200,6 +200,7 @@ struct HomeView: View {
             }
             .buttonStyle(.ckSecondary)
             .accessibilityHint("Reads a PDF or pasted text on this device")
+            .accessibilityIdentifier("home.importResume")
         }
         .frame(maxWidth: 460)
         .frame(maxWidth: .infinity)

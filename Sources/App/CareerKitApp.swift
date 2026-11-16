@@ -45,6 +45,8 @@ struct CKRootContainer: View {
             }
         }
         .animation(reduceMotion ? nil : Animation.easeInOut(duration: 0.3), value: appState.hasCompletedOnboarding)
+        // App Store rating prompt, only after a finished export (see ReviewPromptPolicy).
+        .ckReviewPromptHost()
         .task {
             #if DEBUG
             CKScreenshotSupport.seedIfRequested(store: store, appState: appState)

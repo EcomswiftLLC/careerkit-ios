@@ -89,7 +89,7 @@ def main():
     d.text((80, 218), "CareerKit", font=font(76), fill="#1F4D3A")
     d.text((80, 340), "Free resume and cover letter maker", font=sans(34), fill="#5B605C")
     d.text((80, 388), "for iPhone and iPad", font=sans(34), fill="#5B605C")
-    d.text((80, 520), "30 templates   ATS guidance   PDF export", font=sans(28), fill="#1F2421")
+    d.text((80, 520), "30 templates   ATS guidance   Word + PDF", font=sans(28), fill="#1F2421")
     ic = rounded_icon(360)
     img.paste(ic, (W - 360 - 90, (H - 360) // 2 - 7), ic)
     img.save(OUT / "og-image.png", optimize=True)

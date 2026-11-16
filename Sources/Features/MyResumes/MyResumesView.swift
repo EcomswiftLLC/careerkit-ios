@@ -116,6 +116,7 @@ struct MyResumesView: View {
             } label: {
                 Label("New resume", systemImage: "plus")
             }
+            .accessibilityIdentifier("myResumes.newResumeMenu")
         }
     }
 

@@ -98,4 +98,170 @@ final class ScreenshotTests: XCTestCase {
             shot("70-export-sheet")
         }
     }
+
+    // MARK: - Helpers for the newer screens
+
+    private static let sampleJobAd: String = "Senior Product Designer\nWe are looking for a designer with Figma, prototyping and user research skills. Experience with design systems, accessibility and A/B testing is required. You will work closely with engineering and product managers."
+
+    private static let sampleResumeText: String = "Jordan Lee\nProduct Designer\njordan.lee@example.com\n\nSummary\nProduct designer with six years of experience in mobile apps.\n\nExperience\nSenior Product Designer, Northwind Studio\n2021 - Present\nLed the redesign of the booking flow.\n\nEducation\nBA Design, State University, 2017\n\nSkills\nFigma, Prototyping, User research"
+
+    /// Any element with this accessibility identifier.
+    private func element(_ identifier: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
+    /// Scrolls content up with a short drag in the upper half of the screen, away from the keyboard.
+    private func dragUp() {
+        let start: XCUICoordinate = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.42))
+        let end: XCUICoordinate = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.18))
+        start.press(forDuration: 0.05, thenDragTo: end)
+    }
+
+    @discardableResult
+    private func scrollUntilHittable(_ target: XCUIElement, attempts: Int = 5) -> Bool {
+        for _ in 0..<attempts {
+            if target.exists && target.isHittable { return true }
+            dragUp()
+        }
+        return target.exists && target.isHittable
+    }
+
+    private func launchSeeded() {
+        app.launchArguments = ["-ck-screenshots", "-ck-seed"]
+        app.launch()
+        _ = app.tabBars.firstMatch.waitForExistence(timeout: 8)
+    }
+
+    private func openSeededEditor() throws {
+        launchSeeded()
+        tap(tab("My Resumes"))
+        guard tap(app.staticTexts["UX Designer"].firstMatch, wait: 5) else {
+            throw XCTSkip("Seeded resume not found, editor shots skipped")
+        }
+    }
+
+    private func openImportSheet() throws {
+        launchSeeded()
+        tap(tab("My Resumes"))
+        let menu: XCUIElement = element("myResumes.newResumeMenu")
+        if !tap(menu, wait: 4) {
+            guard tap(app.navigationBars.buttons["New resume"].firstMatch, wait: 2) else {
+                throw XCTSkip("New resume menu not found")
+            }
+        }
+        guard tap(app.buttons["Import resume"].firstMatch, wait: 3) else {
+            throw XCTSkip("Import resume menu item not found")
+        }
+        guard app.staticTexts["Bring in your current resume"].waitForExistence(timeout: 6) else {
+            throw XCTSkip("Import sheet did not appear")
+        }
+    }
+
+    // MARK: - Home empty state with Import (runs right after onboarding, before any seeding)
+
+    func test1b_HomeEmptyImport() throws {
+        app.launchArguments = ["-ck-screenshots"]
+        app.launch()
+        // Finish onboarding first if it is still showing.
+        if app.buttons["Continue"].waitForExistence(timeout: 4) {
+            for _ in 0..<6 {
+                guard app.buttons["Continue"].exists else { break }
+                app.buttons["Continue"].tap()
+            }
+        }
+        tap(app.buttons["Get started"], wait: 2)
+        let importButton: XCUIElement = element("home.importResume")
+        guard importButton.waitForExistence(timeout: 8) else {
+            throw XCTSkip("Home is not in its empty state (documents already exist)")
+        }
+        scrollUntilHittable(importButton, attempts: 2)
+        shot("75-home-empty-import")
+    }
+
+    // MARK: - Export sheet with Word selected
+
+    func test4_ExportWordSelected() throws {
+        try openSeededEditor()
+        guard tap(app.buttons["Export"].firstMatch, wait: 4) else {
+            throw XCTSkip("Export button not found")
+        }
+        let wordRow: XCUIElement = element("export.format.docx")
+        guard wordRow.waitForExistence(timeout: 5), scrollUntilHittable(wordRow, attempts: 2) else {
+            throw XCTSkip("Word row not found in the export sheet")
+        }
+        wordRow.tap()
+        shot("71-export-sheet-word-selected")
+        // Put PDF back so later runs on this simulator start from the default.
+        let pdfRow: XCUIElement = element("export.format.pdf")
+        if pdfRow.exists && pdfRow.isHittable { pdfRow.tap() }
+    }
+
+    // MARK: - ATS check, job ad match
+
+    func test5_ATSJobMatch() throws {
+        try openSeededEditor()
+        guard tap(app.buttons["ATS check"].firstMatch, wait: 4) else {
+            throw XCTSkip("ATS check button not found")
+        }
+        // Let the general checks finish first so the layout stops moving.
+        _ = app.buttons["Check again"].waitForExistence(timeout: 12)
+
+        let jobBox: XCUIElement = app.textViews["Job description"].firstMatch
+        guard jobBox.waitForExistence(timeout: 5), scrollUntilHittable(jobBox, attempts: 8) else {
+            throw XCTSkip("Job description box not found")
+        }
+        // Bring the box higher so the Compare button stays above the keyboard.
+        if jobBox.frame.minY > app.frame.height * 0.4 {
+            dragUp()
+        }
+        guard jobBox.exists, jobBox.isHittable else { throw XCTSkip("Job description box scrolled away") }
+        jobBox.tap()
+        jobBox.typeText(ScreenshotTests.sampleJobAd)
+
+        let compare: XCUIElement = element("ats.jobMatch.compare")
+        guard compare.exists, scrollUntilHittable(compare, attempts: 3) else {
+            throw XCTSkip("Compare button not reachable")
+        }
+        compare.tap()
+
+        let summary: XCUIElement = element("ats.jobMatch.summary")
+        guard summary.waitForExistence(timeout: 12) else {
+            throw XCTSkip("Job match results did not appear")
+        }
+        Thread.sleep(forTimeInterval: 0.6)
+        scrollUntilHittable(summary, attempts: 4)
+        // Show as much of the results as possible below the summary.
+        if summary.exists && summary.frame.minY > app.frame.height * 0.45 {
+            dragUp()
+        }
+        shot("72-ats-job-match")
+    }
+
+    // MARK: - Import
+
+    func test6_ImportSheet() throws {
+        try openImportSheet()
+        shot("73-import-sheet")
+    }
+
+    func test7_ImportReview() throws {
+        try openImportSheet()
+        let pasteBox: XCUIElement = app.textViews["Resume text"].firstMatch
+        guard pasteBox.waitForExistence(timeout: 4), scrollUntilHittable(pasteBox, attempts: 4) else {
+            throw XCTSkip("Paste box not found")
+        }
+        pasteBox.tap()
+        pasteBox.typeText(ScreenshotTests.sampleResumeText)
+
+        let continueButton: XCUIElement = element("import.continueWithText")
+        guard continueButton.exists, scrollUntilHittable(continueButton, attempts: 4) else {
+            throw XCTSkip("Continue button not reachable")
+        }
+        continueButton.tap()
+
+        guard element("import.review.title").waitForExistence(timeout: 12) else {
+            throw XCTSkip("Review screen did not appear")
+        }
+        shot("74-import-review")
+    }
 }
