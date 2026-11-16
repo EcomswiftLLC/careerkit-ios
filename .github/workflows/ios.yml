@@ -63,6 +63,29 @@ jobs:
             | tee build/uitests.log | tail -n 120
         shell: bash
 
+      - name: Release build check
+        if: always()
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project CareerKit.xcodeproj \
+            -scheme CareerKit \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build/dd-release \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build/release.log | tail -n 20
+          APP=$(find build/dd-release -name CareerKit.app -maxdepth 6 | head -1)
+          echo "App: $APP"
+          for K in GADApplicationIdentifier CKBannerAdUnitID CKRewardedAdUnitID; do /usr/libexec/PlistBuddy -c "Print :$K" "$APP/Info.plist" 2>/dev/null || true; done
+          /usr/libexec/PlistBuddy -c "Print :GADApplicationIdentifier" "$APP/Info.plist"
+          if /usr/libexec/PlistBuddy -c "Print :GADApplicationIdentifier" "$APP/Info.plist" | grep -q "3940256099942544"; then
+            echo "Release build still uses the Google test app id" && exit 1
+          fi
+        shell: bash
+
       - name: Rasterize rendered PDFs
         if: always()
         run: |
