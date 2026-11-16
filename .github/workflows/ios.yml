@@ -88,6 +88,29 @@ jobs:
             | tee build/uitests-ipad-dark.log | tail -n 60
         shell: bash
 
+      - name: UI screenshots (Spanish, French, German, Chinese)
+        if: always()
+        continue-on-error: true
+        run: |
+          DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro Max" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/' || true)
+          if [ -z "$DEST" ]; then DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[5-9]" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/'); fi
+          echo "Simulator: $DEST"
+          xcrun simctl boot "$DEST" || true
+          xcrun simctl ui "$DEST" appearance light || true
+          mkdir -p /tmp/careerkit-shots-l10n
+          for LANGCODE in de zh-Hans fr es; do
+            echo "=== $LANGCODE ==="
+            TEST_RUNNER_CAREERKIT_LANG=$LANGCODE TEST_RUNNER_CAREERKIT_SHOT_DIR=/tmp/careerkit-shots-l10n \
+            xcodebuild test \
+              -project CareerKit.xcodeproj \
+              -scheme CareerKit \
+              -destination "id=$DEST" \
+              -only-testing:CareerKitUITests/LocalizedScreenshotTests \
+              CODE_SIGNING_ALLOWED=NO \
+              | tee build/uitests-l10n-$LANGCODE.log | tail -n 15 || true
+          done
+        shell: bash
+
       - name: Release build check
         if: always()
         continue-on-error: true
@@ -143,6 +166,14 @@ jobs:
         with:
           name: screenshots-ipad-dark
           path: /tmp/careerkit-shots-ipad-dark
+          if-no-files-found: ignore
+
+      - name: Upload localized screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-l10n
+          path: /tmp/careerkit-shots-l10n
           if-no-files-found: ignore
 
       - name: Upload logs
