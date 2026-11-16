@@ -39,7 +39,7 @@ final class ArtifactDumpTests: XCTestCase {
         // Stress cases that failed in the first run, with the extracted text for diagnosis.
         let specs: [TemplateSpec] = EngineFixtures.specs
         for testCase in EngineFixtures.cases() {
-            for spec in specs.prefix(4) {
+            for spec in specs {
                 let doc: RenderedDocument = DocumentRenderer.render(testCase.resume, template: spec)
                 let report: PDFValidationReport = PDFValidator.validate(doc, resume: testCase.resume)
                 if !report.passed || doc.pageCount > testCase.maxPages {
