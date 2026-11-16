@@ -23,6 +23,18 @@ enum CKPageImages {
     }
 }
 
+// MARK: - Resume metadata
+
+enum CKResumeMeta {
+    static func templateName(_ resume: Resume) -> String {
+        TemplateLibrary.spec(id: resume.templateID)?.name ?? String(localized: "Template")
+    }
+
+    static func completionPercent(_ resume: Resume) -> Int {
+        Int((resume.completion * 100).rounded())
+    }
+}
+
 // MARK: - Cache clearing
 
 /// Image caches register here. They are emptied when the app posts "CKCachesShouldClear"

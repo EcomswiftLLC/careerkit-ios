@@ -70,7 +70,6 @@ struct ExportFlowSheet: View {
     @StateObject private var session = ExportSession()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @ScaledMetric(relativeTo: .title) private var titleSize: CGFloat = 26
 
     @State private var phase: Phase = .explanation
     @State private var fileState: FileState = .preparing
@@ -113,7 +112,7 @@ struct ExportFlowSheet: View {
             .accessibilityHidden(true)
 
             Text("Export as PDF")
-                .ckTitleFont(titleSize)
+                .ckTitleFont(26)
                 .foregroundStyle(CK.Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
