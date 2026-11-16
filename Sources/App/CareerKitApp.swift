@@ -45,6 +45,11 @@ struct CKRootContainer: View {
             }
         }
         .animation(reduceMotion ? nil : Animation.easeInOut(duration: 0.3), value: appState.hasCompletedOnboarding)
+        .task {
+            #if DEBUG
+            CKScreenshotSupport.seedIfRequested(store: store, appState: appState)
+            #endif
+        }
         .task(id: appState.hasCompletedOnboarding) {
             await startAdsWhenReady()
         }
@@ -57,6 +62,9 @@ struct CKRootContainer: View {
     }
 
     private func startAdsWhenReady() async {
+        #if DEBUG
+        if CKScreenshotSupport.isActive { return }
+        #endif
         guard appState.hasCompletedOnboarding, !adsStarted else { return }
         // Let the first frame draw before any consent or ad work begins.
         try? await Task.sleep(nanoseconds: 400_000_000)

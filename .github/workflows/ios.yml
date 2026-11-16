@@ -9,13 +9,12 @@ on:
 jobs:
   build-test:
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
       - name: Select Xcode
         run: |
-          ls /Applications | grep -i xcode || true
           sudo xcode-select -s /Applications/Xcode_16.4.app 2>/dev/null || sudo xcode-select -s "$(ls -d /Applications/Xcode_16*.app | sort | tail -1)"
           xcodebuild -version
 
@@ -28,7 +27,7 @@ jobs:
       - name: Resolve packages
         run: xcodebuild -resolvePackageDependencies -project CareerKit.xcodeproj -scheme CareerKit
 
-      - name: Build and test
+      - name: Unit tests
         env:
           TEST_RUNNER_CAREERKIT_DUMP_DIR: /tmp/careerkit-renders
         run: |
@@ -40,9 +39,28 @@ jobs:
             -project CareerKit.xcodeproj \
             -scheme CareerKit \
             -destination "id=$DEST" \
-            -resultBundlePath build/TestResults.xcresult \
+            -only-testing:CareerKitTests \
             CODE_SIGNING_ALLOWED=NO \
             | tee build/xcodebuild.log | tail -n 200
+        shell: bash
+
+      - name: UI screenshots
+        if: always()
+        continue-on-error: true
+        env:
+          TEST_RUNNER_CAREERKIT_SHOT_DIR: /tmp/careerkit-shots
+        run: |
+          set -o pipefail
+          DEST=$(xcrun simctl list devices available | grep -E "iPhone 16 Pro Max" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/')
+          if [ -z "$DEST" ]; then DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[5-7]" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/'); fi
+          echo "Simulator: $DEST"
+          xcodebuild test \
+            -project CareerKit.xcodeproj \
+            -scheme CareerKit \
+            -destination "id=$DEST" \
+            -only-testing:CareerKitUITests \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build/uitests.log | tail -n 120
         shell: bash
 
       - name: Rasterize rendered PDFs
@@ -63,10 +81,18 @@ jobs:
           path: /tmp/careerkit-renders
           if-no-files-found: ignore
 
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: /tmp/careerkit-shots
+          if-no-files-found: ignore
+
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: build/xcodebuild.log
+          path: build/*.log
           if-no-files-found: ignore

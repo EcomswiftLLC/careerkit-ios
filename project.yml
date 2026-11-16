@@ -61,6 +61,18 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/CareerKit.app/CareerKit"
         BUNDLE_LOADER: "$(TEST_HOST)"
+  CareerKitUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: CareerKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ecomswift.careerkit.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: CareerKit
 schemes:
   CareerKit:
     build:
@@ -69,3 +81,4 @@ schemes:
     test:
       targets:
         - CareerKitTests
+        - CareerKitUITests
