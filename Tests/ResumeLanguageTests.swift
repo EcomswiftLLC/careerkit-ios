@@ -66,17 +66,17 @@ final class ResumeLanguageTests: XCTestCase {
     func testLanguageDecodes() throws {
         XCTAssertEqual(try decode(#"{"language":"de"}"#).language, .de)
         XCTAssertEqual(try decode(#"{"language":"zh-Hans"}"#).language, .zhHans)
-        XCTAssertEqual(try decode(#"{"language":"es","accentHex":"#123456"}"#).language, .es)
+        XCTAssertEqual(try decode(##"{"language":"es","accentHex":"#123456"}"##).language, .es)
     }
 
     func testMissingKeyMeansAppLanguage() throws {
-        let decoded: StyleOverrides = try decode(#"{"accentHex":"#123456","fontScale":1.1}"#)
+        let decoded: StyleOverrides = try decode(##"{"accentHex":"#123456","fontScale":1.1}"##)
         XCTAssertNil(decoded.language)
         XCTAssertEqual(decoded.accentHex, "#123456")
     }
 
     func testUnknownOrWrongTypeFallsBackWithoutLosingTheDocument() throws {
-        let unknown: StyleOverrides = try decode(#"{"language":"ja","accentHex":"#123456","photoSize":"small"}"#)
+        let unknown: StyleOverrides = try decode(##"{"language":"ja","accentHex":"#123456","photoSize":"small"}"##)
         XCTAssertNil(unknown.language)
         XCTAssertEqual(unknown.accentHex, "#123456")
         XCTAssertEqual(unknown.photoSize, .small)
