@@ -15,6 +15,31 @@ enum CJKText {
         }
     }
 
+    /// Text from a PDF often comes back with Kangxi radicals (for example U+2F4B for 八) and with the simplified
+    /// radicals of the CJK Radicals Supplement (U+2ED3 for 长). Compatibility folding (NFKC) turns the Kangxi
+    /// ones into the ordinary characters but leaves the simplified ones, so those are mapped here.
+    private static let simplifiedRadicals: [UInt32: UInt32] = [
+        0x2EC5: 0x89C1, 0x2EC8: 0x8BA0, 0x2EC9: 0x8D1D, 0x2ECB: 0x8F66, 0x2ED0: 0x9485, 0x2ED3: 0x957F,
+        0x2ED4: 0x95E8, 0x2ED9: 0x97E6, 0x2EDA: 0x53F6, 0x2EDB: 0x98CE, 0x2EDC: 0x98DE, 0x2EE0: 0x9963,
+        0x2EE2: 0x9A6C, 0x2EE5: 0x9C7C, 0x2EE6: 0x9E1F, 0x2EE7: 0x5364, 0x2EE8: 0x9EA6, 0x2EE9: 0x9EC4,
+        0x2EEA: 0x9EFE, 0x2EEC: 0x9F50, 0x2EEE: 0x9F7F, 0x2EF0: 0x9F99, 0x2EF3: 0x9F9F
+    ]
+
+    /// `text` in compatibility form with simplified radicals replaced by the characters they stand for.
+    static func foldingRadicals(_ text: String) -> String {
+        let composed: String = text.precomposedStringWithCompatibilityMapping
+        guard composed.unicodeScalars.contains(where: { $0.value >= 0x2E80 && $0.value <= 0x2EFF }) else { return composed }
+        var scalars = String.UnicodeScalarView()
+        for scalar in composed.unicodeScalars {
+            if let mapped = simplifiedRadicals[scalar.value], let replacement = Unicode.Scalar(mapped) {
+                scalars.append(replacement)
+            } else {
+                scalars.append(scalar)
+            }
+        }
+        return String(scalars)
+    }
+
     static func isKana(_ scalar: Unicode.Scalar) -> Bool {
         switch scalar.value {
         case 0x3040...0x309F, 0x30A0...0x30FF, 0x31F0...0x31FF, 0xFF66...0xFF9D:

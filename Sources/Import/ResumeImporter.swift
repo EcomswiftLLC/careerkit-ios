@@ -339,7 +339,7 @@ enum ResumeImporter {
 
     /// Unifies line breaks, spaces, ligatures and invisible characters. Blank lines are kept as "".
     static func normalisedLines(_ text: String) -> [String] {
-        var value: String = text.precomposedStringWithCompatibilityMapping
+        var value: String = CJKText.foldingRadicals(text)
         value = value.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
         value = value.replacingOccurrences(of: "\u{2028}", with: "\n").replacingOccurrences(of: "\u{2029}", with: "\n")
         value = value.replacingOccurrences(of: "\u{000C}", with: "\n")

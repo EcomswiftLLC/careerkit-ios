@@ -111,7 +111,7 @@ enum PDFValidator {
     /// Text is compared in composed form (NFKC), so an accent PDFKit returns as a separate mark still matches,
     /// and German "ß" matches the "SS" an uppercase heading turns it into.
     static func normalise(_ raw: String) -> String {
-        let folded: String = raw.precomposedStringWithCompatibilityMapping.lowercased()
+        let folded: String = CJKText.foldingRadicals(raw).lowercased()
         var scalars = String.UnicodeScalarView()
         for scalar in folded.unicodeScalars {
             if CharacterSet.whitespacesAndNewlines.contains(scalar) { continue }
@@ -168,7 +168,13 @@ enum PDFValidator {
             .map { normalise(String($0)) }
             .filter { !$0.isEmpty }
         if words.count > 1 {
-            return words.allSatisfy { haystack.contains($0) || haystack.contains(String($0.reversed())) }
+            return words.allSatisfy { word in
+                if haystack.contains(word) || haystack.contains(String(word.reversed())) { return true }
+                // A hyphenated word ("start-ups") can break at the hyphen, and extraction may then return the two
+                // halves apart from each other. Each half has to be present.
+                let parts: [String] = word.split(separator: "-").map { String($0) }.filter { !$0.isEmpty }
+                return parts.count > 1 && parts.allSatisfy { haystack.contains($0) }
+            }
         }
         return false
     }
