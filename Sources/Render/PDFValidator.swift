@@ -96,7 +96,8 @@ enum PDFValidator {
         return String(scalars)
     }
 
-    private static func appears(_ expected: String, in haystack: String) -> Bool {
+    /// `haystack` must already be passed through `normalise`.
+    static func appears(_ expected: String, in haystack: String) -> Bool {
         let needle: String = normalise(expected)
         if needle.isEmpty { return true }
         if haystack.contains(needle) { return true }
