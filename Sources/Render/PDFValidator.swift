@@ -102,19 +102,22 @@ enum PDFValidator {
         if needle.isEmpty { return true }
         if haystack.contains(needle) { return true }
 
-        // Right to left text may be extracted in visual order, so accept the reverse or the same letters.
+        // PDFKit reads right to left runs in visual order: words come back reversed, marks detach from
+        // their letters, and a phone number in a right-aligned header reads "014-2290 )555( 1+".
+        // Accept the reversed text, and compare scalars so detached marks still match.
+        if haystack.contains(String(needle.reversed())) { return true }
         if RenderTextDirection.containsRTL(expected) {
-            if haystack.contains(String(needle.reversed())) { return true }
-            return needle.allSatisfy { haystack.contains($0) }
+            let available: Set<Unicode.Scalar> = Set(haystack.unicodeScalars)
+            return needle.unicodeScalars.allSatisfy { available.contains($0) }
         }
 
-        // Columns can interleave lines in extraction. Fall back to checking each word.
+        // Columns can interleave lines in extraction. Fall back to checking each word, in either direction.
         let words: [String] = expected
             .split(whereSeparator: { $0.isWhitespace })
             .map { normalise(String($0)) }
             .filter { !$0.isEmpty }
         if words.count > 1 {
-            return words.allSatisfy { haystack.contains($0) }
+            return words.allSatisfy { haystack.contains($0) || haystack.contains(String($0.reversed())) }
         }
         return false
     }

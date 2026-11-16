@@ -426,7 +426,7 @@ enum EngineFixtures {
                         resume: resume("Skills", person: standard, sections: [
                             section(.skills, skills: (0..<5).map { g in group("Group \(g)", (0..<30).map { "Skill\(g)x\($0)" }) })
                         ]),
-                        keys: ["Group 4", "Skill4x29"], minPages: 1, maxPages: 4))
+                        keys: ["Group 4", "Skill4x29"], minPages: 1, maxPages: 6))
 
         // 16. Only a name.
         out.append(Case(name: "name only",

@@ -30,7 +30,7 @@ final class RenderSectionBuilder {
 
     var paragraphGap: CGFloat { return max(3, style.bodySize * 0.45) }
     var bulletGap: CGFloat { return max(1.5, style.bodySize * 0.22) }
-    var bulletIndent: CGFloat { return max(9, style.bodySize * 1.15) }
+    var bulletIndent: CGFloat { return max(11, style.bodySize * 1.5) }
 
     // MARK: Section assembly
 

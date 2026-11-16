@@ -110,7 +110,7 @@ enum SampleContent {
     // MARK: Fitting one-page templates
 
     /// Word budget for a one-page sample. Two-page templates use the whole persona.
-    private static let onePageWordBudget = 470
+    private static let onePageWordBudget = 340
 
     private static func words(in section: ResumeSection) -> Int {
         var parts: [String] = [section.title, section.text]
