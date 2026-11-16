@@ -304,6 +304,9 @@ struct ProfileView: View {
             }
             .accessibilityElement(children: .combine)
             .listRowBackground(CK.Palette.surface)
+            if WritingAssist.isAvailable {
+                CKSettingsRow(systemImage: "iphone", title: String(localized: "On-device writing help"), detail: String(localized: "Suggestions are made on this device. Your text is not sent anywhere.")).listRowBackground(CK.Palette.surface)
+            }
         } header: {
             sectionHeader("About")
         } footer: {

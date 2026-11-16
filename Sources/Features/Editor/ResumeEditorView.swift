@@ -117,7 +117,10 @@ struct ResumeEditorView: View {
                                      systemImage: section.kind.systemImage,
                                      dimmed: !section.isVisible,
                                      isExpanded: expandedBinding(section.id.uuidString)) {
-                        SectionEditorView(section: $section)
+                        SectionEditorView(section: $section,
+                                          assistContext: section.kind == .summary
+                                              ? WritingAssistText.experienceContext(from: resume.wrappedValue.sections)
+                                              : "")
                     }
                 }
                 Button {

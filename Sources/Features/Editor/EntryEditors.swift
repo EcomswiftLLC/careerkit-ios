@@ -83,9 +83,12 @@ struct EdMonthYearField: View {
 struct EdBulletEditor: View {
     @Binding var bullets: [String]
     var showsExamples: Bool
+    /// Role line for on-device writing help. nil hides it (sections that are not work-like).
+    var assistContext: String? = nil
     var onExamples: () -> Void
 
     @FocusState private var focusedIndex: Int?
+    @State private var assistUndo: WritingAssistUndo<[String]>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.s + 2) {
@@ -103,6 +106,22 @@ struct EdBulletEditor: View {
                 Spacer()
                 if showsExamples {
                     EdTextButton(title: "Writing examples", systemImage: "text.book.closed", action: onExamples)
+                }
+            }
+            if let assistContext, WritingAssist.isAvailable {
+                HStack(spacing: CK.Space.m) {
+                    WritingAssistButton(target: .bullets, text: WritingAssistText.joinBullets(bullets), context: assistContext) { suggestion in
+                        let updated = WritingAssistText.splitBullets(suggestion)
+                        assistUndo = WritingAssistUndo(previous: bullets, applied: updated)
+                        bullets = updated
+                    }
+                    if let undo = assistUndo, undo.canUndo(current: bullets) {
+                        WritingAssistUndoButton {
+                            bullets = undo.previous
+                            assistUndo = nil
+                        }
+                    }
+                    Spacer(minLength: 0)
                 }
             }
         }
@@ -258,7 +277,11 @@ struct EdEntryCard: View {
             }
             EdTextArea(label: "Description", text: $entry.detail, prompt: "Optional. A short paragraph about the role or project.", minHeight: 80)
             if labels.showsBullets {
-                EdBulletEditor(bullets: $entry.bullets, showsExamples: labels.offersExamples) { showExamples = true }
+                EdBulletEditor(bullets: $entry.bullets,
+                               showsExamples: labels.offersExamples,
+                               assistContext: labels.offersExamples
+                                   ? WritingAssistText.roleLine(heading: entry.heading, subheading: entry.subheading)
+                                   : nil) { showExamples = true }
             }
             EdField(label: labels.extra, text: $entry.extra, capitalization: .never)
         }

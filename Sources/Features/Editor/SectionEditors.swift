@@ -3,11 +3,13 @@ import SwiftUI
 /// Chooses the editor that matches the section's shape.
 struct SectionEditorView: View {
     @Binding var section: ResumeSection
+    /// Work experience text for on-device writing help in the summary. Empty elsewhere.
+    var assistContext: String = ""
 
     var body: some View {
         switch section.kind.shape {
         case .text:
-            TextSectionEditor(section: $section)
+            TextSectionEditor(section: $section, assistContext: assistContext)
         case .entries:
             EntriesSectionEditor(section: $section)
         case .skillGroups:
@@ -18,7 +20,9 @@ struct SectionEditorView: View {
 
 struct TextSectionEditor: View {
     @Binding var section: ResumeSection
+    var assistContext: String = ""
     @State private var showExamples = false
+    @State private var assistUndo: WritingAssistUndo<String>?
 
     private var wordCount: Int {
         section.text.split(whereSeparator: { $0.isWhitespace }).count
@@ -44,6 +48,21 @@ struct TextSectionEditor: View {
                 Spacer()
                 if section.kind == .summary {
                     EdTextButton(title: "Writing examples", systemImage: "text.book.closed") { showExamples = true }
+                }
+            }
+            if section.kind == .summary && WritingAssist.isAvailable {
+                HStack(spacing: CK.Space.m) {
+                    WritingAssistButton(target: .summary, text: section.text, context: assistContext) { suggestion in
+                        assistUndo = WritingAssistUndo(previous: section.text, applied: suggestion)
+                        section.text = suggestion
+                    }
+                    if let undo = assistUndo, undo.canUndo(current: section.text) {
+                        WritingAssistUndoButton {
+                            section.text = undo.previous
+                            assistUndo = nil
+                        }
+                    }
+                    Spacer(minLength: 0)
                 }
             }
             if !tip.isEmpty {
