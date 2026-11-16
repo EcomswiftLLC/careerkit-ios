@@ -130,7 +130,7 @@ final class PersistenceDecodingTests: XCTestCase {
     }
 
     func testUnknownPageSizeAndStyleValuesFallBack() throws {
-        let json: String = #"{"title":"CV","pageSize":"a3","style":{"headerStyle":"zigzag","accentHex":"#112233","dateFormat":"roman"}}"#
+        let json: String = ##"{"title":"CV","pageSize":"a3","style":{"headerStyle":"zigzag","accentHex":"#112233","dateFormat":"roman"}}"##
         let resume: Resume = try decode(Resume.self, json)
         XCTAssertEqual(resume.pageSize, .a4)
         XCTAssertNil(resume.style.headerStyle)
@@ -139,7 +139,7 @@ final class PersistenceDecodingTests: XCTestCase {
     }
 
     func testOldStyleOverridesJSONStillWorks() throws {
-        let json: String = #"{"title":"CV","style":{"accentHex":"#1F3A5F","fontScale":1.1,"lineSpacing":1.2,"marginPoints":40,"showPhoto":false}}"#
+        let json: String = ##"{"title":"CV","style":{"accentHex":"#1F3A5F","fontScale":1.1,"lineSpacing":1.2,"marginPoints":40,"showPhoto":false}}"##
         let resume: Resume = try decode(Resume.self, json)
         XCTAssertEqual(resume.style.accentHex, "#1F3A5F")
         XCTAssertEqual(resume.style.fontScale, 1.1, accuracy: 0.0001)
