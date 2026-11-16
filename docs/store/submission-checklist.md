@@ -93,7 +93,7 @@ Test script (about 15 minutes):
 2. **Apple guideline on ads.** Rewarded ads that gate a feature are allowed. The ad must be clearly opt-in, which the design already does. No interstitials, no ads in the editor.
 3. **Name availability** of `Resume Builder: CareerKit` is only known after creating the app record.
 4. **Screenshots with ads.** Never submit a screenshot that shows a test ad label.
-5. **Descriptions of UI.** The review notes and screenshot plan name buttons and screens (for example "Profile > Delete all local data", "Ad privacy choices", "Watch an Ad to Export Free"). Check each name against the real UI once the app runs and edit the text if the labels differ.
+5. **Descriptions of UI.** The review notes and screenshot plan name buttons and screens (for example "Profile > Delete all local data", "Ad privacy choices", "Watch an ad to export"). Check each name against the real UI once the app runs and edit the text if the labels differ.
 
 ## 8. After approval
 

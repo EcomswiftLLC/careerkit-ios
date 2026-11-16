@@ -44,7 +44,7 @@ This writes the four HTML pages into `website/careerkit/`. The pages show the ad
 ## What could not be verified
 
 - No compile, no simulator, no device. Icon appearance on a real home screen at 60 pt is unchecked.
-- UI labels in the store and legal text were checked against the Swift source on 2026-11-16 (Profile tab, "Delete all local data", "Ad privacy choices", "Watch an Ad to Export Free", "Try again", five onboarding pages). Re-check after the editor and appui owners change copy.
+- UI labels in the store and legal text were checked against the Swift source on 2026-11-16 (Profile tab, "Delete all local data", "Ad privacy choices", "Watch an ad to export", "Try again", five onboarding pages). Re-check after the editor and appui owners change copy.
 - Screenshots and the app preview do not exist: they need the running app. The plan, captions, size spec and framing script are ready.
 - Apple's age rating and App Privacy questionnaires change; the answers are drafts to compare with the live forms. Google's AdMob data table was not re-fetched by me; I followed `docs/handoff/ads.md`.
 - Keywords and category are judgement, not data. No search volume was checked.

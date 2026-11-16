@@ -17,13 +17,13 @@ Design system, `Sources/DesignSystem/`
 - `ComponentsTemplates.swift`: `CKAdaptiveGrid`, `CKTemplateCard`, `CKATSBadge`, `CKFilterChipBar`, `CKFilterMenuChip`, `CKToggleChip`.
 
 Features
-- `Onboarding/OnboardingView.swift`, `OnboardingArt.swift`: five pages, Skip and Get Started, Reduce Motion aware. Art uses real `TemplateThumbnail`s and real font names.
+- `Onboarding/OnboardingView.swift`, `OnboardingArt.swift`: five pages, Skip and Get started, Reduce Motion aware. Art uses real `TemplateThumbnail`s and real font names.
 - `Home/HomeView.swift`, `HomeSections.swift`: greeting, create buttons, recent resumes, template carousel, cover letter shortcut, career tools, "How CareerKit stays free", banner last, new-user empty state.
 - `MyResumes/MyResumesView.swift`: search, sort, active/archived, list or grid, swipe and context actions, banner at the end of the list, empty states.
 - `MyResumes/ResumeActionHost.swift`: rename alert, delete confirmation, change template sheet, toasts. Shared by Home and My Resumes.
 - `MyResumes/ResumeSorting.swift`: `CKResumeSort`, `CKResumeSearch`, `CKResumeStats` (pure logic).
 - `MyResumes/CompareVersionsView.swift`: two pickers, two real first-page previews, side-by-side counts, full preview sheet.
-- `Templates/TemplateBrowserView.swift`, `TemplateFilter.swift`, `TemplatePreviewSheet.swift`, `TemplateFlows.swift`: browser, filters, large preview, "Use This Template" flow, template picker for existing resumes.
+- `Templates/TemplateBrowserView.swift`, `TemplateFilter.swift`, `TemplatePreviewSheet.swift`, `TemplateFlows.swift`: browser, filters, large preview, "Use this template" flow, template picker for existing resumes.
 - `Profile/ProfileView.swift`, `HowExportsWorkView.swift`, `CKLinks.swift`: settings, backup, two-step delete, explainer, links.
 
 ## Contract APIs relied on

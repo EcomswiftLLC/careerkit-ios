@@ -73,8 +73,7 @@ struct ResumeEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbarContent(resume) }
-        .toolbarBackground(CK.Palette.ivory, for: .bottomBar)
-        .toolbarBackground(.visible, for: .bottomBar)
+        .safeAreaInset(edge: .bottom, spacing: 0) { bottomToolbar }
         .sheet(item: $sheet) { item in
             sheetContent(item, resume)
         }
@@ -166,7 +165,11 @@ struct ResumeEditorView: View {
                 .foregroundStyle(CK.Palette.forest)
                 .accessibilityHint("Opens the export options")
         }
-        ToolbarItemGroup(placement: .bottomBar) {
+    }
+
+    /// A solid bar that runs to the screen edge, so nothing scrolls into view behind the labels.
+    private var bottomToolbar: some View {
+        HStack {
             toolButton("Template", symbol: "rectangle.on.rectangle") { open(.templates) }
             Spacer()
             toolButton("Style", symbol: "paintpalette") { open(.style) }
@@ -175,6 +178,10 @@ struct ResumeEditorView: View {
             Spacer()
             toolButton("ATS check", symbol: "checkmark.shield") { open(.ats) }
         }
+        .padding(.horizontal, CK.Space.m)
+        .padding(.top, CK.Space.xs)
+        .background(CK.Palette.ivory.ignoresSafeArea(edges: .bottom))
+        .overlay(alignment: .top) { Rectangle().fill(CK.Palette.hairline).frame(height: 0.5) }
     }
 
     private func toolButton(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {

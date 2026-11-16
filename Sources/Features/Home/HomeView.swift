@@ -157,14 +157,14 @@ struct HomeView: View {
             Button {
                 appState.selectedTab = .templates
             } label: {
-                Text("Create New Resume")
+                Text("Create new resume")
             }
             .buttonStyle(.ckPrimary)
 
             Button {
                 showBlank = true
             } label: {
-                Text("Create from Scratch")
+                Text("Create from scratch")
             }
             .buttonStyle(.ckSecondary)
         }

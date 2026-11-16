@@ -145,7 +145,7 @@ struct CKTemplatePreviewSheet: View {
             Button {
                 showFlow = true
             } label: {
-                Text("Use This Template")
+                Text("Use this template")
             }
             .buttonStyle(.ckPrimary)
             .padding(.horizontal, CK.Space.m)

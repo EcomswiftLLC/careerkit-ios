@@ -102,7 +102,7 @@ struct OnboardingView: View {
                     }
                 }
             } label: {
-                Text(isLast ? "Get Started" : "Continue")
+                Text(isLast ? "Get started" : "Continue")
             }
             .buttonStyle(.ckPrimary)
         }

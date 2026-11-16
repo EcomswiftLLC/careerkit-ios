@@ -181,7 +181,7 @@ struct CKResumeTile: View {
                 CKResumeThumbnail(resume: resume, width: width)
                     .overlay(alignment: .bottomTrailing) {
                         Text("\(CKResumeMeta.completionPercent(resume))%")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.caption2.weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(CK.Palette.forest)
                             .padding(.horizontal, 8)

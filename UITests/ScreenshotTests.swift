@@ -39,7 +39,7 @@ final class ScreenshotTests: XCTestCase {
         for index in 2...5 {
             if tap(app.buttons["Continue"], wait: 3) { shot("01-onboarding-\(index)") }
         }
-        tap(app.buttons["Get Started"], wait: 3)
+        tap(app.buttons["Get started"], wait: 3)
         shot("02-home-empty")
     }
 
@@ -87,7 +87,7 @@ final class ScreenshotTests: XCTestCase {
         app.swipeUp()
         shot("61-editor-scrolled")
 
-        for name in ["Preview", "Style", "Sections", "Template", "ATS Check"] {
+        for name in ["Preview", "Style", "Sections", "Template", "ATS check"] {
             let button: XCUIElement = app.buttons[name].firstMatch
             if tap(button, wait: 2) {
                 shot("62-editor-" + name.replacingOccurrences(of: " ", with: "-").lowercased())

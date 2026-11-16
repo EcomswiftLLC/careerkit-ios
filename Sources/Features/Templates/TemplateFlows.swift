@@ -11,7 +11,7 @@ extension View {
         }
     }
 
-    /// Presents the large template preview. "Use This Template" runs `NewResumeFlow`, and once the
+    /// Presents the large template preview. "Use this template" runs `NewResumeFlow`, and once the
     /// resume exists both sheets close and `onCreated` runs so the caller can open the editor.
     func templatePreviewSheet(_ template: Binding<TemplateSpec?>, onCreated: @escaping (UUID) -> Void) -> some View {
         sheet(item: template) { spec in

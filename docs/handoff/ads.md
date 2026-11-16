@@ -33,7 +33,7 @@ No StoreKit anywhere. No ids in Swift.
 
 - Grants: one per document id, valid 24 hours, one export. A second grant for the same document while one is valid is ignored (no stacking, no extension). A grant dated in the future (device clock moved back more than 5 minutes) is invalid.
 - A grant is created only in `ExportFlowSheet` after `present()` returned true. It is consumed only after the share sheet, Files exporter or print dialog reports `completed == true`. A cancelled share keeps the grant, and reopening the sheet goes straight to the destination step.
-- The rewarded ad never starts by itself. The person taps "Watch an Ad to Export Free". After that tap the sheet shows a spinner with Cancel and plays the video as soon as it is loaded, unless they cancelled. Interactive dismissal is disabled during that wait.
+- The rewarded ad never starts by itself. The person taps "Watch an ad to export". After that tap the sheet shows a spinner with Cancel and plays the video as soon as it is loaded, unless they cancelled. Interactive dismissal is disabled during that wait.
 - Failure states use plain messages and "Try again". There is no payment fallback.
 - Rendering runs in a detached task after the reward (or immediately when a grant already exists). The PDF is written to `tmp/CareerKitExport-<uuid>/<sanitised name>.pdf`. The folder is removed when the sheet's state object is released.
 - Banner: `currentOrientationAnchoredAdaptiveBanner(width:)` is marked deprecated in v12 in favour of `largeAnchoredAdaptiveBanner(width:)`. I kept the contract name because it is certain to exist; it only gives a deprecation warning. Switch later if you want the larger anchored size.

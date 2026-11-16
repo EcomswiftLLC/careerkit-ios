@@ -143,7 +143,7 @@ struct ExportFlowSheet: View {
 
             VStack(spacing: CK.Space.s) {
                 Button(action: startAdFlow) {
-                    Text("Watch an Ad to Export Free").multilineTextAlignment(.center)
+                    Text("Watch an ad to export").multilineTextAlignment(.center)
                 }
                 .buttonStyle(.ckPrimary)
 

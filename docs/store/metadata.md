@@ -160,7 +160,7 @@ How to test:
 3. Edit any field. The preview updates. No ad is shown while editing.
 4. Open the ATS check from the resume to see general guidance. It is not a score from any employer system.
 5. Create a cover letter from the Cover Letters tab.
-6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an Ad to Export Free, let the video finish, then choose Share, Save to Files or Print.
+6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an ad to export, let the video finish, then choose Share, Save to Files or Print.
 7. Profile > Delete all local data (two confirmation steps, with an option to export a backup first) removes every resume and letter from the device.
 
 If no rewarded video is available when you test (new ad units can have no fill for the first days, and fill varies by region), tap Try again on the export sheet after a moment.
