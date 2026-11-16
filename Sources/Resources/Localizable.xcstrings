@@ -422,57 +422,21 @@
       "extractionState": "manual",
       "localizations": {
         "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ Seite"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ Seiten"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Seiten"
           }
         },
         "es": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ página"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ páginas"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ páginas"
           }
         },
         "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ page"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ pages"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pages"
           }
         },
         "zh-Hans": {
@@ -724,57 +688,21 @@
       "extractionState": "manual",
       "localizations": {
         "de": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ Vorlage"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ Vorlagen"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Vorlagen"
           }
         },
         "es": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ plantilla"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ plantillas"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ plantillas"
           }
         },
         "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ modèle"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%@ modèles"
-                }
-              }
-            }
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ modèles"
           }
         },
         "zh-Hans": {

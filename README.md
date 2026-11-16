@@ -117,9 +117,10 @@ Sources/
   Persistence/              on-device JSON document store (engine)
   Render/                   PDF renderer and validator (engine)
   Templates/                template specs and libraries (templates)
-  Resources/                Info.plist, Assets.xcassets, PrivacyInfo.xcprivacy
+  Resources/                Info.plist, Assets.xcassets, PrivacyInfo.xcprivacy, Localizable.xcstrings (en, es, fr, de, zh-Hans)
 Tests/                      unit tests
 design/                     icon generator and artwork, store screenshot tooling
+tools/                      localization tooling (l10n_extract.py) and translator part files (l10n_parts/)
 docs/                       ARCHITECTURE.md, store/, legal/, handoff/
 website/                    static marketing, privacy, terms and support pages
 .github/workflows/ios.yml   macOS CI: generate, build, test

@@ -56,6 +56,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 | # | Step | Status |
 |---|---|---|
 | 5.1 | Paste name, subtitle, keywords, promotional text, description, What's New from `metadata.md` (verified by `design/check_store_metadata.py`). | Done (text), Owner (paste) |
+| 5.1a | Localized listings: add Spanish (Spain), French (France), German and Chinese (Simplified) in App Store Connect and paste each block from `metadata-localized.md` (verified by `design/check_store_metadata.py`). Screenshots are needed per language, captured from the CI localized screenshot artifact `screenshots-l10n`. | Done (text), Owner (paste, screenshots) |
 | 5.2 | Category Business, secondary Productivity. | Owner |
 | 5.3 | Support, marketing, privacy policy URLs. Terms link in the description or a custom EULA. | Owner |
 | 5.4 | Copyright `2026 Ecom Swift LLC`. | Owner |

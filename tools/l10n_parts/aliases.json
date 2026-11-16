@@ -6,18 +6,9 @@
   "zh-Hans": "%@ 已移到第 %lld 位，共 %@ 位"
  },
  "%@ pages": {
-  "es": {
-   "one": "%@ página",
-   "other": "%@ páginas"
-  },
-  "fr": {
-   "one": "%@ page",
-   "other": "%@ pages"
-  },
-  "de": {
-   "one": "%@ Seite",
-   "other": "%@ Seiten"
-  },
+  "es": "%@ páginas",
+  "fr": "%@ pages",
+  "de": "%@ Seiten",
   "zh-Hans": "%@页"
  },
  "%@ percent": {
@@ -39,18 +30,9 @@
   "zh-Hans": "%@ 示例，第 %@ 页，共 %@ 页"
  },
  "%@ templates": {
-  "es": {
-   "one": "%@ plantilla",
-   "other": "%@ plantillas"
-  },
-  "fr": {
-   "one": "%@ modèle",
-   "other": "%@ modèles"
-  },
-  "de": {
-   "one": "%@ Vorlage",
-   "other": "%@ Vorlagen"
-  },
+  "es": "%@ plantillas",
+  "fr": "%@ modèles",
+  "de": "%@ Vorlagen",
   "zh-Hans": "%@ 个模板"
  },
  "Page %@ of %@": {
