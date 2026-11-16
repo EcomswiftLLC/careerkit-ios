@@ -52,7 +52,7 @@ final class StyleOverridesTests: XCTestCase {
     }
 
     func testOldStyleJSONWithoutNewKeysDecodes() throws {
-        let json: String = #"{"accentHex":"#112233","bodyFont":"georgia","fontScale":1.1,"lineSpacing":1.2,"marginPoints":40,"showPhoto":false}"#
+        let json: String = ##"{"accentHex":"#112233","bodyFont":"georgia","fontScale":1.1,"lineSpacing":1.2,"marginPoints":40,"showPhoto":false}"##
         let decoded: StyleOverrides = try JSONDecoder().decode(StyleOverrides.self, from: Data(json.utf8))
         XCTAssertEqual(decoded.accentHex, "#112233")
         XCTAssertEqual(decoded.bodyFont, .georgia)
