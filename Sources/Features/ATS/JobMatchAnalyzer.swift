@@ -247,8 +247,19 @@ enum JobMatchAnalyzer {
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
         for rawLine in normalised.components(separatedBy: "\n") {
-            let line: String = rawLine.trimmingCharacters(in: .whitespaces)
+            var line: String = rawLine.trimmingCharacters(in: .whitespaces)
             if line.isEmpty { continue }
+            // "Requirements: Kubernetes, Terraform" on one line: the label sets the mode and the rest is content.
+            if let colon = line.firstIndex(of: ":") {
+                let after: String = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
+                let before: String = fold(String(line[..<colon]))
+                let beforeWords: Int = before.split(whereSeparator: { $0.isWhitespace }).count
+                if !after.isEmpty, beforeWords >= 1, beforeWords <= 4,
+                   requirementHeaders.contains(where: { before.hasPrefix($0) }) {
+                    mode = .requirements
+                    line = after
+                }
+            }
             let lower: String = fold(line)
             let wordCount: Int = lower.split(whereSeparator: { $0.isWhitespace }).count
 
