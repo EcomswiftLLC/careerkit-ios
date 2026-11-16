@@ -74,7 +74,7 @@ struct ResumeEditorView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbarContent(resume) }
         .toolbarBackground(CK.Palette.ivory, for: .bottomBar)
-        .toolbarBackgroundVisibility(.visible, for: .bottomBar)
+        .toolbarBackground(.visible, for: .bottomBar)
         .sheet(item: $sheet) { item in
             sheetContent(item, resume)
         }

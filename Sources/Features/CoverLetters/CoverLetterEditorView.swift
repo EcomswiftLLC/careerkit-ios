@@ -83,7 +83,7 @@ struct CoverLetterEditorView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbarContent(letter) }
         .toolbarBackground(CK.Palette.ivory, for: .bottomBar)
-        .toolbarBackgroundVisibility(.visible, for: .bottomBar)
+        .toolbarBackground(.visible, for: .bottomBar)
         .sheet(item: $sheet) { item in
             sheetContent(item, letter)
         }
