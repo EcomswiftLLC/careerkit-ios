@@ -212,7 +212,8 @@ final class DocumentLanguageRenderTests: XCTestCase {
                 let label: String = "\(name) / \(template.id)"
                 XCTAssertGreaterThanOrEqual(doc.pageCount, 1, label)
                 let report: PDFValidationReport = PDFValidator.validate(doc, resume: resume)
-                XCTAssertTrue(report.passed, "\(label): \(report.issues.joined(separator: " | "))")
+                let extractedPreview: String = report.passed ? "" : " || EXTRACTED: " + report.extractedText.replacingOccurrences(of: "\n", with: "⏎").prefix(500)
+                XCTAssertTrue(report.passed, "\(label): \(report.issues.joined(separator: " | "))\(extractedPreview)")
                 let text: String = normalisedText(doc)
                 XCTAssertTrue(text.contains(PDFValidator.normalise(DocumentStrings.present(resume.style.language ?? .en))), label)
                 XCTAssertFalse(report.extractedText.contains("\u{FFFD}"), label)
