@@ -81,14 +81,14 @@ enum WritingExamples {
             "Documented 20 standard procedures so new starters could work independently within two weeks.",
             "Maintained a 99 percent on-time dispatch rate through peak season."
         ]),
-        WritingExampleCategory(id: "technology", name: "Technology and engineering", items: [
+        WritingExampleCategory(id: "ach-technology", name: "Technology and engineering", items: [
             "Built a reporting tool that replaced a weekly manual spreadsheet and saved the team about six hours a week.",
             "Improved page load time by 40 percent by optimizing images and removing unused code.",
             "Wrote automated tests for the checkout flow, cutting regressions found after release by half.",
             "Migrated a customer database to a new system over a weekend with no data loss and under two hours of downtime.",
             "Reviewed code for a team of five and agreed a shared style guide that reduced review comments."
         ]),
-        WritingExampleCategory(id: "service", name: "Customer service", items: [
+        WritingExampleCategory(id: "ach-service", name: "Customer service", items: [
             "Resolved an average of 60 customer contacts a day with a satisfaction rating above 90 percent.",
             "Wrote 15 help articles for the most common questions, reducing repeat contacts by about a fifth.",
             "Handled escalated complaints calmly and turned most of them into repeat customers.",
@@ -102,7 +102,7 @@ enum WritingExamples {
             "Ran retrospectives after each phase and applied the findings to the next one.",
             "Wrote clear project updates for senior stakeholders every two weeks."
         ]),
-        WritingExampleCategory(id: "marketing", name: "Marketing and communications", items: [
+        WritingExampleCategory(id: "ach-marketing", name: "Marketing and communications", items: [
             "Grew the email list from 3,000 to 9,500 subscribers in a year through a new sign-up offer and clearer forms.",
             "Raised email open rates by 8 points by testing subject lines and send times.",
             "Wrote and edited 50 blog posts that brought in steady search traffic.",
@@ -123,7 +123,7 @@ enum WritingExamples {
             "Created revision guides and practice questions shared with all classes in the year group.",
             "Mentored two trainee teachers through their first placement."
         ]),
-        WritingExampleCategory(id: "healthcare", name: "Healthcare", items: [
+        WritingExampleCategory(id: "ach-healthcare", name: "Healthcare", items: [
             "Cared for up to eight patients per shift while keeping documentation accurate and up to date.",
             "Explained treatment plans in plain language to patients and families, and checked understanding before discharge.",
             "Supported the team during a ward reorganization by training colleagues on the new handover process.",
