@@ -33,6 +33,11 @@ enum ExportFileName {
     static func pdfFileName(for raw: String) -> String {
         sanitized(raw) + ".pdf"
     }
+
+    /// "<sanitised name>.<extension of the format>"
+    static func fileName(for raw: String, format: DocumentExportFormat) -> String {
+        sanitized(raw) + "." + format.fileExtension
+    }
 }
 
 enum ExportFileError: Error {
@@ -48,6 +53,17 @@ enum ExportFileWriter {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let url = directory.appendingPathComponent(ExportFileName.pdfFileName(for: baseName))
         try pdfData.write(to: url, options: .atomic)
+        return (url, directory)
+    }
+
+    /// Same as `write(pdfData:baseName:)` for any export format. The folder uses the `CareerKitExport-`
+    /// prefix, so `CKTempFiles` cleans it up like the PDF folders.
+    static func write(data: Data, baseName: String, format: DocumentExportFormat) throws -> (url: URL, directory: URL) {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("CareerKitExport-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let url = directory.appendingPathComponent(ExportFileName.fileName(for: baseName, format: format))
+        try data.write(to: url, options: .atomic)
         return (url, directory)
     }
 }

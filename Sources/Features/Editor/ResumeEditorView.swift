@@ -254,7 +254,7 @@ struct ResumeEditorView: View {
             let snapshot = resume.wrappedValue
             ExportFlowSheet(documentID: snapshot.id,
                             fileName: FileNaming.safeFileName(snapshot.title, fallback: "Resume"),
-                            renderedProvider: { EditorRender.render(snapshot) })
+                            source: ExportSource.forResume(snapshot))
         }
     }
 }

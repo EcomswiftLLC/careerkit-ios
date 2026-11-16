@@ -11,10 +11,10 @@ The rules every contributor follows are in `docs/ARCHITECTURE.md`. Read it first
 
 ## Where this project can be built
 
-The project is edited on Windows, but **it can only be compiled on macOS** with Xcode 16 or later. Two ways:
+The project is edited on Windows, but **it can only be compiled on macOS** with Xcode 26 or later (Apple requires the iOS 26 SDK for App Store uploads). Two ways:
 
 1. A Mac with Xcode (steps below).
-2. The GitHub Actions workflow `.github/workflows/ios.yml`, which runs on a `macos-15` runner on every push to `main`, every pull request and on demand. It installs XcodeGen, generates the project, resolves the Swift packages, then builds and runs the unit tests on an iPhone simulator. Download the logs from the run's artifacts when something fails.
+2. The GitHub Actions workflow `.github/workflows/ios.yml`, which runs on a `macos-26` runner on every push to `main`, every pull request and on demand. It installs XcodeGen, generates the project, resolves the Swift packages, then builds and runs the unit tests on an iPhone simulator. Download the logs from the run's artifacts when something fails.
 
 Nothing in this repository has been compiled yet. The first CI run is the first real build, so expect to fix compile errors.
 

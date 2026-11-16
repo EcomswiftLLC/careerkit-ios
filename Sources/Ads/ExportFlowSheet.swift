@@ -19,6 +19,7 @@ final class ExportSession: ObservableObject {
 
 private struct ProviderBox: @unchecked Sendable {
     let provider: () -> RenderedDocument
+    let source: ExportSource?
 }
 
 private struct ExportedFile {
@@ -27,20 +28,34 @@ private struct ExportedFile {
     let data: Data
 }
 
-/// The whole export experience for one document: explanation, one opt-in video, then Share, Save to Files or Print.
+/// The whole export experience for one document: file type, explanation, one opt-in video,
+/// then Share, Save to Files or Print (Print for PDF only).
 /// When no video can be provided after the person asked for one, the export continues without a video
 /// (see `ExportFallbackPolicy`), so there is never a dead end.
+/// The gate is per document, not per format: one unlock covers one completed export in any format.
 /// Needs `ExportGate` in the environment (injected at the app root).
 @MainActor
 struct ExportFlowSheet: View {
     let documentID: UUID
     let fileName: String
     let renderedProvider: () -> RenderedDocument
+    /// The models behind the document. nil means only PDF can be offered (older call sites).
+    let source: ExportSource?
 
+    /// PDF only, from an already rendered document.
     init(documentID: UUID, fileName: String, renderedProvider: @escaping () -> RenderedDocument) {
         self.documentID = documentID
         self.fileName = fileName
         self.renderedProvider = renderedProvider
+        self.source = nil
+    }
+
+    /// Every format in `DocumentExportFormat`.
+    init(documentID: UUID, fileName: String, source: ExportSource) {
+        self.documentID = documentID
+        self.fileName = fileName
+        self.source = source
+        self.renderedProvider = { DocumentExporter.renderPDF(source) }
     }
 
     private enum Phase: Equatable {
@@ -54,7 +69,7 @@ struct ExportFlowSheet: View {
 
     private enum FileState: Equatable {
         case preparing
-        case ready(url: URL, data: Data)
+        case ready(url: URL, data: Data, format: DocumentExportFormat)
         case failed
     }
 
@@ -77,6 +92,30 @@ struct ExportFlowSheet: View {
     @State private var destinationBusy = false
     @State private var didAppear = false
     @State private var unlockedWithoutVideo = false
+    @State private var detent: PresentationDetent = .large
+    /// The format picked last time, remembered on this device.
+    @AppStorage(DocumentExportFormat.storageKey) private var storedFormat: String = DocumentExportFormat.defaultFormat.rawValue
+
+    // MARK: Format
+
+    private var availableFormats: [DocumentExportFormat] {
+        source == nil ? [.pdf] : DocumentExportFormat.allCases
+    }
+
+    private var format: DocumentExportFormat {
+        let wanted: DocumentExportFormat = DocumentExportFormat.stored(storedFormat)
+        return availableFormats.contains(wanted) ? wanted : .pdf
+    }
+
+    private var showsFormatPicker: Bool {
+        guard availableFormats.count > 1 else { return false }
+        switch phase {
+        case .explanation, .noVideo, .notFinished, .destination:
+            return true
+        case .loadingAd, .finished:
+            return false
+        }
+    }
 
     // MARK: Body
 
@@ -84,6 +123,9 @@ struct ExportFlowSheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CK.Space.l) {
                 header
+                if showsFormatPicker {
+                    formatPicker
+                }
                 content
             }
             .padding(.horizontal, CK.Space.l)
@@ -92,7 +134,7 @@ struct ExportFlowSheet: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(CK.Palette.ivory.ignoresSafeArea())
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, .large], selection: $detent)
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(CK.Radius.sheet)
         .interactiveDismissDisabled(phase == .loadingAd)
@@ -111,11 +153,85 @@ struct ExportFlowSheet: View {
             .frame(width: 52, height: 52)
             .accessibilityHidden(true)
 
-            Text("Export as PDF")
+            Text("Export as \(format.noun)")
                 .ckTitleFont(26)
                 .foregroundStyle(CK.Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
+        }
+    }
+
+    // MARK: File type picker
+
+    private var formatPicker: some View {
+        VStack(alignment: .leading, spacing: CK.Space.s) {
+            Text("File type")
+                .font(CK.Font.label)
+                .foregroundStyle(CK.Palette.ink)
+                .accessibilityAddTraits(.isHeader)
+
+            VStack(spacing: CK.Space.xs) {
+                ForEach(availableFormats) { option in
+                    formatRow(option)
+                }
+            }
+        }
+        .disabled(destinationBusy)
+    }
+
+    private func formatRow(_ option: DocumentExportFormat) -> some View {
+        let selected: Bool = option == format
+        return Button {
+            select(option)
+        } label: {
+            HStack(alignment: .center, spacing: CK.Space.m) {
+                Image(systemName: option.systemImage)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(selected ? CK.Palette.forest : CK.Palette.graphite)
+                    .frame(width: 24)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(option.displayName)
+                        .font(CK.Font.label)
+                        .foregroundStyle(CK.Palette.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(option.shortDescription)
+                        .font(CK.Font.caption)
+                        .foregroundStyle(CK.Palette.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20, weight: .regular))
+                    .foregroundStyle(selected ? CK.Palette.forest : CK.Palette.hairline)
+                    .accessibilityHidden(true)
+            }
+            .padding(.horizontal, CK.Space.m)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(selected ? CK.Palette.forest.opacity(0.08) : CK.Palette.surface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(selected ? CK.Palette.forest : CK.Palette.hairline, lineWidth: selected ? 1.5 : 1)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(option.displayName))
+        .accessibilityValue(Text(option.shortDescription))
+        .accessibilityAddTraits(selected ? AccessibilityTraits.isSelected : AccessibilityTraits.isButton)
+    }
+
+    private func select(_ option: DocumentExportFormat) {
+        guard option != format, !destinationBusy else { return }
+        storedFormat = option.rawValue
+        notice = nil
+        // A file that is already prepared is for the old format, so make the new one.
+        if phase == .destination {
+            prepareFile(as: option)
         }
     }
 
@@ -269,7 +385,7 @@ struct ExportFlowSheet: View {
             case .preparing:
                 HStack(spacing: CK.Space.m) {
                     ProgressView()
-                    Text("Preparing your PDF")
+                    Text("Preparing your \(format.noun)")
                         .font(CK.Font.body)
                         .foregroundStyle(CK.Palette.graphite)
                 }
@@ -277,17 +393,17 @@ struct ExportFlowSheet: View {
 
             case .failed:
                 VStack(alignment: .leading, spacing: CK.Space.m) {
-                    Text("We could not prepare your PDF. Your export is still available.")
+                    Text("We could not prepare your \(format.noun). Your export is still available.")
                         .font(CK.Font.body)
                         .foregroundStyle(CK.Palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
-                    Button(action: prepareFile) { Text("Try again") }
+                    Button { prepareFile() } label: { Text("Try again") }
                         .buttonStyle(.ckPrimary)
                 }
 
-            case .ready(let url, let data):
+            case .ready(let url, let data, let readyFormat):
                 VStack(alignment: .leading, spacing: CK.Space.s) {
-                    Text("Choose where to send your PDF.")
+                    Text("Choose where to send your \(readyFormat.noun).")
                         .font(CK.Font.body)
                         .foregroundStyle(CK.Palette.graphite)
                         .padding(.bottom, CK.Space.xs)
@@ -302,14 +418,22 @@ struct ExportFlowSheet: View {
                     }
                     .buttonStyle(.ckSecondary)
 
-                    Button {
-                        perform { done in
-                            runner.printPDF(data: data, jobName: url.deletingPathExtension().lastPathComponent, completion: done)
+                    if readyFormat.supportsPrint {
+                        Button {
+                            perform { done in
+                                runner.printPDF(data: data, jobName: url.deletingPathExtension().lastPathComponent, completion: done)
+                            }
+                        } label: {
+                            Label("Print", systemImage: "printer")
                         }
-                    } label: {
-                        Label("Print", systemImage: "printer")
+                        .buttonStyle(.ckSecondary)
+                    } else {
+                        Text("To print, choose PDF above. It keeps your page layout exactly.")
+                            .font(CK.Font.caption)
+                            .foregroundStyle(CK.Palette.graphite)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, CK.Space.xs)
                     }
-                    .buttonStyle(.ckSecondary)
                 }
                 .disabled(destinationBusy)
             }
@@ -461,18 +585,30 @@ struct ExportFlowSheet: View {
     // MARK: Rendering and destinations
 
     private func prepareFile() {
+        prepareFile(as: format)
+    }
+
+    /// Builds the file off the main thread and writes it to a fresh `CareerKitExport-` temp folder.
+    /// The folder is removed when the sheet goes away (`ExportSession`) or by `CKTempFiles` at the next launch.
+    private func prepareFile(as chosen: DocumentExportFormat) {
         session.renderTask?.cancel()
         fileState = .preparing
-        let box = ProviderBox(provider: renderedProvider)
+        let box = ProviderBox(provider: renderedProvider, source: source)
         let baseName = ExportFileName.sanitized(fileName)
         let session = self.session
         session.renderTask = Task {
             let result: Result<ExportedFile, Error> = await Task.detached(priority: .userInitiated) { () -> Result<ExportedFile, Error> in
                 do {
-                    let document = box.provider()
-                    guard !document.pdfData.isEmpty else { throw ExportFileError.emptyDocument }
-                    let written = try ExportFileWriter.write(pdfData: document.pdfData, baseName: baseName)
-                    return .success(ExportedFile(url: written.url, directory: written.directory, data: document.pdfData))
+                    let bytes: Data
+                    if let source = box.source {
+                        bytes = try DocumentExporter.export(source, as: chosen)
+                    } else {
+                        bytes = box.provider().pdfData
+                    }
+                    guard !bytes.isEmpty else { throw ExportFileError.emptyDocument }
+                    let format: DocumentExportFormat = box.source == nil ? .pdf : chosen
+                    let written = try ExportFileWriter.write(data: bytes, baseName: baseName, format: format)
+                    return .success(ExportedFile(url: written.url, directory: written.directory, data: bytes))
                 } catch {
                     return .failure(error)
                 }
@@ -482,7 +618,8 @@ struct ExportFlowSheet: View {
             case .success(let file):
                 session.directories.append(file.directory)
                 if Task.isCancelled { return }
-                fileState = .ready(url: file.url, data: file.data)
+                let readyFormat: DocumentExportFormat = box.source == nil ? .pdf : chosen
+                fileState = .ready(url: file.url, data: file.data, format: readyFormat)
             case .failure:
                 if Task.isCancelled { return }
                 fileState = .failed

@@ -22,14 +22,14 @@ struct ResumePreviewScreen: View {
                                 .contentShape(Rectangle())
                         }
                         .accessibilityLabel(Text("Export"))
-                        .accessibilityHint(Text("Opens the options to share, save or print this resume as a PDF"))
+                        .accessibilityHint(Text("Opens the options to share or save this resume as a PDF, Word, Rich Text, plain text or web page file"))
                     }
                 }
             }
             .sheet(item: $exportSnapshot) { (snapshot: Resume) in
                 ExportFlowSheet(documentID: snapshot.id,
                                 fileName: FileNaming.safeFileName(snapshot.title, fallback: "Resume"),
-                                renderedProvider: { EditorRender.render(snapshot) })
+                                source: ExportSource.forResume(snapshot))
             }
     }
 }

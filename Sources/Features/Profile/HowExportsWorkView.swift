@@ -15,11 +15,15 @@ struct CKHowExportsWorkView: View {
         ),
         Block(
             title: "What needs a short video",
-            text: "Turning a finished document into a file leaves the app: saving the PDF to Files, sharing it, or printing it. Each of those starts with one optional short video."
+            text: "Turning a finished document into a file leaves the app: saving it to Files, sharing it, or printing it. Each of those starts with one optional short video."
+        ),
+        Block(
+            title: "File types you can export",
+            text: "PDF keeps your design exactly and is the best choice for most applications. Word (.docx) and Rich Text open as editable documents in Word, Pages or Google Docs. Plain text is for pasting into online application forms. A web page opens in any browser. Printing is available for PDF."
         ),
         Block(
             title: "What one video covers",
-            text: "One completed video covers one export of that document and stays valid for 24 hours. It is used up once the export finishes, so the next export asks again."
+            text: "One completed video covers one export of that document, in any file type, and stays valid for 24 hours. It is used up once the export finishes, so the next export asks again."
         ),
         Block(
             title: "If a video is not available",

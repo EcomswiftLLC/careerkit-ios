@@ -191,7 +191,7 @@ struct CoverLetterEditorView: View {
             let snapshot = letter.wrappedValue
             ExportFlowSheet(documentID: snapshot.id,
                             fileName: FileNaming.safeFileName(snapshot.title, fallback: "Cover letter"),
-                            renderedProvider: { EditorRender.render(snapshot) })
+                            source: ExportSource.forCoverLetter(snapshot))
         case .suggestions(let field):
             CoverLetterSuggestionSheet(field: field, letter: letter.wrappedValue) { suggestion in
                 var updated = letter.wrappedValue
