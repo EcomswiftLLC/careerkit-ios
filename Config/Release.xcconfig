@@ -1,4 +1,4 @@
-﻿// Release IDs. Until the real AdMob iOS app and ad units exist these are Google's test IDs,
+// Release IDs. Until the real AdMob iOS app and ad units exist these are Google's test IDs,
 // so a build made now cannot serve real ads (and cannot earn or violate anything).
 // Replace the three values with the production IDs from the AdMob console before App Store submission.
 ADMOB_APP_ID = ca-app-pub-3940256099942544~1458002511
