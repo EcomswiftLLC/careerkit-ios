@@ -79,6 +79,30 @@ enum PDFValidator {
         return String(flat.prefix(57)) + "..."
     }
 
+    /// Core Text can write Arabic with the dots of a letter as separate marks, so extraction returns the
+    /// dotless base shape. Letters that share a base shape compare as equal, and anything outside the
+    /// Arabic block is returned unchanged.
+    static func arabicSkeleton(_ scalar: Unicode.Scalar) -> Unicode.Scalar {
+        let mapped: UInt32
+        switch scalar.value {
+        case 0x0628, 0x062A, 0x062B, 0x0646, 0x064A, 0x0649, 0x0626, 0x067E, 0x0679, 0x06CC, 0x06D2, 0x066E:
+            mapped = 0x066E
+        case 0x0641, 0x0642, 0x06A1, 0x066F:
+            mapped = 0x06A1
+        case 0x062C, 0x062E, 0x0686:
+            mapped = 0x062D
+        case 0x0630: mapped = 0x062F
+        case 0x0632, 0x0698: mapped = 0x0631
+        case 0x0634: mapped = 0x0633
+        case 0x0636: mapped = 0x0635
+        case 0x0638: mapped = 0x0637
+        case 0x063A: mapped = 0x0639
+        case 0x0629: mapped = 0x0647
+        default: return scalar
+        }
+        return Unicode.Scalar(mapped) ?? scalar
+    }
+
     /// Case, spacing, ligatures and width forms are ignored so layout choices cannot cause false alarms.
     static func normalise(_ raw: String) -> String {
         let folded: String = raw.precomposedStringWithCompatibilityMapping.lowercased()
@@ -116,7 +140,10 @@ enum PDFValidator {
         if haystack.contains(String(needle.reversed())) { return true }
         if RenderTextDirection.containsRTL(expected) {
             let available: Set<Unicode.Scalar> = Set(haystack.unicodeScalars)
-            return needle.unicodeScalars.allSatisfy { available.contains($0) }
+            let skeleton: Set<Unicode.Scalar> = Set(haystack.unicodeScalars.map { arabicSkeleton($0) })
+            return needle.unicodeScalars.allSatisfy { scalar in
+                available.contains(scalar) || skeleton.contains(arabicSkeleton(scalar))
+            }
         }
 
         // Columns can interleave lines in extraction. Fall back to checking each word, in either direction.
