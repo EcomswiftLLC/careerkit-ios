@@ -96,7 +96,8 @@ struct CKCompareVersionsView: View {
                         .foregroundStyle(CK.Palette.graphite)
                 }
                 .padding(.horizontal, 12)
-                .frame(width: columnWidth, minHeight: 44)
+                .frame(width: columnWidth)
+                .frame(minHeight: 44)
                 .background(
                     RoundedRectangle(cornerRadius: CK.Radius.chip, style: .continuous).fill(CK.Palette.surface)
                 )
