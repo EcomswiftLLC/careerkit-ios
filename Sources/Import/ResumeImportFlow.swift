@@ -370,9 +370,9 @@ struct ResumeImportReviewView: View {
             EdField(label: String(localized: "Full name"), text: $draft.personal.fullName, contentType: .name, capitalization: .words)
             EdField(label: String(localized: "Professional title"), text: $draft.personal.professionalTitle, contentType: .jobTitle, capitalization: .words)
             EdField(label: String(localized: "Email"), text: $draft.personal.email, keyboard: .emailAddress, contentType: .emailAddress, capitalization: .never)
-            EdField(label: String(localized: "Phone"), text: $draft.personal.phone, keyboard: .phonePad, contentType: .telephoneNumber, capitalization: .never)
-            EdField(label: String(localized: "City"), text: $draft.personal.city, contentType: .addressCity, capitalization: .words)
-            EdField(label: String(localized: "Country or region"), text: $draft.personal.country, contentType: .countryName, capitalization: .words)
+            EdField(label: String(localized: "Phone"), text: $draft.personal.phone, prompt: String(localized: "Not found. Add it here."), keyboard: .phonePad, contentType: .telephoneNumber, capitalization: .never)
+            EdField(label: String(localized: "City"), text: $draft.personal.city, prompt: String(localized: "Not found. Add it here."), contentType: .addressCity, capitalization: .words)
+            EdField(label: String(localized: "Country or region"), text: $draft.personal.country, prompt: String(localized: "Not found. Add it here."), contentType: .countryName, capitalization: .words)
             if !draft.personal.linkedIn.isEmpty {
                 EdField(label: String(localized: "LinkedIn"), text: $draft.personal.linkedIn, keyboard: .URL, contentType: .URL, capitalization: .never)
             }

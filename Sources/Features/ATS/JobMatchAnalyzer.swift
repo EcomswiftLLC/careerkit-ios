@@ -497,6 +497,7 @@ enum JobMatchAnalyzer {
         "other", "others", "various", "multiple", "several", "key", "main", "successful", "success", "proficient",
         "proficiency", "familiar", "familiarity", "understanding", "background", "equivalent", "similar", "etc", "e.g",
         "best", "fast-paced", "self", "level", "mid", "world", "work", "deliver", "provide", "providing", "ensure",
+        "closely", "effectively", "directly", "strongly", "actively", "proactively", "regularly", "independently",
         // es / pt / de / fr generic
         "experiencia", "experiencia", "anos", "empresa", "trabajo", "equipo", "trabalho", "equipe", "conhecimento",
         "conocimiento", "erfahrung", "jahre", "team", "unternehmen", "kenntnisse", "experience", "ans", "entreprise",
