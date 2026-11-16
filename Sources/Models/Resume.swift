@@ -43,6 +43,40 @@ struct MonthYear: Codable, Equatable, Hashable {
         f.setLocalizedDateFormatFromTemplate("MMM yyyy")
         return f.string(from: date)
     }
+
+    /// Formats the date in the style the user picked. `.monthName` is the original behaviour.
+    func formatted(_ format: ResumeDateFormat, locale: Locale = .current) -> String {
+        switch format {
+        case .monthName:
+            return formatted(locale: locale)
+        case .numeric:
+            guard let month, (1...12).contains(month) else { return String(year) }
+            let padded: String = month < 10 ? "0\(month)" : "\(month)"
+            return "\(padded)/\(year)"
+        case .yearOnly:
+            return String(year)
+        }
+    }
+}
+
+/// How dates on resume entries are written.
+enum ResumeDateFormat: String, Codable, CaseIterable, Identifiable {
+    /// "Jan 2024" (follows the device language).
+    case monthName
+    /// "01/2024"
+    case numeric
+    /// "2024"
+    case yearOnly
+
+    var id: String { rawValue }
+
+    var example: String {
+        switch self {
+        case .monthName: return "Jan 2024"
+        case .numeric: return "01/2024"
+        case .yearOnly: return "2024"
+        }
+    }
 }
 
 // MARK: - Personal info
@@ -174,6 +208,21 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
         case (false, false): return "\(startText) – \(endText)"
         }
     }
+
+    /// Same as `dateRange(locale:)` but in the chosen format. nil keeps the original "Jan 2020" style.
+    func dateRange(format: ResumeDateFormat?, locale: Locale = .current) -> String {
+        guard let format, format != .monthName else { return dateRange(locale: locale) }
+        let startText: String = start?.formatted(format, locale: locale) ?? ""
+        let endText: String = isCurrent ? "Present" : (end?.formatted(format, locale: locale) ?? "")
+        switch (startText.isEmpty, endText.isEmpty) {
+        case (true, true): return ""
+        case (false, true): return startText
+        case (true, false): return endText
+        case (false, false):
+            if startText == endText { return startText }
+            return "\(startText) – \(endText)"
+        }
+    }
 }
 
 struct SkillGroup: Codable, Identifiable, Equatable {
@@ -222,6 +271,116 @@ struct StyleOverrides: Codable, Equatable {
     var marginPoints: Double?
     /// Hide the photo even if the template supports it.
     var showPhoto = true
+
+    // Structure. nil keeps the template value. Applied by `TemplateSpec.applying(_:)`.
+    var headingStyle: SectionHeadingStyle?
+    /// Only the full width styles are offered: leftAligned, centered, splitContact, ruledMonogram, banner.
+    var headerStyle: HeaderStyle?
+    var entryLayout: EntryLayout?
+    var bullets: BulletStyle?
+    var skillStyle: SkillStyle?
+    var uppercaseHeadings: Bool?
+    /// Only used by layouts that have a sidebar.
+    var sidebarPosition: SidebarPosition?
+
+    // Spacing multipliers on the template values.
+    /// Space between sections, 0.7...1.6.
+    var sectionSpacing: Double = 1.0
+    /// Space between entries, 0.7...1.6.
+    var entrySpacing: Double = 1.0
+    /// Multiplier on the name size, 0.8...1.3.
+    var nameScale: Double = 1.0
+
+    // Colours, "#RRGGBB". nil keeps the template colour.
+    var textHex: String?
+    var sidebarFillHex: String?
+    var headerFillHex: String?
+
+    // Details. nil keeps the template behaviour.
+    var photoShape: PhotoShape?
+    var dateFormat: ResumeDateFormat?
+
+    static let spacingRange: ClosedRange<Double> = 0.7...1.6
+    static let nameScaleRange: ClosedRange<Double> = 0.8...1.3
+}
+
+enum SidebarPosition: String, Codable, CaseIterable, Identifiable {
+    case left, right
+    var id: String { rawValue }
+}
+
+enum PhotoShape: String, Codable, CaseIterable, Identifiable {
+    case circle, rounded, square
+    var id: String { rawValue }
+}
+
+extension StyleOverrides {
+    enum CodingKeys: String, CodingKey {
+        case accentHex, bodyFont, headingFont, fontScale, lineSpacing, marginPoints, showPhoto
+        case headingStyle, headerStyle, entryLayout, bullets, skillStyle, uppercaseHeadings, sidebarPosition
+        case sectionSpacing, entrySpacing, nameScale
+        case textHex, sidebarFillHex, headerFillHex
+        case photoShape, dateFormat
+    }
+
+    /// Every key is optional so documents saved by older versions (or with values a newer
+    /// version added) still open. Unknown enum values fall back to the template.
+    init(from decoder: Decoder) throws {
+        self.init()
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        accentHex = (try? c.decodeIfPresent(String.self, forKey: .accentHex))
+        bodyFont = (try? c.decodeIfPresent(FontChoice.self, forKey: .bodyFont))
+        headingFont = (try? c.decodeIfPresent(FontChoice.self, forKey: .headingFont))
+        fontScale = (try? c.decodeIfPresent(Double.self, forKey: .fontScale)) ?? 1.0
+        lineSpacing = (try? c.decodeIfPresent(Double.self, forKey: .lineSpacing)) ?? 1.0
+        marginPoints = (try? c.decodeIfPresent(Double.self, forKey: .marginPoints))
+        showPhoto = (try? c.decodeIfPresent(Bool.self, forKey: .showPhoto)) ?? true
+
+        headingStyle = (try? c.decodeIfPresent(SectionHeadingStyle.self, forKey: .headingStyle))
+        headerStyle = (try? c.decodeIfPresent(HeaderStyle.self, forKey: .headerStyle))
+        entryLayout = (try? c.decodeIfPresent(EntryLayout.self, forKey: .entryLayout))
+        bullets = (try? c.decodeIfPresent(BulletStyle.self, forKey: .bullets))
+        skillStyle = (try? c.decodeIfPresent(SkillStyle.self, forKey: .skillStyle))
+        uppercaseHeadings = (try? c.decodeIfPresent(Bool.self, forKey: .uppercaseHeadings))
+        sidebarPosition = (try? c.decodeIfPresent(SidebarPosition.self, forKey: .sidebarPosition))
+
+        sectionSpacing = (try? c.decodeIfPresent(Double.self, forKey: .sectionSpacing)) ?? 1.0
+        entrySpacing = (try? c.decodeIfPresent(Double.self, forKey: .entrySpacing)) ?? 1.0
+        nameScale = (try? c.decodeIfPresent(Double.self, forKey: .nameScale)) ?? 1.0
+
+        textHex = (try? c.decodeIfPresent(String.self, forKey: .textHex))
+        sidebarFillHex = (try? c.decodeIfPresent(String.self, forKey: .sidebarFillHex))
+        headerFillHex = (try? c.decodeIfPresent(String.self, forKey: .headerFillHex))
+
+        photoShape = (try? c.decodeIfPresent(PhotoShape.self, forKey: .photoShape))
+        dateFormat = (try? c.decodeIfPresent(ResumeDateFormat.self, forKey: .dateFormat))
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(accentHex, forKey: .accentHex)
+        try c.encodeIfPresent(bodyFont, forKey: .bodyFont)
+        try c.encodeIfPresent(headingFont, forKey: .headingFont)
+        try c.encode(fontScale, forKey: .fontScale)
+        try c.encode(lineSpacing, forKey: .lineSpacing)
+        try c.encodeIfPresent(marginPoints, forKey: .marginPoints)
+        try c.encode(showPhoto, forKey: .showPhoto)
+        try c.encodeIfPresent(headingStyle, forKey: .headingStyle)
+        try c.encodeIfPresent(headerStyle, forKey: .headerStyle)
+        try c.encodeIfPresent(entryLayout, forKey: .entryLayout)
+        try c.encodeIfPresent(bullets, forKey: .bullets)
+        try c.encodeIfPresent(skillStyle, forKey: .skillStyle)
+        try c.encodeIfPresent(uppercaseHeadings, forKey: .uppercaseHeadings)
+        try c.encodeIfPresent(sidebarPosition, forKey: .sidebarPosition)
+        try c.encode(sectionSpacing, forKey: .sectionSpacing)
+        try c.encode(entrySpacing, forKey: .entrySpacing)
+        try c.encode(nameScale, forKey: .nameScale)
+        try c.encodeIfPresent(textHex, forKey: .textHex)
+        try c.encodeIfPresent(sidebarFillHex, forKey: .sidebarFillHex)
+        try c.encodeIfPresent(headerFillHex, forKey: .headerFillHex)
+        try c.encodeIfPresent(photoShape, forKey: .photoShape)
+        try c.encodeIfPresent(dateFormat, forKey: .dateFormat)
+    }
 }
 
 // MARK: - Resume

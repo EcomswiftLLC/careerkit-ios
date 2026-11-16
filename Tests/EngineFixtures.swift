@@ -94,7 +94,21 @@ enum EngineFixtures {
         spec(id: "t.twocol.split", layout: .headerThenTwoColumn, header: .splitContact, heading: .plainBold,
              entry: .dateRight, bullets: .disc, skills: .pipeList),
         spec(id: "t.twocol.banner", layout: .headerThenTwoColumn, header: .banner, heading: .smallCapsAccent,
-             entry: .dateGutter, bullets: .dash, skills: .commaList, photo: .headerRight)
+             entry: .dateGutter, bullets: .dash, skills: .commaList, photo: .headerRight),
+        // Decorative header and heading styles added in the template distinctness pass.
+        spec(id: "t.single.monogram", layout: .singleColumn, header: .monogramBadge, heading: .underlineAccent,
+             entry: .dateRight, bullets: .disc, skills: .groupedLines, photo: .headerRight,
+             headingFont: .avenirNext, bodyFont: .iowanOldStyle),
+        spec(id: "t.single.accentrule", layout: .singleColumn, header: .accentRuleLeft, heading: .centeredRule,
+             entry: .dateBelow, bullets: .dash, skills: .commaList, headingFont: .baskerville, bodyFont: .charter,
+             uppercase: true),
+        spec(id: "t.single.centeredaccent", layout: .singleColumn, header: .centeredAccent, heading: .leftBorder,
+             entry: .stacked, bullets: .square, skills: .pipeList, headingFont: .palatino, bodyFont: .palatino),
+        spec(id: "t.twocol.doublerule", layout: .headerThenTwoColumn, header: .doubleRule, heading: .tintedBand,
+             entry: .dateRight, bullets: .chevron, skills: .groupedLines, headingFont: .didot, bodyFont: .georgia),
+        spec(id: "t.sidebarleft.band", layout: .sidebarLeft, header: .sidebarCard, heading: .tintedBand,
+             entry: .dateBelow, bullets: .disc, skills: .groupedLines, photo: .sidebarTop,
+             headingFont: .optima, bodyFont: .avenirNext)
     ]
 
     static func coverLetterSpecs() -> [CoverLetterTemplateSpec] {

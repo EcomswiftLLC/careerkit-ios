@@ -43,6 +43,14 @@ final class RenderHeaderBuilder {
             plan = planSplit()
         case .ruledMonogram:
             plan = planRuled()
+        case .monogramBadge:
+            plan = planMonogram()
+        case .accentRuleLeft:
+            plan = planAccentRule()
+        case .centeredAccent:
+            plan = planCenteredAccent()
+        case .doubleRule:
+            plan = planDoubleRule()
         }
         return makeItem(plan)
     }
@@ -63,10 +71,10 @@ final class RenderHeaderBuilder {
 
     // MARK: Pieces
 
-    private func nameLayout(width: CGFloat, color: UIColor, alignment: NSTextAlignment, size: CGFloat? = nil, kern: CGFloat = 0) -> RenderTextLayout? {
+    private func nameLayout(width: CGFloat, color: UIColor, alignment: NSTextAlignment, size: CGFloat? = nil, kern: CGFloat = 0, bold: Bool = true) -> RenderTextLayout? {
         let name: String = RenderContent.trimmed(personal.fullName)
         guard !name.isEmpty else { return nil }
-        let font: UIFont = style.headingFont(size: size ?? style.nameSize, bold: true)
+        let font: UIFont = style.headingFont(size: size ?? style.nameSize, bold: bold)
         let textStyle = RenderTextStyle(font: font, color: color, leading: 1.0, alignment: alignment, kern: kern)
         return ctx.layout(RenderText.attributed(name, textStyle), width: width, links: [])
     }
@@ -90,8 +98,9 @@ final class RenderHeaderBuilder {
 
     private func addPhoto(to plan: inout Plan, x: CGFloat, y: CGFloat, size: CGFloat, shape: RenderPhotoShape) {
         guard let image = photo else { return }
+        let resolved: RenderPhotoShape = style.photoShape ?? shape
         plan.decorations.append { origin in
-            RenderPhoto.draw(image, in: CGRect(x: origin.x + x, y: origin.y + y, width: size, height: size), shape: shape)
+            RenderPhoto.draw(image, in: CGRect(x: origin.x + x, y: origin.y + y, width: size, height: size), shape: resolved)
         }
         plan.height = max(plan.height, y + size)
     }
@@ -256,6 +265,214 @@ final class RenderHeaderBuilder {
         return plan
     }
 
+    // MARK: Monogram badge
+
+    /// First letters of the first and last word of the name, at most two.
+    private var initials: String {
+        let words = RenderContent.trimmed(personal.fullName).split(whereSeparator: { $0 == " " })
+        guard let firstWord = words.first, let firstLetter = firstWord.first else { return "" }
+        var out: String = String(firstLetter)
+        if words.count > 1, let lastWord = words.last, let lastLetter = lastWord.first {
+            out.append(lastLetter)
+        }
+        return out.uppercased()
+    }
+
+    /// Initials in an accent disc (the photo takes the disc's place when there is one), with name,
+    /// title and contact set beside it and centered on the disc.
+    private func planMonogram() -> Plan {
+        var plan = Plan()
+        let w: CGFloat = ctx.width
+        let badge: CGFloat = min(max(style.nameSize * 1.75, 46), 64)
+        let accent: UIColor = theme.accent
+        let mark: String = initials
+
+        var markLayout: RenderTextLayout? = nil
+        var markFont: UIFont? = nil
+        if photo == nil && !mark.isEmpty {
+            let font: UIFont = style.headingFont(size: badge * 0.36, bold: true)
+            let markColor: UIColor = RenderColors.readable(on: accent, dark: theme.ink)
+            let markStyle = RenderTextStyle(font: font, color: markColor, leading: 1.0, alignment: .center, kern: 0)
+            markLayout = ctx.layout(RenderText.attributed(mark, markStyle), width: badge, links: [])
+            markFont = font
+        }
+        let hasBadge: Bool = photo != nil || markLayout != nil
+        let textX: CGFloat = hasBadge ? badge + 16 : 0
+        let textWidth: CGFloat = max(80, w - textX)
+
+        var parts: [RenderPart] = []
+        var y: CGFloat = 0
+        if let name = nameLayout(width: textWidth, color: theme.ink, alignment: .natural) {
+            parts.append(RenderPart(layout: name, x: textX, y: 0))
+            y = name.height
+        }
+        if let title = titleLayout(width: textWidth, color: theme.accent, alignment: .natural) {
+            y += y > 0 ? 3 : 0
+            parts.append(RenderPart(layout: title, x: textX, y: y))
+            y += title.height
+        }
+        let items = RenderContact.items(for: personal)
+        if !items.isEmpty {
+            let block = RenderContact.flow(items, ctx: ctx, width: textWidth, alignment: .natural,
+                                           font: style.bodyFont(size: style.smallSize), color: theme.muted,
+                                           sepColor: theme.rule)
+            y += y > 0 ? 7 : 0
+            for part in block.parts {
+                parts.append(RenderPart(layout: part.layout, x: part.x + textX, y: part.y + y))
+            }
+            y += block.height
+        }
+
+        let shift: CGFloat = hasBadge ? max(0, floor((badge - y) / 2)) : 0
+        for part in parts {
+            plan.parts.append(RenderPart(layout: part.layout, x: part.x, y: part.y + shift))
+        }
+        plan.height = max(y + shift, hasBadge ? badge : 0)
+
+        if photo != nil {
+            addPhoto(to: &plan, x: 0, y: 0, size: badge, shape: .circle)
+        } else if let layout = markLayout, let font = markFont {
+            let markY: CGFloat = floor(badge / 2 - (layout.baseline(ofLine: 0) - font.capHeight / 2))
+            plan.decorations.append { origin in
+                RenderDraw.fillRounded(CGRect(x: origin.x, y: origin.y, width: badge, height: badge), radius: badge / 2, accent)
+                layout.draw(at: CGPoint(x: origin.x, y: origin.y + markY), withLinks: false)
+            }
+        }
+        return plan
+    }
+
+    // MARK: Accent rule left
+
+    /// A thick accent bar runs down the left of the name, title and contact block.
+    private func planAccentRule() -> Plan {
+        var plan = Plan()
+        let w: CGFloat = ctx.width
+        let barWidth: CGFloat = 4
+        let inset: CGFloat = 16
+        let reserve: CGFloat = photo == nil ? 0 : photoSize + 18
+        let textWidth: CGFloat = max(80, w - inset - reserve)
+        var y: CGFloat = 0
+
+        if let name = nameLayout(width: textWidth, color: theme.ink, alignment: .natural) {
+            plan.parts.append(RenderPart(layout: name, x: inset, y: 0))
+            y = name.height
+        }
+        if let title = titleLayout(width: textWidth, color: theme.accent, alignment: .natural) {
+            y += y > 0 ? 3 : 0
+            plan.parts.append(RenderPart(layout: title, x: inset, y: y))
+            y += title.height
+        }
+        let items = RenderContact.items(for: personal)
+        if !items.isEmpty {
+            let block = RenderContact.flow(items, ctx: ctx, width: textWidth, alignment: .natural,
+                                           font: style.bodyFont(size: style.smallSize), color: theme.muted,
+                                           sepColor: theme.rule)
+            y += y > 0 ? 8 : 0
+            append(block, to: &plan, x: inset, y: y)
+            y += block.height
+        }
+        plan.height = y
+        if y > 0 {
+            let accent: UIColor = theme.accent
+            let barHeight: CGFloat = y
+            plan.decorations.append { origin in
+                RenderDraw.fill(CGRect(x: origin.x, y: origin.y, width: barWidth, height: barHeight), accent)
+            }
+        }
+        addPhoto(to: &plan, x: w - photoSize, y: 0, size: photoSize, shape: .rounded)
+        return plan
+    }
+
+    // MARK: Centered accent
+
+    /// Centered regular-weight name in the accent colour, a short rule, then a small caps title.
+    private func planCenteredAccent() -> Plan {
+        var plan = Plan()
+        let w: CGFloat = ctx.width
+        let reserve: CGFloat = photo == nil ? 0 : photoSize + 18
+        let textWidth: CGFloat = max(80, w - 2 * reserve)
+        let originX: CGFloat = reserve
+        var y: CGFloat = 0
+
+        if let name = nameLayout(width: textWidth, color: theme.accent, alignment: .center, kern: 0.5, bold: false) {
+            plan.parts.append(RenderPart(layout: name, x: originX, y: 0))
+            y = name.height
+        }
+        if y > 0 {
+            let ruleWidth: CGFloat = 36
+            let ruleY: CGFloat = y + 7
+            let ruleX: CGFloat = floor((w - ruleWidth) / 2)
+            let accent: UIColor = theme.accent
+            plan.decorations.append { origin in
+                RenderDraw.fill(CGRect(x: origin.x + ruleX, y: origin.y + ruleY, width: ruleWidth, height: 1), accent)
+            }
+            y = ruleY + 1
+        }
+        if let title = titleLayout(width: textWidth, color: theme.ink, alignment: .center, smallCaps: true) {
+            y += y > 0 ? 8 : 0
+            plan.parts.append(RenderPart(layout: title, x: originX, y: y))
+            y += title.height
+        }
+        let items = RenderContact.items(for: personal)
+        if !items.isEmpty {
+            let block = RenderContact.flow(items, ctx: ctx, width: textWidth, alignment: .center,
+                                           font: style.bodyFont(size: style.smallSize), color: theme.muted,
+                                           sepColor: theme.rule)
+            y += y > 0 ? 7 : 0
+            append(block, to: &plan, x: originX, y: y)
+            y += block.height
+        }
+        plan.height = y
+        addPhoto(to: &plan, x: w - photoSize, y: 0, size: photoSize, shape: .circle)
+        return plan
+    }
+
+    // MARK: Double rule
+
+    /// A hairline above a regular-weight name, and a thick-and-thin rule closing the header.
+    private func planDoubleRule() -> Plan {
+        var plan = Plan()
+        let w: CGFloat = ctx.width
+        let accent: UIColor = theme.accent
+        let reserve: CGFloat = photo == nil ? 0 : photoSize + 18
+        let textWidth: CGFloat = max(80, w - reserve)
+        let topRule: CGFloat = 0.8
+        let top: CGFloat = topRule + 12
+        var y: CGFloat = top
+
+        if let name = nameLayout(width: textWidth, color: theme.ink, alignment: .natural, kern: 0.4, bold: false) {
+            plan.parts.append(RenderPart(layout: name, x: 0, y: y))
+            y += name.height
+        }
+        if let title = titleLayout(width: textWidth, color: theme.accent, alignment: .natural, smallCaps: true) {
+            y += 5
+            plan.parts.append(RenderPart(layout: title, x: 0, y: y))
+            y += title.height
+        }
+        let items = RenderContact.items(for: personal)
+        if !items.isEmpty {
+            let block = RenderContact.flow(items, ctx: ctx, width: textWidth, alignment: .natural,
+                                           font: style.bodyFont(size: style.smallSize), color: theme.muted,
+                                           sepColor: theme.rule)
+            y += 7
+            append(block, to: &plan, x: 0, y: y)
+            y += block.height
+        }
+        guard y > top || photo != nil else { return plan }
+        addPhoto(to: &plan, x: w - photoSize, y: top, size: photoSize, shape: .rounded)
+        y = max(y, plan.height)
+
+        let thickY: CGFloat = y + 10
+        let thinY: CGFloat = thickY + 2.2 + 2
+        plan.decorations.append { origin in
+            RenderDraw.fill(CGRect(x: origin.x, y: origin.y, width: w, height: topRule), accent)
+            RenderDraw.fill(CGRect(x: origin.x, y: origin.y + thickY, width: w, height: 2.2), accent)
+            RenderDraw.fill(CGRect(x: origin.x, y: origin.y + thinY, width: w, height: 0.6), accent)
+        }
+        plan.height = thinY + 0.6
+        return plan
+    }
+
     // MARK: Sidebar card
 
     /// Photo, name, title and stacked contact lines for the top of a sidebar.
@@ -266,8 +483,9 @@ final class RenderHeaderBuilder {
 
         if let image = photo {
             let size: CGFloat = min(w, 92)
+            let cardShape: RenderPhotoShape = style.photoShape ?? .circle
             items.append(RenderFlowItem(height: ceil(size), keepWithNext: true, draw: { origin, _ in
-                RenderPhoto.draw(image, in: CGRect(x: origin.x, y: origin.y, width: size, height: size), shape: .circle)
+                RenderPhoto.draw(image, in: CGRect(x: origin.x, y: origin.y, width: size, height: size), shape: cardShape)
             }))
         }
 

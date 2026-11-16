@@ -36,6 +36,12 @@ struct RenderStyle {
     let sidebarFill: UIColor
     let sidebarInk: UIColor
     let headerFill: UIColor
+    /// User choice for heading capitals. nil keeps each heading style's own rule.
+    var headingCaseOverride: Bool? = nil
+    /// User choice for the photo crop. nil keeps the shape each header style uses.
+    var photoShape: RenderPhotoShape? = nil
+    /// User choice for entry dates. nil keeps "Jan 2024".
+    var dateFormat: ResumeDateFormat? = nil
 
     // MARK: Fonts
 
@@ -124,28 +130,32 @@ struct RenderStyle {
         }
 
         let body: CGFloat = max(6, CGFloat(template.baseSize) * scale)
-        return RenderStyle(pageSize: pageSize,
-                           marginTop: top,
-                           marginSide: side,
-                           marginBottom: bottom,
-                           scale: scale,
-                           leading: leading,
-                           headingChoice: overrides.headingFont ?? template.headingFont,
-                           bodyChoice: overrides.bodyFont ?? template.bodyFont,
-                           bodySize: body,
-                           smallSize: body * 0.92,
-                           nameSize: max(12, CGFloat(template.nameSize) * scale),
-                           headingSize: max(7, CGFloat(template.headingSize) * scale),
-                           uppercaseHeadings: template.uppercaseHeadings,
-                           headingKern: CGFloat(template.letterSpacingHeadings),
-                           sectionGap: CGFloat(template.sectionSpacing) * scale,
-                           entryGap: CGFloat(template.entrySpacing) * scale,
-                           accent: accent,
-                           ink: ink,
-                           muted: muted,
-                           sidebarFill: sidebarFill,
-                           sidebarInk: sidebarInk,
-                           headerFill: headerFill)
+        var result = RenderStyle(pageSize: pageSize,
+                                 marginTop: top,
+                                 marginSide: side,
+                                 marginBottom: bottom,
+                                 scale: scale,
+                                 leading: leading,
+                                 headingChoice: overrides.headingFont ?? template.headingFont,
+                                 bodyChoice: overrides.bodyFont ?? template.bodyFont,
+                                 bodySize: body,
+                                 smallSize: body * 0.92,
+                                 nameSize: max(12, CGFloat(template.nameSize) * scale),
+                                 headingSize: max(7, CGFloat(template.headingSize) * scale),
+                                 uppercaseHeadings: template.uppercaseHeadings,
+                                 headingKern: CGFloat(template.letterSpacingHeadings),
+                                 sectionGap: CGFloat(template.sectionSpacing) * scale,
+                                 entryGap: CGFloat(template.entrySpacing) * scale,
+                                 accent: accent,
+                                 ink: ink,
+                                 muted: muted,
+                                 sidebarFill: sidebarFill,
+                                 sidebarInk: sidebarInk,
+                                 headerFill: headerFill)
+        result.headingCaseOverride = overrides.uppercaseHeadings
+        result.photoShape = RenderPhotoShape.from(overrides.photoShape)
+        result.dateFormat = overrides.dateFormat
+        return result
     }
 
     static func make(letter: CoverLetterTemplateSpec, overrides: StyleOverrides, pageSize: CGSize) -> RenderStyle {
@@ -167,10 +177,12 @@ struct RenderStyle {
 
         let accentHex: String = overrides.accentHex ?? letter.accentHex
         let accent = UIColor(hexString: accentHex)
-        let ink = UIColor(hexString: letter.textHex)
+        let ink = UIColor(hexString: TemplateSpec.normalizedHex(overrides.textHex) ?? letter.textHex)
         let muted = UIColor(hexString: letter.mutedHex)
         let headerFill: UIColor
-        if let hex = letter.headerFillHex {
+        if let custom = TemplateSpec.normalizedHex(overrides.headerFillHex) {
+            headerFill = UIColor(hexString: custom)
+        } else if let hex = letter.headerFillHex {
             if overrides.accentHex != nil && RenderColors.sameHex(hex, letter.accentHex) {
                 headerFill = accent
             } else {
@@ -181,6 +193,8 @@ struct RenderStyle {
         }
 
         let body: CGFloat = max(6, CGFloat(letter.baseSize) * scale)
+        let nameFactor: CGFloat = clamp(overrides.nameScale, StyleOverrides.nameScaleRange.lowerBound, StyleOverrides.nameScaleRange.upperBound)
+        let paragraphFactor: CGFloat = clamp(overrides.sectionSpacing, StyleOverrides.spacingRange.lowerBound, StyleOverrides.spacingRange.upperBound)
         return RenderStyle(pageSize: pageSize,
                            marginTop: top,
                            marginSide: side,
@@ -191,12 +205,12 @@ struct RenderStyle {
                            bodyChoice: overrides.bodyFont ?? letter.bodyFont,
                            bodySize: body,
                            smallSize: body * 0.92,
-                           nameSize: max(12, CGFloat(letter.nameSize) * scale),
+                           nameSize: max(12, CGFloat(letter.nameSize) * scale * nameFactor),
                            headingSize: body,
                            uppercaseHeadings: false,
                            headingKern: 0,
-                           sectionGap: CGFloat(letter.paragraphSpacing) * scale,
-                           entryGap: CGFloat(letter.paragraphSpacing) * scale,
+                           sectionGap: CGFloat(letter.paragraphSpacing) * scale * paragraphFactor,
+                           entryGap: CGFloat(letter.paragraphSpacing) * scale * paragraphFactor,
                            accent: accent,
                            ink: ink,
                            muted: muted,

@@ -136,6 +136,10 @@ enum HeaderStyle: String, Codable {
     case splitContact     // name left, contact stacked right
     case sidebarCard      // name + photo live at the top of the sidebar
     case ruledMonogram    // name with thick rule below, small caps title
+    case monogramBadge    // initials in an accent disc (or the photo) beside name, title and contact. Decorative, not ATS.
+    case accentRuleLeft   // thick vertical accent bar to the left of the name block
+    case centeredAccent   // centered regular-weight name in the accent colour over a short rule, small caps title
+    case doubleRule       // regular-weight name between a hairline above and a thick-and-thin rule below
 }
 
 enum SectionHeadingStyle: String, Codable {
@@ -146,6 +150,10 @@ enum SectionHeadingStyle: String, Codable {
     case plainBold         // bold label only
     case sideLabel         // label sits in a left gutter, content indented (editorial)
     case dottedRule        // label then dotted line
+    case underlineAccent   // label with a short thick accent underline below it
+    case centeredRule      // label centered between two hairlines
+    case leftBorder        // thick accent bar to the left of the label
+    case tintedBand        // label on a full-width pale tint of the accent
 }
 
 enum EntryLayout: String, Codable {
@@ -162,7 +170,8 @@ enum BulletStyle: String, Codable {
         switch self {
         case .disc: return "•"
         case .dash: return "–"
-        case .square: return "▪"
+        // U+FE0E asks for the text form. Without it, fonts that lack U+25AA fall back to the emoji font.
+        case .square: return "\u{25AA}\u{FE0E}"
         case .chevron: return "›"
         case .none: return ""
         }

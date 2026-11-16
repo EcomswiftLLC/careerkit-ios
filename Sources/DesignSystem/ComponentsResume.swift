@@ -180,10 +180,16 @@ struct CKResumeTile: View {
             Button { actions.edit(resume) } label: {
                 CKResumeThumbnail(resume: resume, width: width)
                     .overlay(alignment: .bottomTrailing) {
-                        ProgressRing(value: resume.completion, size: 44, lineWidth: 4)
-                            .padding(3)
-                            .background(Circle().fill(CK.Palette.surface))
+                        Text("\(CKResumeMeta.completionPercent(resume))%")
+                            .font(.system(size: 11, weight: .semibold))
+                            .monospacedDigit()
+                            .foregroundStyle(CK.Palette.forest)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(CK.Palette.surface))
+                            .overlay(Capsule().stroke(CK.Palette.stone, lineWidth: 1))
                             .padding(6)
+                            .accessibilityHidden(true)
                     }
             }
             .buttonStyle(.plain)

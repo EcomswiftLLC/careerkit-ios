@@ -4,8 +4,8 @@ import Foundation
 //
 // Fictional people used for template previews and thumbnails. Names, employers,
 // schools, numbers and results are invented. Each template gets a person who fits
-// its category, industry and level. Templates meant for one page get the same person
-// with the least important lines trimmed, so the sample is about one page long.
+// its category, industry and level. The least important lines are trimmed until a
+// height estimate of the template says the sample fits its declared page count.
 
 enum SampleContent {
 
@@ -21,9 +21,7 @@ enum SampleContent {
             guard let section = person.sections[kind] else { continue }
             sections.append(section)
         }
-        if template.typicalPages <= 1 {
-            sections = fit(sections, budget: onePageWordBudget)
-        }
+        sections = fit(sections, template: template)
         return Resume(
             title: "Sample resume",
             templateID: template.id,
@@ -107,46 +105,34 @@ enum SampleContent {
         }
     }
 
-    // MARK: Fitting one-page templates
+    // MARK: Fitting the sample to its page count
 
-    /// Word budget for a one-page sample. Two-page templates use the whole persona.
-    private static let onePageWordBudget = 285
+    /// Share of the usable page height the estimate may fill. The rest absorbs page-break waste
+    /// and estimate error (the model was calibrated against CI renders to within about 5 percent).
+    private static let fillTarget: Double = 0.95
 
-    private static func words(in section: ResumeSection) -> Int {
-        var parts: [String] = [section.title, section.text]
-        for item in section.entries {
-            parts.append(item.heading)
-            parts.append(item.subheading)
-            parts.append(item.location)
-            parts.append(item.detail)
-            parts.append(item.extra)
-            parts.append(contentsOf: item.bullets)
-        }
-        for group in section.skillGroups {
-            parts.append(group.name)
-            parts.append(contentsOf: group.items)
-        }
-        var total = 0
-        for part in parts {
-            total += part.split(separator: " ").count
-        }
-        return total
-    }
-
-    private static func totalWords(_ sections: [ResumeSection]) -> Int {
-        var total = 0
-        for section in sections { total += words(in: section) }
-        return total
-    }
-
-    /// Removes the least important lines until the sections fit the budget.
-    /// It never removes a whole section and never empties an entry list.
-    private static func fit(_ sections: [ResumeSection], budget: Int) -> [ResumeSection] {
+    /// Trims the least important lines until the estimated height fits `typicalPages` pages.
+    /// It never removes a required section and never empties an entry list.
+    private static func fit(_ sections: [ResumeSection], template: TemplateSpec) -> [ResumeSection] {
+        let model = SampleFitModel(template: template)
+        let capacity: Double = model.usableHeight * Double(max(1, template.typicalPages)) * fillTarget
         var result = sections
         var passes = 0
-        while totalWords(result) > budget && passes < 400 {
+        while passes < 400 {
+            let load = model.load(result)
+            if load.main <= capacity && load.side <= capacity { break }
             passes += 1
-            if !trimOnce(&result) { break }
+            let mainOver: Bool = load.main > capacity
+            let overflow: Double = mainOver ? load.main - capacity : load.side - capacity
+            let columnWidth: Double = mainOver ? model.mainWidth : model.sideWidth
+            var droppable: Set<SectionKind> = []
+            for section in result where model.isInSidebar(section.kind) != mainOver {
+                droppable.insert(section.kind)
+            }
+            let measure: (ResumeSection) -> Double = { section in
+                return model.sectionHeight(section, width: columnWidth)
+            }
+            if !trimOnce(&result, droppable: droppable, overflow: overflow, height: measure) { break }
         }
         return result
     }
@@ -169,7 +155,13 @@ enum SampleContent {
         return found
     }
 
-    private static func trimOnce(_ sections: inout [ResumeSection]) -> Bool {
+    /// Short sections a sample may lose before the main story thins out. Never a required section.
+    private static let optionalKinds: [SectionKind] = [.awards, .memberships, .courses, .interests, .references, .volunteer, .certifications, .languages]
+
+    private static func trimOnce(_ sections: inout [ResumeSection],
+                                 droppable: Set<SectionKind>,
+                                 overflow: Double,
+                                 height: (ResumeSection) -> Double) -> Bool {
         // 1. Long bullet lists lose their last bullet first, down to two.
         if let target = entryWithMostBullets(in: sections, above: 2) {
             sections[target.section].entries[target.entry].bullets.removeLast()
@@ -205,9 +197,67 @@ enum SampleContent {
                 return true
             }
         }
-        // 5. Last resort: shorten bullet lists to one bullet per entry.
+        // 5. The smallest optional section in the crowded column goes, when that does not overshoot by much.
+        var smallest: Int? = nil
+        var smallestHeight: Double = Double.greatestFiniteMagnitude
+        for index in sections.indices {
+            let kind = sections[index].kind
+            guard optionalKinds.contains(kind), droppable.contains(kind) else { continue }
+            let h: Double = height(sections[index])
+            if h <= smallestHeight {
+                smallest = index
+                smallestHeight = h
+            }
+        }
+        if let index = smallest, smallestHeight <= overflow * 1.5 {
+            sections.remove(at: index)
+            return true
+        }
+        // 6. Bullet lists shorten to one bullet per entry.
         if let target = entryWithMostBullets(in: sections, above: 1) {
             sections[target.section].entries[target.entry].bullets.removeLast()
+            return true
+        }
+        // 7. Extra sections keep one entry (two for publications).
+        for index in sections.indices.reversed() {
+            let kind = sections[index].kind
+            if !extraKinds.contains(kind) { continue }
+            let limit = kind == .publications ? 2 : 1
+            if sections[index].entries.count > limit {
+                sections[index].entries.removeLast()
+                return true
+            }
+        }
+        // 8. Context lines go from all but the first entry of each section.
+        for index in sections.indices {
+            let count = sections[index].entries.count
+            guard count > 1 else { continue }
+            for entryIndex in 1..<count where !sections[index].entries[entryIndex].detail.isEmpty {
+                sections[index].entries[entryIndex].detail = ""
+                return true
+            }
+        }
+        // 9. Two jobs, three skill groups, one education entry.
+        for index in sections.indices {
+            let kind = sections[index].kind
+            if (kind == .experience || kind == .internships) && sections[index].entries.count > 2 {
+                sections[index].entries.removeLast()
+                return true
+            }
+        }
+        for index in sections.indices {
+            if sections[index].kind == .skills && sections[index].skillGroups.count > 3 {
+                sections[index].skillGroups.removeLast()
+                return true
+            }
+            if sections[index].kind == .education && sections[index].entries.count > 1 {
+                sections[index].entries.removeLast()
+                return true
+            }
+        }
+        // 10. Last resort: the smallest optional section goes whatever its size.
+        if let index = smallest {
+            sections.remove(at: index)
             return true
         }
         return false

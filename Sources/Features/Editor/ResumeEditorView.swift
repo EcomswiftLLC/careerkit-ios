@@ -73,6 +73,8 @@ struct ResumeEditorView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbarContent(resume) }
+        .toolbarBackground(CK.Palette.ivory, for: .bottomBar)
+        .toolbarBackgroundVisibility(.visible, for: .bottomBar)
         .sheet(item: $sheet) { item in
             sheetContent(item, resume)
         }

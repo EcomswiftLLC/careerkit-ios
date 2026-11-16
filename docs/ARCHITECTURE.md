@@ -50,6 +50,19 @@ enum PDFValidator {
 ```
 Rendering uses Core Text / NSAttributedString drawn into `UIGraphicsPDFRenderer` (selectable text, link annotations for email, phone, URLs). Preview = `PDFView` showing `pdfData`. Never silently drop content: overflow flows to the next page.
 
+#### Style overrides (user customisation)
+`StyleOverrides` (in `Resume.swift`, also used by `CoverLetter`) holds every user style choice. Every field is optional or defaulted and the custom `init(from:)` uses `decodeIfPresent` (unknown enum values become nil), so older documents decode unchanged and `schemaVersion` stays 1.
+- Original: `accentHex`, `bodyFont`, `headingFont`, `fontScale`, `lineSpacing`, `marginPoints`, `showPhoto`.
+- Structure (nil = template): `headingStyle`, `headerStyle` (UI offers leftAligned, centered, splitContact, ruledMonogram, banner, monogramBadge, accentRuleLeft, centeredAccent, doubleRule), `entryLayout`, `bullets`, `skillStyle`, `uppercaseHeadings`, `sidebarPosition` (left/right, sidebar layouts only).
+- Spacing multipliers (default 1): `sectionSpacing` and `entrySpacing` (0.7...1.6), `nameScale` (0.8...1.3).
+- Colours (nil = template, "#RRGGBB"): `textHex`, `sidebarFillHex`, `headerFillHex`.
+- Details (nil = template): `photoShape` (circle/rounded/square), `dateFormat` (`ResumeDateFormat`: "Jan 2024", "01/2024", "2024").
+
+Where they apply, in one place each:
+- `TemplateSpec.applying(_:)` (`Sources/Templates/TemplateSpec+Overrides.swift`) returns the effective spec for structure, spacing, name size and text/sidebar/header colours. `DocumentRenderer.render` calls it once, so every builder, the preview and the PDF see the same spec. Call it only on a library template (the multipliers are not idempotent). Invalid combinations keep the template value: banner with a full height sidebar, sidebarCard without a sidebar, sideLabel outside single column, sidebar side or fill on non-sidebar layouts, bad hex. A custom sidebar fill clears `sidebarTextHex` so readable text is recomputed; a photo in a replaced sidebar card moves to `headerRight`.
+- `RenderStyle.make` keeps handling accent, fonts, text size, line spacing and margins, and carries `headingCaseOverride`, `photoShape` and `dateFormat` to the builders. For letters it also applies `textHex`, `headerFillHex`, `nameScale` and `sectionSpacing` (paragraph spacing).
+- UI: `EdStyleControls` (`Sources/Features/Editor/StylePanel*.swift`) groups Color, Text and fonts, Layout and structure, Spacing, Page, Photo. Letters (`StyleDefaults(letterTemplate:)`) hide the resume-only groups automatically; `showsResumeStructure: false` hides them explicitly.
+
 ### engine: Persistence
 ```swift
 @MainActor final class DocumentStore: ObservableObject {

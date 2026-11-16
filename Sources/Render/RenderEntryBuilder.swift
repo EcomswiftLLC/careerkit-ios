@@ -16,7 +16,7 @@ extension RenderSectionBuilder {
         let location: String = RenderContent.trimmed(entry.location)
         let extra: String = RenderContent.trimmed(entry.extra)
         let detail: String = RenderContent.trimmed(entry.detail)
-        let dates: String = entry.dateRange(locale: Locale.current)
+        let dates: String = entry.dateRange(format: style.dateFormat, locale: Locale.current)
         let bullets: [String] = RenderContent.renderableBullets(entry)
 
         let kind: EntryLayout = effectiveEntryLayout

@@ -111,8 +111,10 @@ final class TemplateLibraryTests: XCTestCase {
 
     func testAllLayoutsHeadersHeadingsAndEntryLayoutsAreUsed() {
         let layouts: Set<PageLayout> = [.singleColumn, .sidebarLeft, .sidebarRight, .headerThenTwoColumn]
-        let headers: Set<HeaderStyle> = [.leftAligned, .centered, .banner, .splitContact, .sidebarCard, .ruledMonogram]
-        let headings: Set<SectionHeadingStyle> = [.uppercaseRule, .smallCapsAccent, .accentBar, .boxedLabel, .plainBold, .sideLabel, .dottedRule]
+        let headers: Set<HeaderStyle> = [.leftAligned, .centered, .banner, .splitContact, .sidebarCard, .ruledMonogram,
+                                         .monogramBadge, .accentRuleLeft, .centeredAccent, .doubleRule]
+        let headings: Set<SectionHeadingStyle> = [.uppercaseRule, .smallCapsAccent, .accentBar, .boxedLabel, .plainBold, .sideLabel, .dottedRule,
+                                                  .underlineAccent, .centeredRule, .leftBorder, .tintedBand]
         let entries: Set<EntryLayout> = [.dateRight, .dateBelow, .dateGutter, .stacked]
         let skills: Set<SkillStyle> = [.commaList, .pipeList, .groupedLines, .bulletColumns]
         XCTAssertEqual(Set(all.map { $0.layout }), layouts)
@@ -160,7 +162,8 @@ final class TemplateLibraryTests: XCTestCase {
 
     func testATSFlagMatchesStructure() {
         for t in all {
-            let plainHeader = t.header != .banner && t.header != .sidebarCard
+            // The monogram badge prints initials as decoration, so it counts as non-plain like a banner.
+            let plainHeader = t.header != .banner && t.header != .sidebarCard && t.header != .monogramBadge
             let plainHeading = t.headingStyle != .boxedLabel && t.headingStyle != .sideLabel
             let structurallyPlain = t.layout == .singleColumn
                 && t.photo == .none

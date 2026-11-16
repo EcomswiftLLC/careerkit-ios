@@ -17,7 +17,7 @@
 | `RenderTextLayout.swift` | TextKit 1 wrapper: measuring, per line splitting, baselines, drawing, link rectangles |
 | `RenderFlow.swift` | `RenderFlowItem` (one placeable block), text item factory, `RenderComposite` (baseline aligned rows) |
 | `RenderPaginator.swift` | column flow and page breaking |
-| `RenderSectionBuilder.swift` | the seven heading styles, text sections, side label sections |
+| `RenderSectionBuilder.swift` | the eleven heading styles, text sections, side label sections |
 | `RenderEntryBuilder.swift` | the four entry layouts, hanging bullets |
 | `RenderSkillBuilder.swift` | the four skill styles |
 | `RenderHeaderBuilder.swift` | the six header styles, sidebar card, photo |
@@ -90,7 +90,8 @@ Matches the contract. Differences and additions:
 - No page numbers or footer.
 - No justified text, no hyphenation (very long unbroken URLs rely on the character wrap fallback of TextKit).
 - Photos are drawn as given (no face detection, plain centre crop).
-- `sideLabel` aligns the label to the top of the first block using an ascender estimate, not an exact shared baseline.
+- `sideLabel` aligns the label to the top of the first block using an ascender estimate, not an exact shared baseline. The gutter is sized to the widest word among the template's default section titles (18 to 32 percent of the column), so labels wrap only between words and every section shares one left edge. A renamed label whose longest word is still too wide is set smaller (down to 70 percent), never broken inside the word. A label taller than its section keeps the next block on the same page and pads the last block so it never runs into the next heading.
+- Header styles added in the distinctness pass: `monogramBadge` (initials in an accent disc, or the photo in its place, with name, title and contact centred beside it), `accentRuleLeft` (4 pt accent bar down the left of the name block), `centeredAccent` (regular-weight name in the accent colour, 36 pt rule, small caps title), `doubleRule` (hairline above a regular-weight name, thick-and-thin rule below). Heading styles added: `underlineAccent` (short 2.2 pt accent bar under the label), `centeredRule` (label centred between hairlines; hairlines are dropped if the label wraps), `leftBorder` (3 pt accent bar beside the label), `tintedBand` (full-width wash of the accent at 9 percent, 14 percent on a sidebar fill; the label uses the accent when it keeps 4.5:1 on the wash, otherwise the column ink). All are vector fills and selectable text.
 - Link rectangles for a link that wraps over several lines are one rectangle per line, which is correct, but a link broken across a page split only gets the part on each page.
 - ATS wording is English only (wrapped in `String(localized:)` so strings can be extracted later).
 - No test checks pixels. Visual quality (spacing, alignment) has to be reviewed by looking at the PDFs from CI or the simulator.

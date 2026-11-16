@@ -244,6 +244,16 @@ enum RenderDraw {
 enum RenderPhotoShape {
     case circle
     case rounded
+    case square
+
+    static func from(_ shape: PhotoShape?) -> RenderPhotoShape? {
+        guard let shape else { return nil }
+        switch shape {
+        case .circle: return .circle
+        case .rounded: return .rounded
+        case .square: return .square
+        }
+    }
 }
 
 enum RenderPhoto {
@@ -266,6 +276,8 @@ enum RenderPhoto {
             path = UIBezierPath(ovalIn: rect)
         case .rounded:
             path = UIBezierPath(roundedRect: rect, cornerRadius: rect.width * 0.12)
+        case .square:
+            path = UIBezierPath(rect: rect)
         }
         path.addClip()
         let scale: CGFloat = max(rect.width / image.size.width, rect.height / image.size.height)

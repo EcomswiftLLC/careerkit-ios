@@ -4,7 +4,9 @@ import UIKit
 /// The same output is used for the live preview and for export.
 enum DocumentRenderer {
     static func render(_ resume: Resume, template: TemplateSpec) -> RenderedDocument {
-        let composer = RenderResumeComposer(resume: resume, template: template)
+        // The user's structural overrides are applied here, once, so every builder sees the effective spec.
+        let effective: TemplateSpec = template.applying(resume.style)
+        let composer = RenderResumeComposer(resume: resume, template: effective)
         return composer.render()
     }
 }
