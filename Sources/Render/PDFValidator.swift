@@ -89,6 +89,14 @@ enum PDFValidator {
             case 0x00AD, 0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0x2060, 0xFEFF,
                  0x202A...0x202E, 0x2066...0x2069:
                 continue
+            // Some fonts draw Arabic letters with Persian or Urdu shaped glyphs, and compatibility
+            // folding then returns those code points. They are the same letters to a reader.
+            case 0x06CC, 0x06D2:
+                scalars.append(Unicode.Scalar(0x064A)!)
+            case 0x06A9:
+                scalars.append(Unicode.Scalar(0x0643)!)
+            case 0x06BE, 0x06C1:
+                scalars.append(Unicode.Scalar(0x0647)!)
             default:
                 scalars.append(scalar)
             }
