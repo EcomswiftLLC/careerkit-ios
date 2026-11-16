@@ -167,7 +167,7 @@ struct TemplateThumbnail: View {
         PDFThumbnailView(
             cacheKey: "resume.v2.\(template.id)",
             width: size,
-            accessibilityName: "\(template.name) template preview with sample content",
+            accessibilityName: String(localized: "\(template.name) template preview with sample content"),
             produce: Self.work(for: template)
         )
     }
@@ -190,7 +190,7 @@ struct CoverLetterThumbnail: View {
         PDFThumbnailView(
             cacheKey: "letter.\(template.id)",
             width: size,
-            accessibilityName: "\(template.name) cover letter preview with sample content",
+            accessibilityName: String(localized: "\(template.name) cover letter preview with sample content"),
             produce: Self.work(for: template)
         )
     }

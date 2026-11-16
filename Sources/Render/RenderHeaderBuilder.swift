@@ -119,7 +119,8 @@ final class RenderHeaderBuilder {
                     bold: Bool = true, uppercase: Bool = false) -> RenderTextLayout? {
         let raw: String = RenderContent.trimmed(personal.fullName)
         guard !raw.isEmpty else { return nil }
-        let name: String = uppercase ? raw.uppercased() : raw
+        // Chinese and Japanese names are never uppercased; RenderText also drops the tracking for them.
+        let name: String = uppercase ? RenderScript.uppercased(raw, language: style.language) : raw
         let font: UIFont = style.headingFont(size: size ?? style.nameSize, bold: bold)
         let textStyle = RenderTextStyle(font: font, color: color, leading: 1.0, alignment: alignment, kern: kern)
         return ctx.layout(RenderText.attributed(name, textStyle), width: width, links: [])
@@ -333,15 +334,10 @@ final class RenderHeaderBuilder {
 
     // MARK: Monogram badge
 
-    /// First letters of the first and last word of the name, at most two.
+    /// First letters of the first and last word of the name, at most two. Chinese and Japanese names give
+    /// their first character (the family name comes first). See `RenderInitials`.
     var initials: String {
-        let words = RenderContent.trimmed(personal.fullName).split(whereSeparator: { $0 == " " })
-        guard let firstWord = words.first, let firstLetter = firstWord.first else { return "" }
-        var out: String = String(firstLetter)
-        if words.count > 1, let lastWord = words.last, let lastLetter = lastWord.first {
-            out.append(lastLetter)
-        }
-        return out.uppercased()
+        return RenderInitials.initials(for: personal.fullName, language: style.language)
     }
 
     /// Initials in an accent disc (the photo takes the disc's place when there is one), with name,

@@ -165,7 +165,7 @@ final class RenderResumeComposer {
                                                       photo: photo,
                                                       bleedLeft: 0,
                                                       bleedRight: 0)
-                let contactHeading: RenderFlowItem = sideBuilder.headingItem(label: String(localized: "Contact"), spaceBefore: 0)
+                let contactHeading: RenderFlowItem = sideBuilder.headingItem(label: DocumentStrings.contact(style.language), spaceBefore: 0)
                 sideItems.append(contentsOf: cardBuilder.buildSidebarCard(contactHeading: contactHeading,
                                                                           band: bandRect,
                                                                           columnTop: style.marginTop,

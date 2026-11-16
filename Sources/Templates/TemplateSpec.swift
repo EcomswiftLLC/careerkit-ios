@@ -85,6 +85,18 @@ enum TemplateCategory: String, Codable, CaseIterable, Identifiable {
     case entryLevel = "Entry Level"
     case technical = "Technical"
     var id: String { rawValue }
+
+    /// Localized name for display. The raw value stays English because it is stored and used as an id.
+    var displayName: String {
+        switch self {
+        case .professional: return String(localized: "Professional")
+        case .modern: return String(localized: "Modern")
+        case .creative: return String(localized: "Creative")
+        case .academic: return String(localized: "Academic")
+        case .entryLevel: return String(localized: "Entry Level")
+        case .technical: return String(localized: "Technical")
+        }
+    }
 }
 
 enum ProfessionalLevel: String, Codable, CaseIterable, Identifiable {
@@ -94,6 +106,17 @@ enum ProfessionalLevel: String, Codable, CaseIterable, Identifiable {
     case senior = "Senior"
     case executive = "Executive"
     var id: String { rawValue }
+
+    /// Localized name for display. The raw value stays English.
+    var displayName: String {
+        switch self {
+        case .student: return String(localized: "Student")
+        case .entry: return String(localized: "Entry level")
+        case .mid: return String(localized: "Mid career")
+        case .senior: return String(localized: "Senior")
+        case .executive: return String(localized: "Executive")
+        }
+    }
 }
 
 enum DesignStyle: String, Codable, CaseIterable, Identifiable {
@@ -103,6 +126,17 @@ enum DesignStyle: String, Codable, CaseIterable, Identifiable {
     case editorial = "Editorial"
     case compact = "Compact"
     var id: String { rawValue }
+
+    /// Localized name for display. The raw value stays English.
+    var displayName: String {
+        switch self {
+        case .classic: return String(localized: "Classic")
+        case .minimal: return String(localized: "Minimal")
+        case .bold: return String(localized: "Bold")
+        case .editorial: return String(localized: "Editorial")
+        case .compact: return String(localized: "Compact")
+        }
+    }
 }
 
 enum Industry: String, Codable, CaseIterable, Identifiable {
@@ -114,6 +148,21 @@ enum Industry: String, Codable, CaseIterable, Identifiable {
     case education = "Education"
     case healthcare = "Healthcare"
     var id: String { rawValue }
+
+    /// Localized name for display. The raw value stays English.
+    /// Education uses its own key because "Education" is already the resume section heading
+    /// ("Formación", "Ausbildung"), which reads wrong as the name of a field of work.
+    var displayName: String {
+        switch self {
+        case .general: return String(localized: "General")
+        case .business: return String(localized: "Business & Finance")
+        case .technology: return String(localized: "Technology")
+        case .creative: return String(localized: "Design & Marketing")
+        case .academia: return String(localized: "Academia & Research")
+        case .education: return String(localized: "industry.education", defaultValue: "Education")
+        case .healthcare: return String(localized: "Healthcare")
+        }
+    }
 }
 
 // MARK: - Layout vocabulary

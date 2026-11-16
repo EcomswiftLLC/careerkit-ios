@@ -11,6 +11,13 @@ struct BlankBuilderView: View {
         case sections = "Sections"
         case layout = "Fonts and layout"
         var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .sections: return String(localized: "Sections")
+            case .layout: return String(localized: "Fonts and layout")
+            }
+        }
     }
 
     @StateObject private var draft = AutosaveDraft<Resume>()
@@ -20,7 +27,7 @@ struct BlankBuilderView: View {
         GeometryReader { proxy in
             VStack(spacing: 0) {
                 PreviewPane(renderer: draft.renderer,
-                            accessibilityName: "Blank resume preview",
+                            accessibilityName: String(localized: "Blank resume preview"),
                             showsPageControls: true,
                             showsZoomControls: false)
                     .frame(height: max(proxy.size.height * 0.38, 220))
@@ -32,7 +39,7 @@ struct BlankBuilderView: View {
                     .padding(.vertical, CK.Space.s)
                     .background(CK.Palette.ivory)
                 Picker("Builder tab", selection: $tab) {
-                    ForEach(BuilderTab.allCases) { item in Text(item.rawValue).tag(item) }
+                    ForEach(BuilderTab.allCases) { item in Text(item.title).tag(item) }
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, CK.Space.m)

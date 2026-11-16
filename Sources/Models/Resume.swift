@@ -150,6 +150,29 @@ enum SectionKind: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// The English source text of `defaultTitle`, which is also its String Catalog key.
+    /// Used to write the default heading in a chosen document language (`DocumentStrings`).
+    var defaultTitleKey: String {
+        switch self {
+        case .summary: return "Professional Summary"
+        case .experience: return "Work Experience"
+        case .education: return "Education"
+        case .skills: return "Skills"
+        case .certifications: return "Certifications"
+        case .projects: return "Projects"
+        case .awards: return "Awards"
+        case .languages: return "Languages"
+        case .publications: return "Publications"
+        case .volunteer: return "Volunteer Experience"
+        case .internships: return "Internships"
+        case .memberships: return "Professional Memberships"
+        case .references: return "References"
+        case .courses: return "Courses"
+        case .interests: return "Interests"
+        case .custom: return "Custom Section"
+        }
+    }
+
     /// Which editor the section uses.
     enum Shape { case text, entries, skillGroups }
 
@@ -206,9 +229,10 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
     }
 
     /// "Jan 2020 – Present", "2018 – 2022", or "" when no dates.
-    func dateRange(locale: Locale = .current) -> String {
+    /// `present` replaces the word for a current role; nil keeps the app language word (`CKDateWords.present`).
+    func dateRange(locale: Locale = .current, present: String? = nil) -> String {
         let startText = start?.formatted(locale: locale) ?? ""
-        let endText = isCurrent ? CKDateWords.present : (end?.formatted(locale: locale) ?? "")
+        let endText = isCurrent ? (present ?? CKDateWords.present) : (end?.formatted(locale: locale) ?? "")
         switch (startText.isEmpty, endText.isEmpty) {
         case (true, true): return ""
         case (false, true): return startText
@@ -218,10 +242,10 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
     }
 
     /// Same as `dateRange(locale:)` but in the chosen format. nil keeps the original "Jan 2020" style.
-    func dateRange(format: ResumeDateFormat?, locale: Locale = .current) -> String {
-        guard let format, format != .monthName else { return dateRange(locale: locale) }
+    func dateRange(format: ResumeDateFormat?, locale: Locale = .current, present: String? = nil) -> String {
+        guard let format, format != .monthName else { return dateRange(locale: locale, present: present) }
         let startText: String = start?.formatted(format, locale: locale) ?? ""
-        let endText: String = isCurrent ? CKDateWords.present : (end?.formatted(format, locale: locale) ?? "")
+        let endText: String = isCurrent ? (present ?? CKDateWords.present) : (end?.formatted(format, locale: locale) ?? "")
         switch (startText.isEmpty, endText.isEmpty) {
         case (true, true): return ""
         case (false, true): return startText
@@ -230,6 +254,12 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
             if startText == endText { return startText }
             return "\(startText) – \(endText)"
         }
+    }
+
+    /// The dates as written on a document in `language`: month names and the word for a current role
+    /// follow the document language, not the device.
+    func dateRange(format: ResumeDateFormat?, language: ResumeLanguage) -> String {
+        return dateRange(format: format, locale: language.locale, present: DocumentStrings.present(language))
     }
 }
 
@@ -316,6 +346,11 @@ struct StyleOverrides: Codable, Equatable {
     /// Which side of the header holds the photo, on templates whose header photo can sit on either side.
     var photoSide: SidebarPosition?
 
+    // Document language. nil means "same as the app language" (resolved with `ResumeLanguage.resolved`).
+    /// Language of the fixed words the app writes into the document: "Present", month names,
+    /// default headings, the cover letter date, greeting and sign-off.
+    var language: ResumeLanguage?
+
     static let spacingRange: ClosedRange<Double> = 0.7...1.6
     static let nameScaleRange: ClosedRange<Double> = 0.8...1.3
 }
@@ -357,6 +392,7 @@ extension StyleOverrides {
         case textHex, sidebarFillHex, headerFillHex
         case photoShape, dateFormat
         case photoSize, photoBorder, photoSide
+        case language
     }
 
     /// Every key is optional so documents saved by older versions (or with values a newer
@@ -394,6 +430,9 @@ extension StyleOverrides {
         photoSize = (try? c.decodeIfPresent(PhotoSizeOption.self, forKey: .photoSize))
         photoBorder = (try? c.decodeIfPresent(PhotoBorderOption.self, forKey: .photoBorder))
         photoSide = (try? c.decodeIfPresent(SidebarPosition.self, forKey: .photoSide))
+
+        // A language this version does not know (or a value of the wrong type) follows the app language.
+        language = (try? c.decodeIfPresent(ResumeLanguage.self, forKey: .language))
     }
 
     func encode(to encoder: Encoder) throws {
@@ -423,6 +462,79 @@ extension StyleOverrides {
         try c.encodeIfPresent(photoSize, forKey: .photoSize)
         try c.encodeIfPresent(photoBorder, forKey: .photoBorder)
         try c.encodeIfPresent(photoSide, forKey: .photoSide)
+        try c.encodeIfPresent(language, forKey: .language)
+    }
+}
+
+// MARK: - Document language
+
+/// The language of the fixed words the app writes into a resume or cover letter. Independent of the
+/// app language, so a German UI user can still produce an English resume.
+enum ResumeLanguage: String, Codable, CaseIterable, Identifiable {
+    case en
+    case es
+    case fr
+    case de
+    case zhHans = "zh-Hans"
+
+    var id: String { rawValue }
+
+    /// The language's own name, shown the same in every UI language.
+    var displayName: String {
+        switch self {
+        case .en: return "English"
+        case .es: return "Español"
+        case .fr: return "Français"
+        case .de: return "Deutsch"
+        case .zhHans: return "简体中文"
+        }
+    }
+
+    /// Locale for dates on the document. The device locale is kept when it already speaks this language,
+    /// so its region (for example "en_GB" or "de_AT") is respected.
+    var locale: Locale {
+        let current: Locale = Locale.current
+        if ResumeLanguage.matching(current.identifier) == self {
+            // A Traditional Chinese device must not write Traditional forms into a Simplified document.
+            let script: String = current.language.script?.identifier ?? ""
+            if self != .zhHans || script.isEmpty || script == "Hans" {
+                return current
+            }
+        }
+        return Locale(identifier: fallbackLocaleIdentifier)
+    }
+
+    private var fallbackLocaleIdentifier: String {
+        switch self {
+        case .en: return "en_US"
+        case .es: return "es_ES"
+        case .fr: return "fr_FR"
+        case .de: return "de_DE"
+        case .zhHans: return "zh_Hans_CN"
+        }
+    }
+
+    /// Maps a language or locale code ("de", "de-AT", "fr_CA", "zh-Hant-TW", "Base") to a document language.
+    /// Every Chinese variant becomes Simplified Chinese; unsupported languages become English.
+    static func matching(_ code: String) -> ResumeLanguage {
+        let lower: String = code.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let base: String = lower.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map(String.init) ?? lower
+        switch base {
+        case "es": return .es
+        case "fr": return .fr
+        case "de": return .de
+        case "zh": return .zhHans
+        default: return .en
+        }
+    }
+
+    /// The language a document is written in: the user's choice, or the app language when there is none.
+    static func resolved(_ chosen: ResumeLanguage?) -> ResumeLanguage {
+        if let chosen { return chosen }
+        if let app = Bundle.main.preferredLocalizations.first, app != "Base" {
+            return matching(app)
+        }
+        return matching(Locale.preferredLanguages.first ?? "en")
     }
 }
 

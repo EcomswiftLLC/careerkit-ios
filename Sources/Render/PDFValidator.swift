@@ -108,12 +108,18 @@ enum PDFValidator {
     }
 
     /// Case, spacing, ligatures and width forms are ignored so layout choices cannot cause false alarms.
+    /// Text is compared in composed form (NFKC), so an accent PDFKit returns as a separate mark still matches,
+    /// and German "ß" matches the "SS" an uppercase heading turns it into.
     static func normalise(_ raw: String) -> String {
         let folded: String = raw.precomposedStringWithCompatibilityMapping.lowercased()
         var scalars = String.UnicodeScalarView()
         for scalar in folded.unicodeScalars {
             if CharacterSet.whitespacesAndNewlines.contains(scalar) { continue }
             switch scalar.value {
+            case 0x00DF, 0x1E9E:
+                scalars.append(Unicode.Scalar(0x0073)!)
+                scalars.append(Unicode.Scalar(0x0073)!)
+                continue
             case 0x00AD, 0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0x2060, 0xFEFF,
                  0x202A...0x202E, 0x2066...0x2069:
                 continue
@@ -150,6 +156,12 @@ enum PDFValidator {
             }
         }
 
+        // Chinese and Japanese have no spaces, so a wrapped line cannot be split into words. Columns can still
+        // interleave lines in extraction: accept the text when it reads in order as a few long pieces.
+        if CJKText.containsCJK(expected) && appearsInPieces(needle, in: haystack) {
+            return true
+        }
+
         // Columns can interleave lines in extraction. Fall back to checking each word, in either direction.
         let words: [String] = expected
             .split(whereSeparator: { $0.isWhitespace })
@@ -159,5 +171,36 @@ enum PDFValidator {
             return words.allSatisfy { haystack.contains($0) || haystack.contains(String($0.reversed())) }
         }
         return false
+    }
+
+    /// True when `needle` (already normalised) splits into consecutive pieces that each appear in `haystack`,
+    /// taking the longest piece every time. Pieces shorter than `minimumPiece` characters are only allowed for
+    /// a needle that short, so scattered single characters never count as a match.
+    static func appearsInPieces(_ needle: String, in haystack: String, minimumPiece: Int = 4) -> Bool {
+        let characters: [Character] = Array(needle)
+        guard !characters.isEmpty else { return true }
+        if characters.count <= minimumPiece { return haystack.contains(needle) }
+        var start: Int = 0
+        while start < characters.count {
+            let remaining: Int = characters.count - start
+            // Every prefix of a piece that appears also appears, so the longest one can be found by bisection.
+            var low: Int = 0
+            var high: Int = remaining
+            while low < high {
+                let mid: Int = (low + high + 1) / 2
+                let piece: String = String(characters[start..<(start + mid)])
+                if haystack.contains(piece) {
+                    low = mid
+                } else {
+                    high = mid - 1
+                }
+            }
+            let matched: Int = low
+            // The last piece of a line may be short; every other piece must be long enough to mean something.
+            if matched == 0 { return false }
+            if matched < minimumPiece && matched < remaining { return false }
+            start += matched
+        }
+        return true
     }
 }

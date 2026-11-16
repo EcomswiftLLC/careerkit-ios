@@ -27,8 +27,8 @@ struct NewResumeFlow: View {
     }
 
     private var defaultTitle: String {
-        if let template { return "\(template.name) Resume" }
-        return "My Resume"
+        if let template { return String(localized: "\(template.name) resume") }
+        return String(localized: "My Resume")
     }
 
     private var cleanTitle: String {
@@ -41,17 +41,17 @@ struct NewResumeFlow: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: CK.Space.l) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(template == nil ? "Start from a blank page" : "Name your resume")
+                        Text(template == nil ? String(localized: "Start from a blank page") : String(localized: "Name your resume"))
                             .ckTitleFont(28)
                             .foregroundStyle(CK.Palette.ink)
                             .accessibilityAddTraits(.isHeader)
                         Text(template == nil
-                             ? "You choose the sections, fonts and margins. Everything stays editable later."
-                             : "You can rename it and change the template at any time.")
+                             ? String(localized: "You choose the sections, fonts and margins. Everything stays editable later.")
+                             : String(localized: "You can rename it and change the template at any time."))
                             .font(CK.Font.callout)
                             .foregroundStyle(CK.Palette.graphite)
                     }
-                    EdField(label: "Resume title", text: $title, prompt: defaultTitle, capitalization: .words)
+                    EdField(label: String(localized: "Resume title"), text: $title, prompt: defaultTitle, capitalization: .words)
                     VStack(alignment: .leading, spacing: CK.Space.s) {
                         Text("Page size").font(CK.Font.label).foregroundStyle(CK.Palette.ink)
                         Picker("Page size", selection: $pageSize) {
@@ -63,7 +63,7 @@ struct NewResumeFlow: View {
                             .foregroundStyle(CK.Palette.graphite)
                     }
                     if let template { templateSummary(template) } else { blankSummary }
-                    Button(template == nil ? "Continue" : "Create resume") { primaryAction() }
+                    Button(template == nil ? String(localized: "Continue") : String(localized: "Create resume")) { primaryAction() }
                         .buttonStyle(.ckPrimary)
                         .padding(.top, CK.Space.s)
                 }
@@ -103,10 +103,10 @@ struct NewResumeFlow: View {
                     .font(CK.Font.callout)
                     .foregroundStyle(CK.Palette.graphite)
                 EdFlowLayout(spacing: 6) {
-                    tag(template.category.rawValue)
-                    tag(template.designStyle.rawValue)
-                    tag(template.typicalPages == 1 ? "1 page" : "\(template.typicalPages) pages")
-                    if template.isATSFriendly { tag("Plain layout") }
+                    tag(template.category.displayName)
+                    tag(template.designStyle.displayName)
+                    tag(pagesLabel(template))
+                    if template.isATSFriendly { tag(String(localized: "Plain layout")) }
                 }
             }
         }
@@ -130,8 +130,15 @@ struct NewResumeFlow: View {
         .overlay(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).strokeBorder(CK.Palette.hairline, lineWidth: 0.5))
     }
 
+    private func pagesLabel(_ template: TemplateSpec) -> String {
+        let pages: Int = template.typicalPages
+        return String(localized: "\(pages) pages")
+    }
+
     private func tag(_ text: String) -> some View {
         Text(text)
+            .lineLimit(2)
+            .minimumScaleFactor(0.8)
             .font(CK.Font.caption)
             .foregroundStyle(CK.Palette.graphite)
             .padding(.horizontal, 8)

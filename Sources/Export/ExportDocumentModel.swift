@@ -273,8 +273,10 @@ enum ExportText {
 
 /// Turns a resume or cover letter into an `ExportDocument`. Pure, safe on any thread.
 enum ExportDocumentBuilder {
-    /// `language` sets the fixed words and date formats of the file; it defaults to the app language.
-    static func build(_ source: ExportSource, language: String = ExportStrings.currentLanguage) -> ExportDocument {
+    /// `language` sets the fixed words and date formats of the file; nil uses the document language
+    /// (`StyleOverrides.language`, which itself defaults to the app language).
+    static func build(_ source: ExportSource, language chosen: String? = nil) -> ExportDocument {
+        let language: String = chosen ?? ExportStrings.documentLanguage(source)
         switch source {
         case .resume(let resume, let template):
             return build(resume: resume, template: template, language: language)
@@ -306,7 +308,8 @@ enum ExportDocumentBuilder {
 
     // MARK: Resume
 
-    static func build(resume: Resume, template: TemplateSpec, language: String = ExportStrings.currentLanguage) -> ExportDocument {
+    static func build(resume: Resume, template: TemplateSpec, language chosen: String? = nil) -> ExportDocument {
+        let language: String = chosen ?? ResumeLanguage.resolved(resume.style.language).rawValue
         let effective: TemplateSpec = template.applying(resume.style)
         let o: StyleOverrides = resume.style
         let scale: Double = clamp(o.fontScale, 0.7, 1.4)
@@ -329,7 +332,8 @@ enum ExportDocumentBuilder {
 
         let dateFormat: ResumeDateFormat? = o.dateFormat
         for section in RenderContent.visibleSections(resume) {
-            blocks.append(ExportBlock(.heading, text: RenderContent.label(for: section)))
+            // Same heading as the PDF: a default title follows the chosen document language.
+            blocks.append(ExportBlock(.heading, text: RenderContent.label(for: section, language: o.language)))
             for paragraph in RenderContent.paragraphs(section.text) {
                 blocks.append(ExportBlock(.paragraph, text: paragraph))
             }
@@ -407,16 +411,7 @@ enum ExportDocumentBuilder {
     /// role ("Present") and the month names in the export language.
     static func dateRange(_ entry: ResumeEntry, format: ResumeDateFormat?, language: String) -> String {
         let locale: Locale = ExportStrings.locale(for: language)
-        let english: String = entry.dateRange(format: format, locale: locale)
-        guard entry.isCurrent else { return english }
-        let present: String = ExportStrings.present(language)
-        guard present != "Present" else { return english }
-        if english == "Present" { return present }
-        let suffix: String = " \u{2013} Present"
-        if english.hasSuffix(suffix) {
-            return String(english.dropLast(suffix.count)) + " \u{2013} " + present
-        }
-        return english
+        return entry.dateRange(format: format, locale: locale, present: ExportStrings.present(language))
     }
 
     /// Contact items joined by " | ", each one a link when it has a safe URL.
@@ -441,7 +436,10 @@ enum ExportDocumentBuilder {
 
     // MARK: Cover letter
 
-    static func build(letter: CoverLetter, template: CoverLetterTemplateSpec, language: String = ExportStrings.currentLanguage) -> ExportDocument {
+    static func build(letter: CoverLetter, template: CoverLetterTemplateSpec, language chosen: String? = nil) -> ExportDocument {
+        let language: String = chosen ?? ResumeLanguage.resolved(letter.style.language).rawValue
+        let documentLanguage: ResumeLanguage = ResumeLanguage.matching(language)
+        let explicitLanguage: Bool = letter.style.language != nil
         let o: StyleOverrides = letter.style
         let scale: Double = clamp(o.fontScale, 0.7, 1.4)
         let pageWidth: Double = Double(letter.pageSize.size.width)
@@ -481,14 +479,14 @@ enum ExportDocumentBuilder {
             blocks.append(ExportBlock(i == recipient.count - 1 ? .paragraph : .line, text: line))
         }
 
-        let greeting: String = RenderContent.trimmed(letter.effectiveGreeting)
+        let greeting: String = RenderContent.trimmed(letter.effectiveGreeting(language: documentLanguage, explicit: explicitLanguage))
         if !greeting.isEmpty { blocks.append(ExportBlock(.paragraph, text: greeting)) }
         for paragraph in letter.bodyParagraphs {
             for part in RenderContent.paragraphs(paragraph) {
                 blocks.append(ExportBlock(.paragraph, text: part))
             }
         }
-        let signOff: String = RenderContent.trimmed(letter.signOff)
+        let signOff: String = RenderContent.trimmed(letter.effectiveSignOff(language: documentLanguage, explicit: explicitLanguage))
         if !signOff.isEmpty { blocks.append(ExportBlock(.line, text: signOff)) }
         if !name.isEmpty {
             blocks.append(ExportBlock(.gap, runs: []))

@@ -15,17 +15,17 @@ struct WritingExamplesSheet: View {
 
         var title: String {
             switch self {
-            case .summaries: return "Summary examples"
-            case .achievements: return "Achievement examples"
+            case .summaries: return String(localized: "Summary examples")
+            case .achievements: return String(localized: "Achievement examples")
             }
         }
 
         var intro: String {
             switch self {
             case .summaries:
-                return "Fictional examples to borrow structure and tone from. Change the details so they describe you."
+                return String(localized: "Fictional examples to borrow structure and tone from. Change the details so they describe you.")
             case .achievements:
-                return "Each example starts with an action and ends with a result. Replace the numbers with your own, and only keep what is true for you."
+                return String(localized: "Each example starts with an action and ends with a result. Replace the numbers with your own, and only keep what is true for you.")
             }
         }
     }
@@ -110,7 +110,7 @@ struct WritingExamplesSheet: View {
                     inserted.insert(example)
                     if mode == .summaries { dismiss() }
                 } label: {
-                    Label(wasInserted ? "Added" : "Use this", systemImage: wasInserted ? "checkmark" : "plus")
+                    Label(wasInserted ? String(localized: "Added") : String(localized: "Use this"), systemImage: wasInserted ? "checkmark" : "plus")
                         .font(CK.Font.label)
                         .foregroundStyle(wasInserted ? CK.Palette.graphite : CK.Palette.forest)
                         .frame(minHeight: 44)

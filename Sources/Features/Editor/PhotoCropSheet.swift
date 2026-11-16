@@ -105,6 +105,7 @@ struct PhotoCropSheet: View {
         GeometryReader { proxy in
             let side: CGFloat = min(proxy.size.width, 320)
             let scale: CGFloat = PhotoCropMath.coverScale(imageSize: image.size, frame: side) * zoom
+            let percent: Int = Int((zoom * 100).rounded())
             ZStack {
                 Image(uiImage: image)
                     .resizable()
@@ -135,7 +136,7 @@ struct PhotoCropSheet: View {
             .onChange(of: side) { _, newSide in frameSide = newSide }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("Photo crop area"))
-            .accessibilityValue(Text("Zoom \(Int((zoom * 100).rounded())) percent"))
+            .accessibilityValue(Text("Zoom \(percent) percent"))
             .accessibilityAdjustableAction { direction in
                 switch direction {
                 case .increment: changeZoom(by: 0.25)

@@ -141,6 +141,50 @@ enum RenderTextDirection {
     }
 }
 
+// MARK: - Script rules
+
+/// Typography rules that depend on the script of the text rather than on the template.
+enum RenderScript {
+    /// True when the text contains Chinese or Japanese characters. Such text has no capitals, is written without
+    /// spaces and must not be letter-spaced or set in drawn small caps.
+    static func isCJK(_ text: String) -> Bool {
+        return CJKText.containsCJK(text)
+    }
+
+    /// Capitals for headings and names. Text with Chinese or Japanese characters is left as typed, and the
+    /// document language decides the case rules (so German "ß" becomes "SS" as a German reader expects).
+    static func uppercased(_ text: String, language: ResumeLanguage) -> String {
+        if isCJK(text) { return text }
+        return text.uppercased(with: language.locale)
+    }
+}
+
+/// The letters of a monogram or a big initial, worked out on whole characters (grapheme clusters), never bytes,
+/// so accented names keep their accents ("Élodie Müller" gives "ÉM").
+enum RenderInitials {
+    static func initials(for fullName: String, language: ResumeLanguage = .en) -> String {
+        let name: String = RenderContent.trimmed(fullName)
+        let words: [Substring] = name.split(whereSeparator: { $0.isWhitespace })
+        guard let firstWord = words.first, let firstLetter = firstWord.first(where: isNameCharacter) else { return "" }
+
+        // Chinese and Japanese names put the family name first and have no capitals: "王小明" gives "王".
+        if RenderScript.isCJK(String(firstLetter)) {
+            return String(firstLetter)
+        }
+        var out: String = String(firstLetter)
+        if words.count > 1, let lastWord = words.last, let lastLetter = lastWord.first(where: isNameCharacter),
+           !RenderScript.isCJK(String(lastLetter)) {
+            out.append(lastLetter)
+        }
+        return out.uppercased(with: language.locale)
+    }
+
+    /// Letters and digits count; punctuation such as an opening bracket or a quote is skipped.
+    private static func isNameCharacter(_ character: Character) -> Bool {
+        return character.isLetter || character.isNumber
+    }
+}
+
 // MARK: - Attributed strings
 
 struct RenderTextStyle {
@@ -177,9 +221,18 @@ enum RenderText {
         return attrs
     }
 
+    /// The style with letter-spacing removed when the text is Chinese or Japanese: tracking pulls those
+    /// characters apart and breaks the even grid they are designed for.
+    static func scriptAdjusted(_ style: RenderTextStyle, for text: String) -> RenderTextStyle {
+        guard style.kern != 0, RenderScript.isCJK(text) else { return style }
+        var adjusted = style
+        adjusted.kern = 0
+        return adjusted
+    }
+
     static func attributed(_ text: String, _ style: RenderTextStyle) -> NSAttributedString {
         let rtl = RenderTextDirection.isRightToLeft(text)
-        return NSAttributedString(string: text, attributes: attributes(style, rtl: rtl))
+        return NSAttributedString(string: text, attributes: attributes(scriptAdjusted(style, for: text), rtl: rtl))
     }
 
     /// Several runs in one paragraph. Paragraph metrics come from the first run.
@@ -190,7 +243,7 @@ enum RenderText {
         let shared = paragraphStyle(first.1, rtl: rtl)
         let out = NSMutableAttributedString()
         for (text, style) in parts where !text.isEmpty {
-            var attrs = attributes(style, rtl: rtl)
+            var attrs = attributes(scriptAdjusted(style, for: text), rtl: rtl)
             attrs[.paragraphStyle] = shared
             out.append(NSAttributedString(string: text, attributes: attrs))
         }
@@ -198,7 +251,11 @@ enum RenderText {
     }
 
     /// Drawn small caps: a full size capital at the start of each word, smaller capitals after it.
+    /// Chinese and Japanese text has no capitals and no spaces between words, so it is set plainly.
     static func smallCaps(_ text: String, _ style: RenderTextStyle) -> NSAttributedString {
+        if RenderScript.isCJK(text) {
+            return attributed(text, style)
+        }
         let rtl = RenderTextDirection.isRightToLeft(text)
         let shared = paragraphStyle(style, rtl: rtl)
         let smallFont: UIFont = style.font.withSize(style.font.pointSize * 0.8)

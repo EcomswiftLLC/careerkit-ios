@@ -6,7 +6,7 @@ final class StyleOverridesTests: XCTestCase {
     private let newKeys: [String] = [
         "headingStyle", "headerStyle", "entryLayout", "bullets", "skillStyle", "uppercaseHeadings", "sidebarPosition",
         "sectionSpacing", "entrySpacing", "nameScale", "textHex", "sidebarFillHex", "headerFillHex", "photoShape", "dateFormat",
-        "photoSize", "photoBorder", "photoSide"
+        "photoSize", "photoBorder", "photoSide", "language"
     ]
 
     private func spec(_ id: String) -> TemplateSpec {
@@ -44,6 +44,7 @@ final class StyleOverridesTests: XCTestCase {
         o.photoSize = .large
         o.photoBorder = .ring
         o.photoSide = .left
+        o.language = .de
         return o
     }
 

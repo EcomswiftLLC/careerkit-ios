@@ -62,14 +62,14 @@ struct WritingAssistSheet: View {
     @ViewBuilder
     private var originalBlock: some View {
         if request.mode.usesContextAsSource {
-            block(title: "Based on") {
+            block(title: String(localized: "Based on")) {
                 Text("The work experience in this resume")
                     .font(CK.Font.body)
                     .foregroundStyle(CK.Palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
             }
         } else {
-            block(title: "Your text") {
+            block(title: String(localized: "Your text")) {
                 Text(verbatim: display(request.original))
                     .font(CK.Font.body)
                     .foregroundStyle(CK.Palette.ink)
@@ -80,7 +80,7 @@ struct WritingAssistSheet: View {
     }
 
     private var suggestionBlock: some View {
-        block(title: "Suggestion") {
+        block(title: String(localized: "Suggestion")) {
             switch model.phase {
             case .idle, .working:
                 HStack(spacing: CK.Space.s) {
@@ -91,7 +91,7 @@ struct WritingAssistSheet: View {
                         .foregroundStyle(CK.Palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: CK.Space.s)
-                    EdTextButton(title: "Cancel") {
+                    EdTextButton(title: String(localized: "Cancel")) {
                         model.cancel()
                         dismiss()
                     }
@@ -120,7 +120,7 @@ struct WritingAssistSheet: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if failure.canRetry {
-                        EdTextButton(title: "Try again", systemImage: "arrow.clockwise") { model.start() }
+                        EdTextButton(title: String(localized: "Try again"), systemImage: "arrow.clockwise") { model.start() }
                     }
                 }
             }
@@ -177,8 +177,8 @@ struct WritingAssistSheet: View {
     private func announce(_ phase: WritingAssistViewModel.Phase) {
         let message: String
         switch phase {
-        case .suggestion: message = "Suggestion ready"
-        case .noChange: message = "No changes to suggest"
+        case .suggestion: message = String(localized: "Suggestion ready")
+        case .noChange: message = String(localized: "No changes to suggest")
         case .failed(let failure): message = failure.message
         case .idle, .working: return
         }

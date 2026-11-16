@@ -83,19 +83,19 @@ enum SectionOps {
 
     /// Short status line for a collapsed section card.
     static func summaryLine(for section: ResumeSection) -> String {
-        let empty = "Nothing added yet"
+        let empty = String(localized: "Nothing added yet")
         switch section.kind.shape {
         case .text:
-            let words = section.text.split(whereSeparator: { $0.isWhitespace }).count
-            return words == 0 ? empty : "\(words) words"
+            let words: Int = section.text.split(whereSeparator: { $0.isWhitespace }).count
+            return words == 0 ? empty : String(localized: "\(words) words")
         case .entries:
-            let count = section.entries.filter { !$0.isEmpty }.count
+            let count: Int = section.entries.filter { !$0.isEmpty }.count
             if count == 0 { return empty }
-            return count == 1 ? "1 item" : "\(count) items"
+            return String(localized: "\(count) items")
         case .skillGroups:
-            let count = section.skillGroups.reduce(0) { $0 + $1.items.count }
+            let count: Int = section.skillGroups.reduce(0) { $0 + $1.items.count }
             if count == 0 { return empty }
-            return count == 1 ? "1 item" : "\(count) items"
+            return String(localized: "\(count) items")
         }
     }
 }
@@ -211,51 +211,51 @@ struct EntryLabels {
     static func labels(for kind: SectionKind) -> EntryLabels {
         switch kind {
         case .experience:
-            return EntryLabels(heading: "Job title", subheading: "Company", extra: "Extra line", addButton: "Add position",
-                               currentToggle: "I currently work here", showsDates: true, showsBullets: true,
+            return EntryLabels(heading: String(localized: "Job title"), subheading: String(localized: "Company"), extra: String(localized: "Extra line"), addButton: String(localized: "Add position"),
+                               currentToggle: String(localized: "I currently work here"), showsDates: true, showsBullets: true,
                                showsLocation: true, offersExamples: true)
         case .internships:
-            return EntryLabels(heading: "Role", subheading: "Organization", extra: "Extra line", addButton: "Add internship",
-                               currentToggle: "I currently work here", showsDates: true, showsBullets: true,
+            return EntryLabels(heading: String(localized: "Role"), subheading: String(localized: "Organization"), extra: String(localized: "Extra line"), addButton: String(localized: "Add internship"),
+                               currentToggle: String(localized: "I currently work here"), showsDates: true, showsBullets: true,
                                showsLocation: true, offersExamples: true)
         case .education:
-            return EntryLabels(heading: "Degree or program", subheading: "School", extra: "Grade, honors or GPA",
-                               addButton: "Add education", currentToggle: "I currently study here", showsDates: true,
+            return EntryLabels(heading: String(localized: "Degree or program"), subheading: String(localized: "School"), extra: String(localized: "Grade, honors or GPA"),
+                               addButton: String(localized: "Add education"), currentToggle: String(localized: "I currently study here"), showsDates: true,
                                showsBullets: true, showsLocation: true, offersExamples: false)
         case .certifications:
-            return EntryLabels(heading: "Certification", subheading: "Issuing organization", extra: "Credential ID or link",
-                               addButton: "Add certification", currentToggle: nil, showsDates: true, showsBullets: false,
+            return EntryLabels(heading: String(localized: "Certification"), subheading: String(localized: "Issuing organization"), extra: String(localized: "Credential ID or link"),
+                               addButton: String(localized: "Add certification"), currentToggle: nil, showsDates: true, showsBullets: false,
                                showsLocation: false, offersExamples: false)
         case .projects:
-            return EntryLabels(heading: "Project name", subheading: "Role or organization", extra: "Link",
-                               addButton: "Add project", currentToggle: "This project is ongoing", showsDates: true,
+            return EntryLabels(heading: String(localized: "Project name"), subheading: String(localized: "Role or organization"), extra: String(localized: "Link"),
+                               addButton: String(localized: "Add project"), currentToggle: String(localized: "This project is ongoing"), showsDates: true,
                                showsBullets: true, showsLocation: false, offersExamples: true)
         case .awards:
-            return EntryLabels(heading: "Award", subheading: "Presented by", extra: "Extra line", addButton: "Add award",
+            return EntryLabels(heading: String(localized: "Award"), subheading: String(localized: "Presented by"), extra: String(localized: "Extra line"), addButton: String(localized: "Add award"),
                                currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
                                offersExamples: false)
         case .publications:
-            return EntryLabels(heading: "Title", subheading: "Publisher or journal", extra: "Link", addButton: "Add publication",
+            return EntryLabels(heading: String(localized: "Title"), subheading: String(localized: "Publisher or journal"), extra: String(localized: "Link"), addButton: String(localized: "Add publication"),
                                currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
                                offersExamples: false)
         case .volunteer:
-            return EntryLabels(heading: "Role", subheading: "Organization", extra: "Extra line", addButton: "Add role",
-                               currentToggle: "I currently volunteer here", showsDates: true, showsBullets: true,
+            return EntryLabels(heading: String(localized: "Role"), subheading: String(localized: "Organization"), extra: String(localized: "Extra line"), addButton: String(localized: "Add role"),
+                               currentToggle: String(localized: "I currently volunteer here"), showsDates: true, showsBullets: true,
                                showsLocation: true, offersExamples: true)
         case .memberships:
-            return EntryLabels(heading: "Membership", subheading: "Organization", extra: "Extra line", addButton: "Add membership",
-                               currentToggle: "This membership is current", showsDates: true, showsBullets: false,
+            return EntryLabels(heading: String(localized: "Membership"), subheading: String(localized: "Organization"), extra: String(localized: "Extra line"), addButton: String(localized: "Add membership"),
+                               currentToggle: String(localized: "This membership is current"), showsDates: true, showsBullets: false,
                                showsLocation: false, offersExamples: false)
         case .references:
-            return EntryLabels(heading: "Name", subheading: "Title and company", extra: "Email or phone",
-                               addButton: "Add reference", currentToggle: nil, showsDates: false, showsBullets: false,
+            return EntryLabels(heading: String(localized: "Name"), subheading: String(localized: "Title and company"), extra: String(localized: "Email or phone"),
+                               addButton: String(localized: "Add reference"), currentToggle: nil, showsDates: false, showsBullets: false,
                                showsLocation: false, offersExamples: false)
         case .courses:
-            return EntryLabels(heading: "Course", subheading: "Provider", extra: "Link", addButton: "Add course",
+            return EntryLabels(heading: String(localized: "Course"), subheading: String(localized: "Provider"), extra: String(localized: "Link"), addButton: String(localized: "Add course"),
                                currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
                                offersExamples: false)
         case .summary, .skills, .languages, .interests, .custom:
-            return EntryLabels(heading: "Title", subheading: "Subtitle", extra: "Extra line", addButton: "Add item",
+            return EntryLabels(heading: String(localized: "Title"), subheading: String(localized: "Subtitle"), extra: String(localized: "Extra line"), addButton: String(localized: "Add item"),
                                currentToggle: nil, showsDates: true, showsBullets: true, showsLocation: true,
                                offersExamples: false)
         }

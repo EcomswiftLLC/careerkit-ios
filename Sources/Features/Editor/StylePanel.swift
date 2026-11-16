@@ -66,26 +66,26 @@ struct EdStyleControls: View {
     @State private var expanded: Set<String> = ["color", "type"]
 
     static let accentSwatches: [EdSwatch] = [
-        EdSwatch(name: "Forest", hex: "#1F4D3A"), EdSwatch(name: "Navy", hex: "#1F3A5F"),
-        EdSwatch(name: "Indigo", hex: "#3B3F8F"), EdSwatch(name: "Plum", hex: "#6B2D5C"),
-        EdSwatch(name: "Brick", hex: "#9A2F2F"), EdSwatch(name: "Copper", hex: "#A5521D"),
-        EdSwatch(name: "Bronze", hex: "#7A5C1E"), EdSwatch(name: "Teal", hex: "#2F6F73"),
-        EdSwatch(name: "Slate", hex: "#444B52"), EdSwatch(name: "Black", hex: "#111111")
+        EdSwatch(name: String(localized: "Forest"), hex: "#1F4D3A"), EdSwatch(name: String(localized: "Navy"), hex: "#1F3A5F"),
+        EdSwatch(name: String(localized: "Indigo"), hex: "#3B3F8F"), EdSwatch(name: String(localized: "Plum"), hex: "#6B2D5C"),
+        EdSwatch(name: String(localized: "Brick"), hex: "#9A2F2F"), EdSwatch(name: String(localized: "Copper"), hex: "#A5521D"),
+        EdSwatch(name: String(localized: "Bronze"), hex: "#7A5C1E"), EdSwatch(name: String(localized: "Teal"), hex: "#2F6F73"),
+        EdSwatch(name: String(localized: "Slate"), hex: "#444B52"), EdSwatch(name: String(localized: "Black"), hex: "#111111")
     ]
     static let textSwatches: [EdSwatch] = [
-        EdSwatch(name: "Charcoal", hex: "#1F2421"), EdSwatch(name: "Black", hex: "#111111"),
-        EdSwatch(name: "Ink blue", hex: "#1C2A3A"), EdSwatch(name: "Graphite", hex: "#3A3F44"),
-        EdSwatch(name: "Espresso", hex: "#3B2F2A")
+        EdSwatch(name: String(localized: "Charcoal"), hex: "#1F2421"), EdSwatch(name: String(localized: "Black"), hex: "#111111"),
+        EdSwatch(name: String(localized: "Ink blue"), hex: "#1C2A3A"), EdSwatch(name: String(localized: "Graphite"), hex: "#3A3F44"),
+        EdSwatch(name: String(localized: "Espresso"), hex: "#3B2F2A")
     ]
     static let sidebarSwatches: [EdSwatch] = [
-        EdSwatch(name: "Mist", hex: "#EEF1F4"), EdSwatch(name: "Sage", hex: "#E9F0EC"),
-        EdSwatch(name: "Linen", hex: "#F4F0E6"), EdSwatch(name: "Forest", hex: "#1F4D3A"),
-        EdSwatch(name: "Navy", hex: "#1B2F4E"), EdSwatch(name: "Charcoal", hex: "#26343F")
+        EdSwatch(name: String(localized: "Mist"), hex: "#EEF1F4"), EdSwatch(name: String(localized: "Sage"), hex: "#E9F0EC"),
+        EdSwatch(name: String(localized: "Linen"), hex: "#F4F0E6"), EdSwatch(name: String(localized: "Forest"), hex: "#1F4D3A"),
+        EdSwatch(name: String(localized: "Navy"), hex: "#1B2F4E"), EdSwatch(name: String(localized: "Charcoal"), hex: "#26343F")
     ]
     static let bandSwatches: [EdSwatch] = [
-        EdSwatch(name: "Forest", hex: "#17382A"), EdSwatch(name: "Navy", hex: "#1B2F4E"),
-        EdSwatch(name: "Plum", hex: "#4A2340"), EdSwatch(name: "Charcoal", hex: "#22272B"),
-        EdSwatch(name: "Bronze", hex: "#6B5124")
+        EdSwatch(name: String(localized: "Forest"), hex: "#17382A"), EdSwatch(name: String(localized: "Navy"), hex: "#1B2F4E"),
+        EdSwatch(name: String(localized: "Plum"), hex: "#4A2340"), EdSwatch(name: String(localized: "Charcoal"), hex: "#22272B"),
+        EdSwatch(name: String(localized: "Bronze"), hex: "#6B5124")
     ]
 
     private var structureTemplate: TemplateSpec? {
@@ -103,6 +103,9 @@ struct EdStyleControls: View {
             }
             spacingGroup
             pageGroup
+            EdLanguageStyleGroup(language: $style.language,
+                                 isLetter: defaults.isLetter,
+                                 isExpanded: isExpanded("language"))
             if showsPhotoToggle && !defaults.isLetter {
                 photoGroup
             }
@@ -125,8 +128,8 @@ struct EdStyleControls: View {
     private var overview: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
             Text(defaults.isLetter
-                 ? "Changes show in the preview and in the exported file."
-                 : "Changes show in the preview and in the exported file. A champagne dot marks the template's own choice.")
+                 ? String(localized: "Changes show in the preview and in the exported file.")
+                 : String(localized: "Changes show in the preview and in the exported file. A champagne dot marks the template's own choice."))
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -155,8 +158,8 @@ struct EdStyleControls: View {
     }
 
     private var colorGroup: some View {
-        EdStyleGroup(title: "Color",
-                     summary: colorModified ? "Custom colors" : "Template colors",
+        EdStyleGroup(title: String(localized: "Color"),
+                     summary: colorModified ? String(localized: "Custom colors") : String(localized: "Template colors"),
                      systemImage: "paintpalette",
                      isModified: colorModified,
                      onReset: {
@@ -166,17 +169,17 @@ struct EdStyleControls: View {
                          style.headerFillHex = nil
                      },
                      isExpanded: isExpanded("color")) {
-            EdColorRow(title: "Accent", help: "Headings, lines and highlights.",
+            EdColorRow(title: String(localized: "Accent"), help: String(localized: "Headings, lines and highlights."),
                        swatches: Self.accentSwatches, selection: $style.accentHex, templateHex: defaults.accentHex)
-            EdColorRow(title: "Text", help: "Body text. Dark colors print and read best.",
+            EdColorRow(title: String(localized: "Text"), help: String(localized: "Body text. Dark colors print and read best."),
                        swatches: Self.textSwatches, selection: $style.textHex, templateHex: defaults.textHex)
             if let template = structureTemplate, template.hasSidebarColumn {
-                EdColorRow(title: "Sidebar background", help: "Text in the sidebar switches to stay readable.",
+                EdColorRow(title: String(localized: "Sidebar background"), help: String(localized: "Text in the sidebar switches to stay readable."),
                            swatches: Self.sidebarSwatches, selection: $style.sidebarFillHex,
                            templateHex: template.sidebarFillHex ?? defaults.accentHex)
             }
             if showsBandColor {
-                EdColorRow(title: "Header band", help: "Name and contact text switch to stay readable.",
+                EdColorRow(title: String(localized: "Header band"), help: String(localized: "Name and contact text switch to stay readable."),
                            swatches: Self.bandSwatches, selection: $style.headerFillHex,
                            templateHex: defaults.headerFillHex ?? (style.accentHex ?? defaults.accentHex))
             }
@@ -193,8 +196,9 @@ struct EdStyleControls: View {
     private var typeGroup: some View {
         let bodyChoice: FontChoice = style.bodyFont ?? defaults.bodyFont
         let headingChoice: FontChoice = style.headingFont ?? defaults.headingFont
-        return EdStyleGroup(title: "Text and fonts",
-                            summary: "\(headingChoice.displayName) and \(bodyChoice.displayName), \(percent(style.fontScale)) size",
+        let sizeText: String = percent(style.fontScale)
+        return EdStyleGroup(title: String(localized: "Text and fonts"),
+                            summary: String(localized: "\(headingChoice.displayName) and \(bodyChoice.displayName), \(sizeText) size"),
                             systemImage: "textformat",
                             isModified: typeModified,
                             onReset: {
@@ -206,16 +210,16 @@ struct EdStyleControls: View {
                                 style.uppercaseHeadings = nil
                             },
                             isExpanded: isExpanded("type")) {
-            fontRow(title: "Heading font", selection: $style.headingFont, fallback: defaults.headingFont)
-            fontRow(title: "Body font", selection: $style.bodyFont, fallback: defaults.bodyFont)
-            EdStyleSlider(title: "Text size", valueText: percent(style.fontScale),
+            fontRow(title: String(localized: "Heading font"), selection: $style.headingFont, fallback: defaults.headingFont)
+            fontRow(title: String(localized: "Body font"), selection: $style.bodyFont, fallback: defaults.bodyFont)
+            EdStyleSlider(title: String(localized: "Text size"), valueText: percent(style.fontScale),
                           value: clampedBinding(\.fontScale, limits.fontScale),
                           range: limits.fontScale, step: 0.01)
-            EdStyleSlider(title: "Name size", help: "Your name at the top of the page.",
+            EdStyleSlider(title: String(localized: "Name size"), help: String(localized: "Your name at the top of the page."),
                           valueText: percent(style.nameScale),
                           value: clampedBinding(\.nameScale, StyleOverrides.nameScaleRange),
                           range: StyleOverrides.nameScaleRange, step: 0.05)
-            EdStyleSlider(title: "Line spacing", valueText: percent(style.lineSpacing),
+            EdStyleSlider(title: String(localized: "Line spacing"), valueText: percent(style.lineSpacing),
                           value: clampedBinding(\.lineSpacing, limits.lineSpacing),
                           range: limits.lineSpacing, step: 0.01)
             if let template = structureTemplate {
@@ -229,7 +233,7 @@ struct EdStyleControls: View {
             EdStyleLabel(title: title)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: CK.Space.s) {
-                    fontChip(text: "Template (\(fallback.displayName))", font: fallback.edPreviewFont(size: 16),
+                    fontChip(text: String(localized: "Template (\(fallback.displayName))"), font: fallback.edPreviewFont(size: 16),
                              selected: selection.wrappedValue == nil) { selection.wrappedValue = nil }
                     ForEach(FontChoice.allCases) { choice in
                         fontChip(text: choice.displayName, font: choice.edPreviewFont(size: 17),
@@ -257,12 +261,12 @@ struct EdStyleControls: View {
 
     private func capitalsRow(_ template: TemplateSpec) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Section titles", help: "Write section titles in capitals or as you typed them.")
+            EdStyleLabel(title: String(localized: "Section titles"), help: String(localized: "Write section titles in capitals or as you typed them."))
             EdFlowLayout(spacing: CK.Space.s) {
-                EdChoiceChip(title: "Template", selected: style.uppercaseHeadings == nil) { style.uppercaseHeadings = nil }
-                EdChoiceChip(title: "CAPITALS", accessibilityText: "Capitals",
+                EdChoiceChip(title: String(localized: "Template"), selected: style.uppercaseHeadings == nil) { style.uppercaseHeadings = nil }
+                EdChoiceChip(title: String(localized: "CAPITALS"), accessibilityText: String(localized: "Capitals"),
                              selected: style.uppercaseHeadings == true) { style.uppercaseHeadings = true }
-                EdChoiceChip(title: "As typed", selected: style.uppercaseHeadings == false) { style.uppercaseHeadings = false }
+                EdChoiceChip(title: String(localized: "As typed"), selected: style.uppercaseHeadings == false) { style.uppercaseHeadings = false }
             }
         }
     }
@@ -287,8 +291,8 @@ struct EdStyleControls: View {
     private var sampleAccent: Color { Color(hexString: style.accentHex ?? defaults.accentHex) }
 
     private func layoutGroup(_ template: TemplateSpec) -> some View {
-        EdStyleGroup(title: "Layout and structure",
-                     summary: layoutModified ? "Custom layout" : "Template layout",
+        EdStyleGroup(title: String(localized: "Layout and structure"),
+                     summary: layoutModified ? String(localized: "Custom layout") : String(localized: "Template layout"),
                      systemImage: "square.grid.3x2",
                      isModified: layoutModified,
                      onReset: {
@@ -317,11 +321,11 @@ struct EdStyleControls: View {
         let templateSide: SidebarPosition = template.layout == .sidebarLeft ? .left : .right
         let current: SidebarPosition = style.sidebarPosition ?? templateSide
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Sidebar side")
+            EdStyleLabel(title: String(localized: "Sidebar side"))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(SidebarPosition.allCases) { side in
-                    EdChoiceChip(title: side == .left ? "Left" : "Right",
-                                 accessibilityText: side == .left ? "Sidebar on the left" : "Sidebar on the right",
+                    EdChoiceChip(title: side == .left ? String(localized: "Left") : String(localized: "Right"),
+                                 accessibilityText: side == .left ? String(localized: "Sidebar on the left") : String(localized: "Sidebar on the right"),
                                  selected: current == side,
                                  isTemplateChoice: side == templateSide) {
                         style.sidebarPosition = side == templateSide ? nil : side
@@ -338,7 +342,7 @@ struct EdStyleControls: View {
         }
         let current: HeaderStyle = effectiveHeader(template)
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Header", help: "Where your name, title and contact details sit.")
+            EdStyleLabel(title: String(localized: "Header"), help: String(localized: "Where your name, title and contact details sit."))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(options, id: \.self) { option in
                     EdSampleChip(label: EdStyleNames.header(option),
@@ -356,7 +360,7 @@ struct EdStyleControls: View {
         let options: [SectionHeadingStyle] = TemplateSpec.offeredHeadingStyles.filter { template.supportsHeading($0) }
         let current: SectionHeadingStyle = effectiveHeading(template)
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Section titles style")
+            EdStyleLabel(title: String(localized: "Section titles style"))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(options, id: \.self) { option in
                     EdSampleChip(label: EdStyleNames.heading(option),
@@ -373,7 +377,7 @@ struct EdStyleControls: View {
     private func entryRow(_ template: TemplateSpec) -> some View {
         let current: EntryLayout = style.entryLayout ?? template.entryLayout
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Jobs and education", help: "How each entry shows its title and dates.")
+            EdStyleLabel(title: String(localized: "Jobs and education"), help: String(localized: "How each entry shows its title and dates."))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(TemplateSpec.offeredEntryLayouts, id: \.self) { option in
                     EdSampleChip(label: EdStyleNames.entry(option),
@@ -390,7 +394,7 @@ struct EdStyleControls: View {
     private func bulletRow(_ template: TemplateSpec) -> some View {
         let current: BulletStyle = style.bullets ?? template.bullets
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Bullet points")
+            EdStyleLabel(title: String(localized: "Bullet points"))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(TemplateSpec.offeredBullets, id: \.self) { option in
                     EdChoiceChip(title: EdStyleNames.bullet(option),
@@ -408,7 +412,7 @@ struct EdStyleControls: View {
     private func skillsRow(_ template: TemplateSpec) -> some View {
         let current: SkillStyle = style.skillStyle ?? template.skillStyle
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Skills")
+            EdStyleLabel(title: String(localized: "Skills"))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(TemplateSpec.offeredSkillStyles, id: \.self) { option in
                     EdSampleChip(label: EdStyleNames.skills(option),
@@ -425,11 +429,11 @@ struct EdStyleControls: View {
     private func dateRow() -> some View {
         let current: ResumeDateFormat = style.dateFormat ?? .monthName
         return VStack(alignment: .leading, spacing: CK.Space.s) {
-            EdStyleLabel(title: "Dates")
+            EdStyleLabel(title: String(localized: "Dates"))
             EdFlowLayout(spacing: CK.Space.s) {
                 ForEach(ResumeDateFormat.allCases) { option in
                     EdChoiceChip(title: option.example,
-                                 accessibilityText: "Dates like \(option.example)",
+                                 accessibilityText: String(localized: "Dates like \(option.example)"),
                                  selected: current == option,
                                  isTemplateChoice: option == .monthName) {
                         style.dateFormat = option == .monthName ? nil : option
@@ -446,8 +450,8 @@ struct EdStyleControls: View {
     }
 
     private var spacingGroup: some View {
-        EdStyleGroup(title: "Spacing",
-                     summary: spacingModified ? "Custom spacing" : "Template spacing",
+        EdStyleGroup(title: String(localized: "Spacing"),
+                     summary: spacingModified ? String(localized: "Custom spacing") : String(localized: "Template spacing"),
                      systemImage: "arrow.up.and.down.text.horizontal",
                      isModified: spacingModified,
                      onReset: {
@@ -456,21 +460,26 @@ struct EdStyleControls: View {
                          style.marginPoints = nil
                      },
                      isExpanded: isExpanded("spacing")) {
-            EdStyleSlider(title: defaults.isLetter ? "Space between paragraphs" : "Space between sections",
+            EdStyleSlider(title: defaults.isLetter ? String(localized: "Space between paragraphs") : String(localized: "Space between sections"),
                           valueText: percent(style.sectionSpacing),
                           value: clampedBinding(\.sectionSpacing, StyleOverrides.spacingRange),
                           range: StyleOverrides.spacingRange, step: 0.05)
             if !defaults.isLetter {
-                EdStyleSlider(title: "Space between entries", help: "The gap between jobs, degrees and other items.",
+                EdStyleSlider(title: String(localized: "Space between entries"), help: String(localized: "The gap between jobs, degrees and other items."),
                               valueText: percent(style.entrySpacing),
                               value: clampedBinding(\.entrySpacing, StyleOverrides.spacingRange),
                               range: StyleOverrides.spacingRange, step: 0.05)
             }
-            EdStyleSlider(title: "Page margin", help: "White space around the edge of the page.",
-                          valueText: "\(Int(marginValue.rounded())) pt",
+            EdStyleSlider(title: String(localized: "Page margin"), help: String(localized: "White space around the edge of the page."),
+                          valueText: marginText,
                           value: Binding(get: { marginValue }, set: { style.marginPoints = $0 }),
                           range: limits.margin, step: 1)
         }
+    }
+
+    private var marginText: String {
+        let number: Int = Int(marginValue.rounded())
+        return String(localized: "\(number) pt")
     }
 
     private var marginValue: Double {
@@ -480,14 +489,14 @@ struct EdStyleControls: View {
     // MARK: Page
 
     private var pageGroup: some View {
-        EdStyleGroup(title: "Page",
+        EdStyleGroup(title: String(localized: "Page"),
                      summary: pageSize.displayName,
                      systemImage: "doc",
                      isModified: false,
                      onReset: {},
                      isExpanded: isExpanded("page")) {
             VStack(alignment: .leading, spacing: CK.Space.s) {
-                EdStyleLabel(title: "Page size", help: "A4 is used in most countries. US Letter is used in the US and Canada.")
+                EdStyleLabel(title: String(localized: "Page size"), help: String(localized: "A4 is used in most countries. US Letter is used in the US and Canada."))
                 Picker("Page size", selection: $pageSize) {
                     ForEach(PageSize.allCases) { size in
                         Text(size.displayName).tag(size)
@@ -508,7 +517,8 @@ struct EdStyleControls: View {
     // MARK: Helpers
 
     private func percent(_ value: Double) -> String {
-        return "\(Int((value * 100).rounded()))%"
+        let percent: Int = Int((value * 100).rounded())
+        return String(localized: "\(percent)%")
     }
 
     private func clampedBinding(_ keyPath: WritableKeyPath<StyleOverrides, Double>, _ range: ClosedRange<Double>) -> Binding<Double> {

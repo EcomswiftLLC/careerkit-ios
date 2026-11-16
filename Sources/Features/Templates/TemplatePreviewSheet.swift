@@ -77,7 +77,7 @@ struct CKTemplatePreviewSheet: View {
                                 .strokeBorder(CK.Palette.hairline, lineWidth: 0.5)
                         )
                         .shadow(color: .black.opacity(0.12), radius: 14, y: 6)
-                        .accessibilityLabel(Text("\(template.name) sample, page \(entry.offset + 1) of \(pages.count)"))
+                        .accessibilityLabel(Text(pageLabel(number: entry.offset + 1, total: pages.count)))
                 }
             }
         }
@@ -113,15 +113,26 @@ struct CKTemplatePreviewSheet: View {
     private var details: some View {
         VStack(spacing: 0) {
             CKHairline()
-            detailRow(String(localized: "Category"), template.category.rawValue)
-            detailRow(String(localized: "Good for"), template.industries.map { $0.rawValue }.joined(separator: ", "))
-            detailRow(String(localized: "Career level"), template.levels.map { $0.rawValue }.joined(separator: ", "))
-            detailRow(String(localized: "Style"), template.designStyle.rawValue)
+            detailRow(String(localized: "Category"), template.category.displayName)
+            detailRow(String(localized: "Good for"), template.industries.map { $0.displayName }.joined(separator: ", "))
+            detailRow(String(localized: "Career level"), template.levels.map { $0.displayName }.joined(separator: ", "))
+            detailRow(String(localized: "Style"), template.designStyle.displayName)
             detailRow(String(localized: "Layout"), layoutDescription)
             detailRow(String(localized: "Photo"), photoDescription)
             detailRow(String(localized: "Fonts"), fontDescription)
-            detailRow(String(localized: "Typical length"), template.typicalPages <= 1 ? String(localized: "1 page") : String(localized: "\(template.typicalPages) pages"))
+            detailRow(String(localized: "Typical length"), typicalLengthText)
         }
+    }
+
+    /// Plural-aware page count ("%lld pages" with one/other forms in the catalog).
+    private var typicalLengthText: String {
+        let pages: Int = max(template.typicalPages, 1)
+        return String(localized: "\(pages) pages")
+    }
+
+    /// VoiceOver label for one rendered page of the sample.
+    private func pageLabel(number: Int, total: Int) -> String {
+        String(localized: "\(template.name) sample, page \(number) of \(total)")
     }
 
     private func detailRow(_ label: String, _ value: String) -> some View {
@@ -131,6 +142,8 @@ struct CKTemplatePreviewSheet: View {
                     .font(CK.Font.callout)
                     .foregroundStyle(CK.Palette.graphite)
                     .frame(width: 112, alignment: .leading)
+                    // Longer labels in German and French wrap to a second line instead of truncating.
+                    .fixedSize(horizontal: false, vertical: true)
                 Text(value)
                     .font(CK.Font.callout)
                     .foregroundStyle(CK.Palette.ink)

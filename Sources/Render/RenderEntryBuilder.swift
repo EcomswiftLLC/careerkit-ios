@@ -16,7 +16,8 @@ extension RenderSectionBuilder {
         let location: String = RenderContent.trimmed(entry.location)
         let extra: String = RenderContent.trimmed(entry.extra)
         let detail: String = RenderContent.trimmed(entry.detail)
-        let dates: String = entry.dateRange(format: style.dateFormat, locale: Locale.current)
+        // Month names and the word for a current role follow the document language, not the device.
+        let dates: String = entry.dateRange(format: style.dateFormat, language: style.language)
         let bullets: [String] = RenderContent.renderableBullets(entry)
 
         let kind: EntryLayout = effectiveEntryLayout

@@ -64,22 +64,22 @@ struct TemplateBrowserView: View {
     private var filterBars: some View {
         VStack(alignment: .leading, spacing: 0) {
             CKFilterChipBar(options: categoryOptions, selection: $filter.category) { (category: TemplateCategory?) -> String in
-                category?.rawValue ?? String(localized: "All")
+                category?.displayName ?? String(localized: "All")
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: CK.Space.s) {
                     CKFilterMenuChip(name: String(localized: "Industry"), options: Industry.allCases, selection: $filter.industry) { (value: Industry) -> String in
-                        value.rawValue
+                        value.displayName
                     }
                     CKFilterMenuChip(name: String(localized: "Level"), options: ProfessionalLevel.allCases, selection: $filter.level) { (value: ProfessionalLevel) -> String in
-                        value.rawValue
+                        value.displayName
                     }
                     CKFilterMenuChip(name: String(localized: "Style"), options: DesignStyle.allCases, selection: $filter.style) { (value: DesignStyle) -> String in
-                        value.rawValue
+                        value.displayName
                     }
                     CKFilterMenuChip(name: String(localized: "Length"), options: CKTemplateFilter.Length.allCases, selection: $filter.length) { (value: CKTemplateFilter.Length) -> String in
-                        value.rawValue
+                        value.displayName
                     }
                     CKToggleChip(name: String(localized: "ATS friendly"), systemImage: "checkmark.seal", isOn: $filter.atsOnly)
                     CKToggleChip(name: String(localized: "With photo"), systemImage: "person.crop.circle", isOn: $filter.photoOnly)
@@ -120,7 +120,7 @@ struct TemplateBrowserView: View {
             ForEach(CKTemplateFilter.grouped(results), id: \.category) { group in
                 VStack(alignment: .leading, spacing: CK.Space.m) {
                     CKSectionHeader(
-                        title: group.category.rawValue,
+                        title: group.category.displayName,
                         subtitle: CKTemplateFilter.summary(for: group.category)
                     )
                     .padding(.horizontal, CK.Space.m)
@@ -137,7 +137,9 @@ struct TemplateBrowserView: View {
         .padding(.horizontal, CK.Space.m)
     }
 
+    /// One plural-aware key ("%lld templates" with one/other forms in the catalog).
     private var resultCountText: String {
-        results.count == 1 ? String(localized: "1 template") : String(localized: "\(results.count) templates")
+        let count: Int = results.count
+        return String(localized: "\(count) templates")
     }
 }

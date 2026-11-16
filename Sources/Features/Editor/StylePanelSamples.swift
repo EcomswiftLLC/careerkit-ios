@@ -457,26 +457,26 @@ enum EdSamples {
         let smallBold: Font = .system(size: 8, weight: .semibold)
         switch style {
         case .commaList:
-            Text("Swift, Figma, SQL, Excel")
+            Text(verbatim: "Swift, Figma, SQL, Excel")
                 .font(small).foregroundStyle(S.ink).lineLimit(2)
         case .pipeList:
-            Text("Swift | Figma | SQL")
+            Text(verbatim: "Swift | Figma | SQL")
                 .font(small).foregroundStyle(S.ink).lineLimit(2)
         case .groupedLines:
             VStack(alignment: .leading, spacing: 2) {
-                (Text("Tools: ").font(smallBold) + Text("Figma, Excel").font(small)).foregroundColor(S.ink)
-                (Text("Code: ").font(smallBold) + Text("Swift, SQL").font(small)).foregroundColor(S.ink)
+                (Text("Tools: ").font(smallBold) + Text(verbatim: "Figma, Excel").font(small)).foregroundColor(S.ink)
+                (Text("Code: ").font(smallBold) + Text(verbatim: "Swift, SQL").font(small)).foregroundColor(S.ink)
             }
             .lineLimit(1)
         case .bulletColumns:
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
-                    (Text("• ").foregroundColor(accent) + Text("Swift").foregroundColor(S.ink)).font(small)
-                    (Text("• ").foregroundColor(accent) + Text("SQL").foregroundColor(S.ink)).font(small)
+                    (Text("• ").foregroundColor(accent) + Text(verbatim: "Swift").foregroundColor(S.ink)).font(small)
+                    (Text("• ").foregroundColor(accent) + Text(verbatim: "SQL").foregroundColor(S.ink)).font(small)
                 }
                 HStack(spacing: 6) {
-                    (Text("• ").foregroundColor(accent) + Text("Figma").foregroundColor(S.ink)).font(small)
-                    (Text("• ").foregroundColor(accent) + Text("Excel").foregroundColor(S.ink)).font(small)
+                    (Text("• ").foregroundColor(accent) + Text(verbatim: "Figma").foregroundColor(S.ink)).font(small)
+                    (Text("• ").foregroundColor(accent) + Text(verbatim: "Excel").foregroundColor(S.ink)).font(small)
                 }
             }
         case .pills:

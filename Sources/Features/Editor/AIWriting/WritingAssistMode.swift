@@ -17,11 +17,11 @@ enum WritingAssistMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .improveWording: return "Improve wording"
-        case .makeConcise: return "Make it shorter"
-        case .strongerActionVerbs: return "Stronger action verbs"
-        case .fixGrammar: return "Fix grammar and spelling"
-        case .professionalSummaryFromExperience: return "Summary from my experience"
+        case .improveWording: return String(localized: "Improve wording")
+        case .makeConcise: return String(localized: "Make it shorter")
+        case .strongerActionVerbs: return String(localized: "Stronger action verbs")
+        case .fixGrammar: return String(localized: "Fix grammar and spelling")
+        case .professionalSummaryFromExperience: return String(localized: "Summary from my experience")
         }
     }
 

@@ -44,10 +44,20 @@ enum ExportStrings {
     }
 
     /// Looks `key` (the English source text of a String Catalog entry) up in the strings of `language`.
-    /// English, or a language the app does not have, gives the key back unchanged.
+    /// English, or a language the app does not have, gives the key back unchanged (never the app language).
+    /// Shares the lookup the PDF renderer uses (`DocumentStrings`), so every format writes the same words.
     static func lookup(_ key: String, language: String) -> String {
-        let source: Bundle = bundle(for: language)
-        return source.localizedString(forKey: key, value: key, table: nil)
+        return DocumentStrings.string(key, language: ResumeLanguage.matching(language))
+    }
+
+    /// The document language a file is written in: the one chosen for the document, or the app language.
+    static func documentLanguage(_ source: ExportSource) -> String {
+        switch source {
+        case .resume(let resume, _):
+            return ResumeLanguage.resolved(resume.style.language).rawValue
+        case .coverLetter(let letter, _):
+            return ResumeLanguage.resolved(letter.style.language).rawValue
+        }
     }
 
     /// Shown for a current role in place of an end date: "Present".

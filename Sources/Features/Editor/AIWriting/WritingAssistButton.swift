@@ -51,7 +51,7 @@ struct WritingAssistUndoButton: View {
     let action: () -> Void
 
     var body: some View {
-        EdTextButton(title: "Undo", systemImage: "arrow.uturn.backward", action: action)
+        EdTextButton(title: String(localized: "Undo"), systemImage: "arrow.uturn.backward", action: action)
             .accessibilityLabel("Undo writing help")
             .accessibilityHint("Puts back your text from before the suggestion")
     }

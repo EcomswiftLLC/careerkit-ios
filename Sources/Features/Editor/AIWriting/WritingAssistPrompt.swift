@@ -10,7 +10,7 @@ enum WritingAssistPrompt {
     Rules you must always follow:
     - Keep every fact exactly as written: employers, job titles, schools, names, numbers, dates, skills, tools and achievements.
     - Never invent or add employers, numbers, percentages, amounts, dates, years of experience, skills, tools, certifications or achievements. If a detail is not in the text, leave it out.
-    - Write in the same language as the text. Do not translate.
+    - Write in the same language as the text. Do not translate. When you write a summary from work experience, use the language of that work experience.
     - Output only the rewritten text. No introduction, no explanation, no notes, no quotation marks, no markdown, no headings.
     - When the text has several lines, each line is a separate bullet point. Return separate lines, one per bullet, in the same order, without bullet symbols or numbers.
     - Keep the person's point of view and keep it plain and professional.

@@ -60,21 +60,21 @@ enum WritingAssistFailure: Error, Equatable {
     var message: String {
         switch self {
         case .nothingToRewrite:
-            return "Write something first, then ask for a suggestion."
+            return String(localized: "Write something first, then ask for a suggestion.")
         case .noExperience:
-            return "Add some work experience first, then try again."
+            return String(localized: "Add some work experience first, then try again.")
         case .inputTooLong:
-            return "This text is too long for writing help. Try it on a shorter part."
+            return String(localized: "This text is too long for writing help. Try it on a shorter part.")
         case .unavailable:
-            return "Writing help is not ready on this device right now. Your text is unchanged."
+            return String(localized: "Writing help is not ready on this device right now. Your text is unchanged.")
         case .unsupportedLanguage:
-            return "Writing help does not support this language yet. Your text is unchanged."
+            return String(localized: "Writing help does not support this language yet. Your text is unchanged.")
         case .declined:
-            return "A suggestion could not be made for this text. Your text is unchanged."
+            return String(localized: "A suggestion could not be made for this text. Your text is unchanged.")
         case .addedDetails:
-            return "The suggestion added details that are not in your text, so it was not used."
+            return String(localized: "The suggestion added details that are not in your text, so it was not used.")
         case .emptySuggestion, .suggestionTooLong, .generic:
-            return "A suggestion could not be made this time. Your text is unchanged."
+            return String(localized: "A suggestion could not be made this time. Your text is unchanged.")
         }
     }
 

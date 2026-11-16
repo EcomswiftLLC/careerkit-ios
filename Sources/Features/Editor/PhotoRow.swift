@@ -35,6 +35,11 @@ struct PhotoRow: View {
         TemplateLibrary.all.filter { $0.supportsPhoto }.count
     }
 
+    private var photoNote: String {
+        let count: Int = Self.photoTemplateCount
+        return String(localized: "Your photo shows on the \(count) templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.")
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
             HStack(spacing: CK.Space.m) {
@@ -52,7 +57,7 @@ struct PhotoRow: View {
                             Label("Choose from Files", systemImage: "folder")
                         }
                     } label: {
-                        Text(photoData == nil ? "Add photo" : "Change photo")
+                        Text(photoData == nil ? String(localized: "Add photo") : String(localized: "Change photo"))
                             .font(CK.Font.label)
                             .foregroundStyle(CK.Palette.forest)
                             .frame(minHeight: 44, alignment: .leading)
@@ -60,8 +65,8 @@ struct PhotoRow: View {
                     .disabled(isLoading)
                     .accessibilityHint("Choose a photo from Photos or Files, then crop it")
                     if photoData != nil {
-                        EdTextButton(title: "Adjust crop") { recrop() }
-                        EdTextButton(title: "Remove photo", role: .destructive) { removePhoto() }
+                        EdTextButton(title: String(localized: "Adjust crop")) { recrop() }
+                        EdTextButton(title: String(localized: "Remove photo"), role: .destructive) { removePhoto() }
                             .accessibilityHint("You can undo this right after")
                     }
                 }
@@ -71,7 +76,7 @@ struct PhotoRow: View {
                 undoBar
             }
             if showsNote {
-                Text("Your photo shows on the \(Self.photoTemplateCount) templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.")
+                Text(photoNote)
                     .font(CK.Font.caption)
                     .foregroundStyle(CK.Palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -154,7 +159,7 @@ struct PhotoRow: View {
         .frame(width: 64, height: 64)
         .overlay(Circle().strokeBorder(CK.Palette.hairline, lineWidth: 0.5))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(isLoading ? "Loading photo" : (photoData == nil ? "No photo" : "Profile photo"))
+        .accessibilityLabel(isLoading ? String(localized: "Loading photo") : (photoData == nil ? String(localized: "No photo") : String(localized: "Profile photo")))
     }
 
     // MARK: Actions

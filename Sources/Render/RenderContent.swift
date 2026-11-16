@@ -71,6 +71,19 @@ enum RenderContent {
         return title.isEmpty ? section.kind.defaultTitle : title
     }
 
+    /// The heading as written on a document. `language` is the document language the user chose
+    /// (`StyleOverrides.language`); nil keeps the original behaviour. With a chosen language, an empty title or
+    /// a title that is still a default heading (in any language) is written as the default in that language.
+    /// Titles the user typed are never changed.
+    static func label(for section: ResumeSection, language: ResumeLanguage?) -> String {
+        guard let language else { return label(for: section) }
+        let title: String = trimmed(section.title)
+        if title.isEmpty || DocumentStrings.isDefaultTitle(title, of: section.kind) {
+            return DocumentStrings.defaultTitle(section.kind, language: language)
+        }
+        return title
+    }
+
     /// Strings that must be present in the text of the exported PDF.
     static func expectedStrings(for resume: Resume) -> [String] {
         var out: [String] = []
@@ -80,7 +93,7 @@ enum RenderContent {
             if !t.isEmpty { out.append(t) }
         }
         for section in visibleSections(resume) {
-            out.append(label(for: section))
+            out.append(label(for: section, language: resume.style.language))
             out.append(contentsOf: paragraphs(section.text))
             for entry in renderableEntries(section) {
                 let heading = trimmed(entry.heading)

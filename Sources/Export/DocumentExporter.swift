@@ -7,9 +7,11 @@ enum DocumentExportError: Error {
 /// The one entry point for every export format. Takes the same models and templates as the PDF renderer
 /// and returns the file bytes. Pure and safe to call from a background task.
 enum DocumentExporter {
-    /// `language` sets the fixed words and date formats of text formats; it defaults to the app language.
+    /// `language` sets the fixed words and date formats of text formats; nil uses the document language
+    /// (`StyleOverrides.language`, which itself defaults to the app language), the same as the PDF.
     static func export(_ source: ExportSource, as format: DocumentExportFormat, date: Date = Date(),
-                       language: String = ExportStrings.currentLanguage) throws -> Data {
+                       language chosen: String? = nil) throws -> Data {
+        let language: String = chosen ?? ExportStrings.documentLanguage(source)
         let data: Data
         switch format {
         case .pdf:

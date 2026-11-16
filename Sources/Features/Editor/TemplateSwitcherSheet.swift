@@ -70,9 +70,9 @@ struct TemplateSwitcherSheet: View {
     private var filterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: CK.Space.s) {
-                chip(title: "All", selected: category == nil) { category = nil }
+                chip(title: String(localized: "All"), selected: category == nil) { category = nil }
                 ForEach(TemplateCategory.allCases) { item in
-                    chip(title: item.rawValue, selected: category == item) { category = item }
+                    chip(title: item.displayName, selected: category == item) { category = item }
                 }
             }
         }
@@ -115,7 +115,9 @@ struct TemplateSwitcherSheet: View {
                     Text(template.name)
                         .ckHeadlineFont(15)
                         .foregroundStyle(CK.Palette.ink)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
+                        .multilineTextAlignment(.leading)
                     if isCurrent {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 13))
@@ -146,7 +148,7 @@ struct TemplateSwitcherSheet: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(cardLabel(template)))
-        .accessibilityValue(isCurrent ? "Current template" : "")
+        .accessibilityValue(isCurrent ? String(localized: "Current template") : "")
         .accessibilityAddTraits(isCurrent ? .isSelected : [])
     }
 

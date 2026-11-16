@@ -40,7 +40,7 @@ final class RenderSectionBuilder {
     // MARK: Section assembly
 
     func sectionItems(_ section: ResumeSection) -> [RenderFlowItem] {
-        let label: String = RenderContent.label(for: section)
+        let label: String = RenderContent.label(for: section, language: style.languageChoice)
         if effectiveHeadingStyle == .sideLabel {
             return sideLabelSection(section, label: label)
         }
@@ -85,9 +85,11 @@ final class RenderSectionBuilder {
 
     private func headingAttributed(_ label: String, kind: SectionHeadingStyle, sizeScale: CGFloat = 1) -> NSAttributedString {
         // An explicit user choice wins over the capitals a heading style normally uses.
-        let upper: Bool = style.headingCaseOverride ?? (kind == .uppercaseRule || kind == .boxedLabel || kind == .fullBar || style.uppercaseHeadings)
+        // Chinese and Japanese have no capitals and are never letter-spaced (RenderText also drops the kern).
+        let cjk: Bool = RenderScript.isCJK(label)
+        let upper: Bool = !cjk && (style.headingCaseOverride ?? (kind == .uppercaseRule || kind == .boxedLabel || kind == .fullBar || style.uppercaseHeadings))
         let font: UIFont = style.headingFont(size: style.headingSize * sizeScale, bold: true)
-        let kern: CGFloat = (upper || kind == .smallCapsAccent) ? style.headingKern * sizeScale : 0
+        let kern: CGFloat = !cjk && (upper || kind == .smallCapsAccent) ? style.headingKern * sizeScale : 0
         let color: UIColor
         switch kind {
         case .uppercaseRule, .smallCapsAccent, .dottedRule, .sideLabel, .centeredRule:
@@ -100,10 +102,10 @@ final class RenderSectionBuilder {
             color = bandTextColor
         }
         let base = RenderTextStyle(font: font, color: color, leading: 1.0, alignment: .natural, kern: kern)
-        if kind == .smallCapsAccent && style.headingCaseOverride != false {
+        if kind == .smallCapsAccent && style.headingCaseOverride != false && !cjk {
             return RenderText.smallCaps(label, base)
         }
-        return RenderText.attributed(upper ? label.uppercased() : label, base)
+        return RenderText.attributed(upper ? RenderScript.uppercased(label, language: style.language) : label, base)
     }
 
     func headingItem(label: String, spaceBefore: CGFloat) -> RenderFlowItem {
@@ -292,7 +294,10 @@ final class RenderSectionBuilder {
         let kinds: [SectionKind] = template.mainSections + template.sidebarSections
         var widest: CGFloat = 0
         for kind in kinds {
-            widest = max(widest, widestWord(of: kind.defaultTitle, sizeScale: 1))
+            // Default titles in the document language when one is chosen, so a German document sizes its
+            // gutter for "Berufserfahrung" even on an English device.
+            let title: String = style.languageChoice.map { DocumentStrings.defaultTitle(kind, language: $0) } ?? kind.defaultTitle
+            widest = max(widest, widestWord(of: title, sizeScale: 1))
         }
         let floorWidth: CGFloat = max(width * 0.18, 76)
         let ceiling: CGFloat = max(floorWidth, width * 0.32)
@@ -313,8 +318,9 @@ final class RenderSectionBuilder {
 
         // A renamed section can hold a word longer than the gutter: shrink that label (not the gutter)
         // until its longest word fits, down to 70 percent.
+        // Chinese and Japanese labels can break between any two characters, so they never need shrinking.
         var scale: CGFloat = 1
-        let longest: CGFloat = widestWord(of: label, sizeScale: 1)
+        let longest: CGFloat = RenderScript.isCJK(label) ? 0 : widestWord(of: label, sizeScale: 1)
         if longest > labelWidth {
             scale = max(0.7, labelWidth / longest)
         }

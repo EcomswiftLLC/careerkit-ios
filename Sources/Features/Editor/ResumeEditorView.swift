@@ -27,9 +27,9 @@ struct ResumeEditorView: View {
             if let resume = Binding($draft.doc) {
                 editor(resume)
             } else if draft.isLoaded {
-                EdUnavailableView(title: "This resume is no longer available",
-                                  message: "It may have been deleted. Go back to My Resumes to choose another.",
-                                  backTitle: "Back",
+                EdUnavailableView(title: String(localized: "This resume is no longer available"),
+                                  message: String(localized: "It may have been deleted. Go back to My Resumes to choose another."),
+                                  backTitle: String(localized: "Back"),
                                   onBack: { dismiss() })
             } else {
                 CK.Palette.ivory.ignoresSafeArea()
@@ -98,14 +98,14 @@ struct ResumeEditorView: View {
     }
 
     private func preview(_ resume: Binding<Resume>) -> some View {
-        PreviewPane(renderer: draft.renderer, accessibilityName: "Live preview of \(resume.wrappedValue.title)")
+        PreviewPane(renderer: draft.renderer, accessibilityName: String(localized: "Live preview of \(resume.wrappedValue.title)"))
     }
 
     private func editScroll(_ resume: Binding<Resume>) -> some View {
         ScrollView {
             VStack(spacing: CK.Space.m) {
                 titleField(resume)
-                EdDisclosureCard(title: "Personal information",
+                EdDisclosureCard(title: String(localized: "Personal information"),
                                  subtitle: personalSummary(resume.wrappedValue.personal),
                                  systemImage: "person",
                                  isExpanded: expandedBinding("personal")) {
@@ -113,7 +113,7 @@ struct ResumeEditorView: View {
                 }
                 ForEach(resume.sections) { $section in
                     EdDisclosureCard(title: section.title,
-                                     subtitle: section.isVisible ? SectionOps.summaryLine(for: section) : "Hidden from the document",
+                                     subtitle: section.isVisible ? SectionOps.summaryLine(for: section) : String(localized: "Hidden from the document"),
                                      systemImage: section.kind.systemImage,
                                      dimmed: !section.isVisible,
                                      isExpanded: expandedBinding(section.id.uuidString)) {
@@ -154,7 +154,7 @@ struct ResumeEditorView: View {
 
     private func personalSummary(_ personal: PersonalInfo) -> String {
         let name = personal.fullName.trimmingCharacters(in: .whitespaces)
-        if name.isEmpty { return "Add your name and contact details" }
+        if name.isEmpty { return String(localized: "Add your name and contact details") }
         return personal.professionalTitle.isEmpty ? name : "\(name), \(personal.professionalTitle)"
     }
 
@@ -173,7 +173,7 @@ struct ResumeEditorView: View {
     private func toolbarContent(_ resume: Binding<Resume>) -> some ToolbarContent {
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
-                Text(resume.wrappedValue.title.isEmpty ? "Untitled resume" : resume.wrappedValue.title)
+                Text(resume.wrappedValue.title.isEmpty ? String(localized: "Untitled resume") : resume.wrappedValue.title)
                     .ckHeadlineFont(16)
                     .foregroundStyle(CK.Palette.ink)
                     .lineLimit(1)
@@ -196,13 +196,17 @@ struct ResumeEditorView: View {
     /// A solid bar that runs to the screen edge, so nothing scrolls into view behind the labels.
     private var bottomToolbar: some View {
         HStack {
-            toolButton("Template", symbol: "rectangle.on.rectangle") { open(.templates) }
+            toolButton(String(localized: "Template"), symbol: "rectangle.on.rectangle",
+                       hint: String(localized: "Choose another template. Your content stays the same.")) { open(.templates) }
             Spacer()
-            toolButton("Style", symbol: "paintpalette") { open(.style) }
+            toolButton(String(localized: "Style"), symbol: "paintpalette",
+                       hint: String(localized: "Change color, fonts, spacing and layout.")) { open(.style) }
             Spacer()
-            toolButton("Sections", symbol: "list.bullet.rectangle") { open(.sections) }
+            toolButton(String(localized: "Sections"), symbol: "list.bullet.rectangle",
+                       hint: String(localized: "Add, hide or reorder sections.")) { open(.sections) }
             Spacer()
-            toolButton("ATS check", symbol: "checkmark.shield") { open(.ats) }
+            toolButton(String(localized: "ATS check"), symbol: "checkmark.shield",
+                       hint: String(localized: "Checks how readable the resume is for applicant tracking software.")) { open(.ats) }
         }
         .padding(.horizontal, CK.Space.m)
         .padding(.top, CK.Space.xs)
@@ -210,17 +214,8 @@ struct ResumeEditorView: View {
         .overlay(alignment: .top) { Rectangle().fill(CK.Palette.hairline).frame(height: 0.5) }
     }
 
-    private func toolButton(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
-        EdToolbarButton(title: title, symbol: symbol, hint: toolHint(title), action: action)
-    }
-
-    private func toolHint(_ title: String) -> String {
-        switch title {
-        case "Template": return "Choose another template. Your content stays the same."
-        case "Style": return "Change color, fonts, spacing and layout."
-        case "Sections": return "Add, hide or reorder sections."
-        default: return "Checks how readable the resume is for applicant tracking software."
-        }
+    private func toolButton(_ title: String, symbol: String, hint: String, action: @escaping () -> Void) -> some View {
+        EdToolbarButton(title: title, symbol: symbol, hint: hint, action: action)
     }
 
     /// Template and style changes are easier to judge with the preview in view, so the panel opens over it.

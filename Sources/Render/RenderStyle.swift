@@ -48,6 +48,10 @@ struct RenderStyle {
     var photoScale: CGFloat = 1
     /// True draws a thin accent ring around the photo.
     var photoRing: Bool = false
+    /// The document language the user chose. nil means "same as the app language".
+    var languageChoice: ResumeLanguage? = nil
+    /// The language of the fixed words on the document ("Present", month names, default headings).
+    var language: ResumeLanguage = .en
 
     // MARK: Fonts
 
@@ -166,6 +170,8 @@ struct RenderStyle {
         }
         result.photoScale = CGFloat((overrides.photoSize ?? .medium).scale)
         result.photoRing = overrides.photoBorder == .ring
+        result.languageChoice = overrides.language
+        result.language = ResumeLanguage.resolved(overrides.language)
         return result
     }
 
@@ -206,7 +212,7 @@ struct RenderStyle {
         let body: CGFloat = max(6, CGFloat(letter.baseSize) * scale)
         let nameFactor: CGFloat = clamp(overrides.nameScale, StyleOverrides.nameScaleRange.lowerBound, StyleOverrides.nameScaleRange.upperBound)
         let paragraphFactor: CGFloat = clamp(overrides.sectionSpacing, StyleOverrides.spacingRange.lowerBound, StyleOverrides.spacingRange.upperBound)
-        return RenderStyle(pageSize: pageSize,
+        var result = RenderStyle(pageSize: pageSize,
                            marginTop: top,
                            marginSide: side,
                            marginBottom: bottom,
@@ -228,6 +234,9 @@ struct RenderStyle {
                            sidebarFill: RenderColors.mix(UIColor.white, accent, 0.10),
                            sidebarInk: ink,
                            headerFill: headerFill)
+        result.languageChoice = overrides.language
+        result.language = ResumeLanguage.resolved(overrides.language)
+        return result
     }
 }
 

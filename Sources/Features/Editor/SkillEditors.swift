@@ -96,7 +96,7 @@ struct SkillGroupsEditor: View {
             ForEach(Array(section.skillGroups.enumerated()), id: \.element.id) { pair in
                 groupCard(index: pair.offset)
             }
-            EdTextButton(title: isLanguages ? "Add language group" : "Add skill group", systemImage: "plus") {
+            EdTextButton(title: isLanguages ? String(localized: "Add language group") : String(localized: "Add skill group"), systemImage: "plus") {
                 section.skillGroups.append(SkillGroup())
             }
         }
@@ -120,10 +120,10 @@ struct SkillGroupsEditor: View {
         if section.skillGroups.indices.contains(index) {
             VStack(alignment: .leading, spacing: CK.Space.s + 2) {
                 HStack(alignment: .bottom, spacing: 0) {
-                    EdField(label: isLanguages ? "Group name (optional)" : "Group name, for example Tools",
+                    EdField(label: isLanguages ? String(localized: "Group name (optional)") : String(localized: "Group name, for example Tools"),
                             text: nameBinding(index),
-                            prompt: isLanguages ? "Languages" : "Technical")
-                    EdMoreMenu(label: "Group actions") {
+                            prompt: isLanguages ? String(localized: "Languages") : String(localized: "Technical skills"))
+                    EdMoreMenu(label: String(localized: "Group actions")) {
                         Button("Move up", systemImage: "arrow.up") { moveGroup(index, by: -1) }
                             .disabled(index == 0)
                         Button("Move down", systemImage: "arrow.down") { moveGroup(index, by: 1) }
@@ -132,7 +132,7 @@ struct SkillGroupsEditor: View {
                     }
                 }
                 EdTokenListEditor(items: itemsBinding(index),
-                                  prompt: isLanguages ? "Add a language, for example Spanish, fluent" : "Add a skill")
+                                  prompt: isLanguages ? String(localized: "Add a language, for example Spanish, fluent") : String(localized: "Add a skill"))
             }
             .padding(CK.Space.m)
             .background(RoundedRectangle(cornerRadius: CK.Radius.chip + 2, style: .continuous).fill(CK.Palette.ivory))

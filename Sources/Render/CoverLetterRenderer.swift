@@ -85,12 +85,10 @@ final class RenderLetterComposer {
         let paragraphGap: CGFloat = max(6, style.sectionGap)
         let blockGap: CGFloat = max(18, style.sectionGap * 1.8)
 
-        // Date.
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        let dateText: String = formatter.string(from: letter.date)
+        // Date, written in the document language ("16. November 2026", "2026年11月16日").
+        let language: ResumeLanguage = style.language
+        let explicitLanguage: Bool = style.languageChoice != nil
+        let dateText: String = DocumentStrings.letterDate(letter.date, language: language)
         if !dateText.isEmpty {
             let layout = ctx.layout(RenderText.attributed(dateText, bodyStyle(color: style.muted)), width: width, links: [])
             out.append(RenderFlowFactory.text(layout: layout, spaceBefore: hasHeader ? blockGap : 0))
@@ -108,7 +106,7 @@ final class RenderLetterComposer {
         }
 
         // Greeting.
-        let greeting: String = RenderContent.trimmed(letter.effectiveGreeting)
+        let greeting: String = RenderContent.trimmed(letter.effectiveGreeting(language: language, explicit: explicitLanguage))
         if !greeting.isEmpty {
             let layout = ctx.layout(RenderText.attributed(greeting, bodyStyle()), width: width)
             out.append(RenderFlowFactory.text(layout: layout, spaceBefore: out.isEmpty ? 0 : paragraphGap * 1.8, keep: true))
@@ -124,7 +122,7 @@ final class RenderLetterComposer {
         }
 
         // Closing.
-        let signOff: String = RenderContent.trimmed(letter.signOff)
+        let signOff: String = RenderContent.trimmed(letter.effectiveSignOff(language: language, explicit: explicitLanguage))
         let signature: String = RenderContent.trimmed(letter.senderName)
         if !signOff.isEmpty || !signature.isEmpty {
             var closing: [RenderFlowItem] = []

@@ -99,13 +99,13 @@ struct EdBulletEditor: View {
                 row(index)
             }
             HStack {
-                EdTextButton(title: "Add bullet", systemImage: "plus") {
+                EdTextButton(title: String(localized: "Add bullet"), systemImage: "plus") {
                     bullets.append("")
                     focusedIndex = bullets.count - 1
                 }
                 Spacer()
                 if showsExamples {
-                    EdTextButton(title: "Writing examples", systemImage: "text.book.closed", action: onExamples)
+                    EdTextButton(title: String(localized: "Writing examples"), systemImage: "text.book.closed", action: onExamples)
                 }
             }
             if let assistContext, WritingAssist.isAvailable {
@@ -139,7 +139,7 @@ struct EdBulletEditor: View {
                 .lineLimit(1...6)
                 .focused($focusedIndex, equals: index)
                 .frame(minHeight: 36)
-            EdMoreMenu(label: "Bullet actions") {
+            EdMoreMenu(label: String(localized: "Bullet actions")) {
                 Button("Move up", systemImage: "arrow.up") { move(index, by: -1) }
                     .disabled(index == 0)
                 Button("Move down", systemImage: "arrow.down") { move(index, by: 1) }
@@ -202,7 +202,7 @@ struct EdEntryCard: View {
 
     private var title: String {
         let heading = entry.heading.trimmingCharacters(in: .whitespaces)
-        return heading.isEmpty ? "Untitled" : heading
+        return heading.isEmpty ? String(localized: "Untitled") : heading
     }
 
     private var detailLine: String {
@@ -241,8 +241,8 @@ struct EdEntryCard: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(detailLine.isEmpty ? title : "\(title), \(detailLine)")
-            .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
-            EdMoreMenu(label: "Entry actions") {
+            .accessibilityValue(isExpanded ? String(localized: "Expanded") : String(localized: "Collapsed"))
+            EdMoreMenu(label: String(localized: "Entry actions")) {
                 Button("Move up", systemImage: "arrow.up") { onMove(-1) }.disabled(isFirst)
                 Button("Move down", systemImage: "arrow.down") { onMove(1) }.disabled(isLast)
                 Button("Duplicate", systemImage: "plus.square.on.square", action: onDuplicate)
@@ -256,10 +256,10 @@ struct EdEntryCard: View {
             EdField(label: labels.heading, text: $entry.heading)
             EdField(label: labels.subheading, text: $entry.subheading)
             if labels.showsLocation {
-                EdField(label: "Location", text: $entry.location, prompt: "City, country")
+                EdField(label: String(localized: "Location"), text: $entry.location, prompt: String(localized: "City, country"))
             }
             if labels.showsDates {
-                EdMonthYearField(label: "Start", value: $entry.start)
+                EdMonthYearField(label: String(localized: "Start"), value: $entry.start)
                 if let toggleText = labels.currentToggle {
                     Toggle(toggleText, isOn: $entry.isCurrent)
                         .font(CK.Font.callout)
@@ -267,7 +267,7 @@ struct EdEntryCard: View {
                         .frame(minHeight: 44)
                 }
                 if !entry.isCurrent || labels.currentToggle == nil {
-                    EdMonthYearField(label: "End", value: $entry.end)
+                    EdMonthYearField(label: String(localized: "End"), value: $entry.end)
                 }
                 if !MonthYearHelper.isValidRange(start: entry.start, end: entry.isCurrent ? nil : entry.end) {
                     Label("The end date is before the start date.", systemImage: "exclamationmark.triangle")
@@ -275,7 +275,7 @@ struct EdEntryCard: View {
                         .foregroundStyle(CK.Palette.danger)
                 }
             }
-            EdTextArea(label: "Description", text: $entry.detail, prompt: "Optional. A short paragraph about the role or project.", minHeight: 80)
+            EdTextArea(label: String(localized: "Description"), text: $entry.detail, prompt: String(localized: "Optional. A short paragraph about the role or project."), minHeight: 80)
             if labels.showsBullets {
                 EdBulletEditor(bullets: $entry.bullets,
                                showsExamples: labels.offersExamples,
@@ -301,7 +301,7 @@ struct EntriesSectionEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.m) {
             if section.kind == .custom {
-                EdField(label: "Section heading", text: $section.title)
+                EdField(label: String(localized: "Section heading"), text: $section.title)
             }
             ForEach($section.entries) { $entry in
                 let index = section.entries.firstIndex(where: { $0.id == entry.id }) ?? 0

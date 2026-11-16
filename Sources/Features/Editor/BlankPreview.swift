@@ -5,12 +5,12 @@ import Foundation
 enum BlankPreviewMapper {
     static func previewResume(from resume: Resume, now: Date = Date()) -> Resume {
         var copy = resume
-        if copy.personal.fullName.isEmpty { copy.personal.fullName = "Your Name" }
-        if copy.personal.professionalTitle.isEmpty { copy.personal.professionalTitle = "Your professional title" }
+        if copy.personal.fullName.isEmpty { copy.personal.fullName = String(localized: "Your Name") }
+        if copy.personal.professionalTitle.isEmpty { copy.personal.professionalTitle = String(localized: "Your professional title") }
         if copy.personal.email.isEmpty { copy.personal.email = "you@example.com" }
         if copy.personal.phone.isEmpty { copy.personal.phone = "555 010 0100" }
-        if copy.personal.city.isEmpty { copy.personal.city = "City" }
-        if copy.personal.country.isEmpty { copy.personal.country = "Country" }
+        if copy.personal.city.isEmpty { copy.personal.city = String(localized: "City") }
+        if copy.personal.country.isEmpty { copy.personal.country = String(localized: "Country") }
 
         let year = MonthYearHelper.currentYear(now: now)
         for index in copy.sections.indices {
@@ -27,29 +27,29 @@ enum BlankPreviewMapper {
         case .text:
             if section.kind == .summary {
                 result.text = WritingExamples.summaryCategories.first?.items.first
-                    ?? "A short summary of your experience and strengths."
+                    ?? String(localized: "A short summary of your experience and strengths.")
             } else {
-                result.text = "Reading, hiking and volunteering."
+                result.text = String(localized: "Reading, hiking and volunteering.")
             }
         case .entries:
             let labels = EntryLabels.labels(for: section.kind)
             var entry = ResumeEntry()
             entry.heading = labels.heading
             entry.subheading = labels.subheading
-            if labels.showsLocation { entry.location = "City, Country" }
+            if labels.showsLocation { entry.location = String(localized: "City, Country") }
             if labels.showsDates {
                 entry.start = MonthYear(year: year - 3, month: 1)
                 entry.end = MonthYear(year: year - 1, month: 6)
             }
             if labels.showsBullets {
                 entry.bullets = [
-                    "Describe a result you achieved, with a number if you have one.",
-                    "Say what you were responsible for and how it helped the team."
+                    String(localized: "Describe a result you achieved, with a number if you have one."),
+                    String(localized: "Say what you were responsible for and how it helped the team.")
                 ]
             }
             result.entries = [entry]
         case .skillGroups:
-            let items = ["First item", "Second item", "Third item"]
+            let items: [String] = [String(localized: "First item"), String(localized: "Second item"), String(localized: "Third item")]
             if result.skillGroups.isEmpty {
                 result.skillGroups = [SkillGroup(name: "", items: items)]
             } else {

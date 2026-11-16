@@ -11,17 +11,51 @@ enum RenderFonts {
         let safeSize: CGFloat = max(1, size)
         switch choice {
         case .sfPro:
+            // The system font already falls back to PingFang for Chinese.
             return systemFont(size: safeSize, bold: bold, italic: italic, serif: false)
         case .newYork:
-            return systemFont(size: safeSize, bold: bold, italic: italic, serif: true)
+            return withCJKCascade(systemFont(size: safeSize, bold: bold, italic: italic, serif: true), serif: true, bold: bold)
         default:
             if let family = choice.familyName,
                let found = familyFont(family: family, size: safeSize, bold: bold, italic: italic) {
-                return found
+                return withCJKCascade(found, serif: choice.isSerif, bold: bold)
             }
-            return systemFont(size: safeSize, bold: bold, italic: italic, serif: choice.isSerif)
+            return withCJKCascade(systemFont(size: safeSize, bold: bold, italic: italic, serif: choice.isSerif),
+                                  serif: choice.isSerif, bold: bold)
         }
     }
+
+    // MARK: Chinese fallback
+
+    /// Template fonts (Georgia, Didot, Futura...) have no Chinese glyphs. An explicit cascade list makes Core Text
+    /// draw those characters in a matching Chinese face instead of leaving the choice to the system: Songti for
+    /// serif templates when the device has it, PingFang otherwise. Latin text keeps the template font.
+    static func withCJKCascade(_ font: UIFont, serif: Bool, bold: Bool) -> UIFont {
+        let names: [String] = cascadeNames(serif: serif, bold: bold)
+        guard !names.isEmpty else { return font }
+        let cascade: [UIFontDescriptor] = names.map { UIFontDescriptor(fontAttributes: [UIFontDescriptor.AttributeName.name: $0]) }
+        let descriptor: UIFontDescriptor = font.fontDescriptor.addingAttributes([UIFontDescriptor.AttributeName.cascadeList: cascade])
+        return UIFont(descriptor: descriptor, size: font.pointSize)
+    }
+
+    /// Installed Chinese faces in order of preference. Names that are not installed are left out.
+    static func cascadeNames(serif: Bool, bold: Bool) -> [String] {
+        switch (serif, bold) {
+        case (true, true): return cascadeSerifBold
+        case (true, false): return cascadeSerifRegular
+        case (false, true): return cascadeSansBold
+        case (false, false): return cascadeSansRegular
+        }
+    }
+
+    private static func installed(_ names: [String]) -> [String] {
+        return names.filter { UIFont(name: $0, size: 12) != nil }
+    }
+
+    private static let cascadeSansRegular: [String] = installed(["PingFangSC-Regular", "STHeitiSC-Light", "HiraginoSans-W3"])
+    private static let cascadeSansBold: [String] = installed(["PingFangSC-Semibold", "STHeitiSC-Medium", "HiraginoSans-W6"])
+    private static let cascadeSerifRegular: [String] = installed(["STSongti-SC-Regular", "PingFangSC-Regular", "STHeitiSC-Light"])
+    private static let cascadeSerifBold: [String] = installed(["STSongti-SC-Bold", "PingFangSC-Semibold", "STHeitiSC-Medium"])
 
     // MARK: System fonts
 

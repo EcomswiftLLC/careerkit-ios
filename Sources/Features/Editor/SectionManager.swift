@@ -39,7 +39,7 @@ struct EdSectionManagerList: View {
                                 .frame(width: 24)
                                 .foregroundStyle(CK.Palette.forest)
                                 .accessibilityHidden(true)
-                            Text(kind == .custom ? "Custom section" : kind.defaultTitle)
+                            Text(kind == .custom ? String(localized: "Custom section") : kind.defaultTitle)
                                 .font(CK.Font.body)
                                 .foregroundStyle(CK.Palette.ink)
                             Spacer()
@@ -51,7 +51,7 @@ struct EdSectionManagerList: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Add \(kind == .custom ? "custom section" : kind.defaultTitle)")
+                    .accessibilityLabel(kind == .custom ? String(localized: "Add custom section") : String(localized: "Add \(kind.defaultTitle)"))
                 }
             } header: {
                 Text("Add a section")
@@ -76,9 +76,9 @@ struct EdSectionManagerList: View {
 
     private var deleteMessage: String {
         if let id = pendingDelete, let section = sections.first(where: { $0.id == id }) {
-            return "\"\(section.title)\" and everything in it will be removed from this resume. Hide it instead if you may want it later."
+            return String(localized: "\"\(section.title)\" and everything in it will be removed from this resume. Hide it instead if you may want it later.")
         }
-        return "The section and everything in it will be removed."
+        return String(localized: "The section and everything in it will be removed.")
     }
 
     private var deleteBinding: Binding<Bool> {
@@ -102,7 +102,7 @@ struct EdSectionManagerList: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(section.wrappedValue.isVisible ? "Hide \(displayTitle(section.wrappedValue))" : "Show \(displayTitle(section.wrappedValue))")
+            .accessibilityLabel(section.wrappedValue.isVisible ? String(localized: "Hide \(displayTitle(section.wrappedValue))") : String(localized: "Show \(displayTitle(section.wrappedValue))"))
             .modifier(reorderActions(section.wrappedValue))
 
             VStack(alignment: .leading, spacing: 0) {
@@ -114,7 +114,7 @@ struct EdSectionManagerList: View {
                     .accessibilityLabel("Section heading")
                     .accessibilityHint(positionHint(section.wrappedValue))
                     .modifier(reorderActions(section.wrappedValue))
-                Text(section.wrappedValue.isVisible ? SectionOps.summaryLine(for: section.wrappedValue) : "Hidden from the document")
+                Text(section.wrappedValue.isVisible ? SectionOps.summaryLine(for: section.wrappedValue) : String(localized: "Hidden from the document"))
                     .font(CK.Font.caption)
                     .foregroundStyle(CK.Palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -132,7 +132,9 @@ struct EdSectionManagerList: View {
 
     private func positionHint(_ section: ResumeSection) -> String {
         guard let index = sections.firstIndex(where: { $0.id == section.id }) else { return "" }
-        return String(localized: "Position \(index + 1) of \(sections.count). Swipe up or down for move actions.")
+        let number: Int = index + 1
+        let total: Int = sections.count
+        return String(localized: "Position \(number) of \(total). Swipe up or down for move actions.")
     }
 
     private func reorderActions(_ section: ResumeSection) -> EdReorderActions {
@@ -150,9 +152,11 @@ struct EdSectionManagerList: View {
         var copy = sections
         guard ListEditing.move(&copy, index: index, by: offset) else { return }
         let title: String = displayTitle(copy[index + offset])
+        let number: Int = index + offset + 1
+        let total: Int = copy.count
         sections = copy
         UIAccessibility.post(notification: .announcement,
-                             argument: String(localized: "\(title) moved to position \(index + offset + 1) of \(copy.count)"))
+                             argument: String(localized: "\(title) moved to position \(number) of \(total)"))
     }
 }
 

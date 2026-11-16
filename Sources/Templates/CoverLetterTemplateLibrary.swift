@@ -41,8 +41,8 @@ enum CoverLetterTemplateLibrary {
     // MARK: Designs
 
     private static let executive = CoverLetterTemplateSpec(
-        id: "ck.letter.executive", name: "Executive",
-        tagline: "Large name over a fine rule, with contact details on one line.",
+        id: "ck.letter.executive", name: String(localized: "Executive"),
+        tagline: String(localized: "Large name over a fine rule, with contact details on one line."),
         header: .letterhead, headingFont: .baskerville, bodyFont: .charter,
         baseSize: 11, nameSize: 28, lineSpacing: 1.28,
         accentHex: "#1B2A4A", textHex: "#1A1D24", mutedHex: "#545C68", headerFillHex: nil,
@@ -51,8 +51,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let corporate = CoverLetterTemplateSpec(
-        id: "ck.letter.corporate", name: "Corporate",
-        tagline: "Sender block at the top left, set in one sans-serif family.",
+        id: "ck.letter.corporate", name: String(localized: "Corporate"),
+        tagline: String(localized: "Sender block at the top left, set in one sans-serif family."),
         header: .leftBlock, headingFont: .helveticaNeue, bodyFont: .helveticaNeue,
         baseSize: 10.5, nameSize: 22, lineSpacing: 1.26,
         accentHex: "#1D4E89", textHex: "#1B1F27", mutedHex: "#545E6B", headerFillHex: nil,
@@ -61,8 +61,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let classic = CoverLetterTemplateSpec(
-        id: "ck.letter.classic", name: "Classic",
-        tagline: "Centered name and address block in a traditional serif.",
+        id: "ck.letter.classic", name: String(localized: "Classic"),
+        tagline: String(localized: "Centered name and address block in a traditional serif."),
         header: .centered, headingFont: .palatino, bodyFont: .palatino,
         baseSize: 11, nameSize: 26, lineSpacing: 1.3,
         accentHex: "#6E1F2B", textHex: "#221A1C", mutedHex: "#645A5C", headerFillHex: nil,
@@ -71,8 +71,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let minimal = CoverLetterTemplateSpec(
-        id: "ck.letter.minimal", name: "Minimal",
-        tagline: "Sender details aligned to the right, with wide margins.",
+        id: "ck.letter.minimal", name: String(localized: "Minimal"),
+        tagline: String(localized: "Sender details aligned to the right, with wide margins."),
         header: .rightBlock, headingFont: .futura, bodyFont: .avenirNext,
         baseSize: 10.5, nameSize: 24, lineSpacing: 1.3,
         accentHex: "#155E63", textHex: "#16191C", mutedHex: "#596068", headerFillHex: nil,
@@ -81,8 +81,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let elegant = CoverLetterTemplateSpec(
-        id: "ck.letter.elegant", name: "Elegant",
-        tagline: "A thin rosewood rule beside the sender block.",
+        id: "ck.letter.elegant", name: String(localized: "Elegant"),
+        tagline: String(localized: "A thin rosewood rule beside the sender block."),
         header: .sideRule, headingFont: .cochin, bodyFont: .hoeflerText,
         baseSize: 11, nameSize: 26, lineSpacing: 1.3,
         accentHex: "#7B2D45", textHex: "#241C1F", mutedHex: "#62575B", headerFillHex: nil,
@@ -91,8 +91,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let grid = CoverLetterTemplateSpec(
-        id: "ck.letter.grid", name: "Grid",
-        tagline: "Prussian blue band across the top with the name in white.",
+        id: "ck.letter.grid", name: String(localized: "Grid"),
+        tagline: String(localized: "Prussian blue band across the top with the name in white."),
         header: .banner, headingFont: .sfPro, bodyFont: .charter,
         baseSize: 10.5, nameSize: 26, lineSpacing: 1.27,
         accentHex: "#1F4E79", textHex: "#1A1F26", mutedHex: "#56606C", headerFillHex: "#13355B",
@@ -101,8 +101,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let editorial = CoverLetterTemplateSpec(
-        id: "ck.letter.editorial", name: "Editorial",
-        tagline: "High-contrast serif name with a hairline and a single contact line.",
+        id: "ck.letter.editorial", name: String(localized: "Editorial"),
+        tagline: String(localized: "High-contrast serif name with a hairline and a single contact line."),
         header: .letterhead, headingFont: .didot, bodyFont: .georgia,
         baseSize: 10.5, nameSize: 32, lineSpacing: 1.3,
         accentHex: "#8E1B1B", textHex: "#1F1A1B", mutedHex: "#5F5557", headerFillHex: nil,
@@ -111,8 +111,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let academic = CoverLetterTemplateSpec(
-        id: "ck.letter.academic", name: "Academic",
-        tagline: "Left-aligned block set in Charter. Suits longer letters.",
+        id: "ck.letter.academic", name: String(localized: "Academic"),
+        tagline: String(localized: "Left-aligned block set in Charter. Suits longer letters."),
         header: .leftBlock, headingFont: .charter, bodyFont: .charter,
         baseSize: 11, nameSize: 22, lineSpacing: 1.3,
         accentHex: "#5A2E24", textHex: "#1E1B1A", mutedHex: "#5C5652", headerFillHex: nil,
@@ -121,8 +121,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let marketing = CoverLetterTemplateSpec(
-        id: "ck.letter.marketing", name: "Marketing",
-        tagline: "Indigo band with the name, then a clean letter body.",
+        id: "ck.letter.marketing", name: String(localized: "Marketing"),
+        tagline: String(localized: "Indigo band with the name, then a clean letter body."),
         header: .banner, headingFont: .gillSans, bodyFont: .helveticaNeue,
         baseSize: 10.5, nameSize: 28, lineSpacing: 1.27,
         accentHex: "#3A3F8F", textHex: "#1C1E2B", mutedHex: "#575A6B", headerFillHex: "#2B2F6B",
@@ -131,8 +131,8 @@ enum CoverLetterTemplateLibrary {
     )
 
     private static let engineer = CoverLetterTemplateSpec(
-        id: "ck.letter.engineer", name: "Engineer",
-        tagline: "Code blue rule beside a monospaced name, kept short and direct.",
+        id: "ck.letter.engineer", name: String(localized: "Engineer"),
+        tagline: String(localized: "Code blue rule beside a monospaced name, kept short and direct."),
         header: .sideRule, headingFont: .menlo, bodyFont: .sfPro,
         baseSize: 10.5, nameSize: 22, lineSpacing: 1.26,
         accentHex: "#2457A6", textHex: "#171B20", mutedHex: "#566069", headerFillHex: nil,

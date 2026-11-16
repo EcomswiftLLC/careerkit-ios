@@ -1,0 +1,10 @@
+{
+ "_about": "Render area: fixed words the PDF renderer and the exporters write into documents in the document language (DocumentStrings, Sources/Render/DocumentStrings.swift). Keys are the English source text. Words already translated elsewhere are reused from there and not repeated here: Present, Dear %@,, Dear Hiring Manager,, Sincerely, and the default section headings (shell.json).",
+ "Contact": {
+  "es": "Contacto",
+  "fr": "Contact",
+  "de": "Kontakt",
+  "zh-Hans": "联系方式",
+  "_comment": "Resume document content. Heading above the email, phone and links in the sidebar of a two-column resume."
+ }
+}

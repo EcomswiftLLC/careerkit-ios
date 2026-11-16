@@ -76,8 +76,8 @@ enum TemplateLibrary {
     // MARK: Professional
 
     private static let executive = TemplateSpec(
-        id: "ck.professional.executive", name: "Executive", category: .professional,
-        tagline: "Baskerville name between a hairline and an Oxford rule. Centered section titles.",
+        id: "ck.professional.executive", name: String(localized: "Executive"), category: .professional,
+        tagline: String(localized: "Baskerville name between a hairline and an Oxford rule. Centered section titles."),
         industries: [.business, .general], levels: [.senior, .executive], designStyle: .classic,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .doubleRule, headingStyle: .centeredRule,
@@ -92,8 +92,8 @@ enum TemplateLibrary {
     )
 
     private static let corporate = TemplateSpec(
-        id: "ck.professional.corporate", name: "Corporate", category: .professional,
-        tagline: "Cobalt bar across the top edge, contact stacked right and bars beside titles.",
+        id: "ck.professional.corporate", name: String(localized: "Corporate"), category: .professional,
+        tagline: String(localized: "Cobalt bar across the top edge, contact stacked right and bars beside titles."),
         industries: [.business, .general], levels: [.mid, .senior], designStyle: .compact,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .splitContact, headingStyle: .leftBorder,
@@ -109,8 +109,8 @@ enum TemplateLibrary {
     )
 
     private static let modernProfessional = TemplateSpec(
-        id: "ck.professional.modern-professional", name: "Modern Professional", category: .professional,
-        tagline: "Pine side panel on the left, a bar beside the name and room for a photo.",
+        id: "ck.professional.modern-professional", name: String(localized: "Modern Professional"), category: .professional,
+        tagline: String(localized: "Pine side panel on the left, a bar beside the name and room for a photo."),
         industries: [.business, .technology, .general], levels: [.mid], designStyle: .minimal,
         isATSFriendly: false, typicalPages: 1,
         layout: .headerThenTwoColumn, sidebarFraction: 0.3, header: .accentRuleLeft, headingStyle: .underlineAccent,
@@ -126,8 +126,8 @@ enum TemplateLibrary {
     )
 
     private static let classicProfessional = TemplateSpec(
-        id: "ck.professional.classic-professional", name: "Classic Professional", category: .professional,
-        tagline: "Claret Palatino name inside a fine double frame, with dotted leaders.",
+        id: "ck.professional.classic-professional", name: String(localized: "Classic Professional"), category: .professional,
+        tagline: String(localized: "Claret Palatino name inside a fine double frame, with dotted leaders."),
         industries: [.general, .business, .healthcare], levels: [.mid, .senior], designStyle: .classic,
         isATSFriendly: true, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .centeredAccent, headingStyle: .dottedRule,
@@ -143,8 +143,8 @@ enum TemplateLibrary {
     )
 
     private static let businessElite = TemplateSpec(
-        id: "ck.professional.business-elite", name: "Business Elite", category: .professional,
-        tagline: "Midnight navy sidebar, Didot name and gold underlines on each section.",
+        id: "ck.professional.business-elite", name: String(localized: "Business Elite"), category: .professional,
+        tagline: String(localized: "Midnight navy sidebar, Didot name and gold underlines on each section."),
         industries: [.business], levels: [.senior, .executive], designStyle: .bold,
         isATSFriendly: false, typicalPages: 2,
         layout: .sidebarLeft, sidebarFraction: 0.3, header: .sidebarCard, headingStyle: .underlineAccent,
@@ -159,8 +159,8 @@ enum TemplateLibrary {
     )
 
     private static let seniorManagement = TemplateSpec(
-        id: "ck.professional.senior-management", name: "Senior Management", category: .professional,
-        tagline: "Name set flush right over a copper rule, with copper tinted section bands.",
+        id: "ck.professional.senior-management", name: String(localized: "Senior Management"), category: .professional,
+        tagline: String(localized: "Name set flush right over a copper rule, with copper tinted section bands."),
         industries: [.general, .business, .healthcare], levels: [.senior, .executive], designStyle: .classic,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .rightAligned, headingStyle: .tintedBand,
@@ -177,8 +177,8 @@ enum TemplateLibrary {
     // MARK: Modern
 
     private static let modernMinimal = TemplateSpec(
-        id: "ck.modern.modern-minimal", name: "Modern Minimal", category: .modern,
-        tagline: "Oversized Futura name beside the photo, a teal timeline and skill pills.",
+        id: "ck.modern.modern-minimal", name: String(localized: "Modern Minimal"), category: .modern,
+        tagline: String(localized: "Oversized Futura name beside the photo, a teal timeline and skill pills."),
         industries: [.general, .technology, .creative], levels: [.entry, .mid], designStyle: .minimal,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .leftAligned, headingStyle: .smallCapsAccent,
@@ -193,8 +193,8 @@ enum TemplateLibrary {
     )
 
     private static let contemporary = TemplateSpec(
-        id: "ck.modern.contemporary", name: "Contemporary", category: .modern,
-        tagline: "Lavender sidebar with the photo, and plum tinted bands on each section.",
+        id: "ck.modern.contemporary", name: String(localized: "Contemporary"), category: .modern,
+        tagline: String(localized: "Lavender sidebar with the photo, and plum tinted bands on each section."),
         industries: [.technology, .creative, .general], levels: [.mid], designStyle: .bold,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarRight, sidebarFraction: 0.34, header: .sidebarCard, headingStyle: .tintedBand,
@@ -209,8 +209,8 @@ enum TemplateLibrary {
     )
 
     private static let elegant = TemplateSpec(
-        id: "ck.modern.elegant", name: "Elegant", category: .modern,
-        tagline: "Portrait centered over a Cochin name, rosewood titles between hairlines.",
+        id: "ck.modern.elegant", name: String(localized: "Elegant"), category: .modern,
+        tagline: String(localized: "Portrait centered over a Cochin name, rosewood titles between hairlines."),
         industries: [.general, .education, .healthcare], levels: [.mid, .senior], designStyle: .classic,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .centered, headingStyle: .centeredRule,
@@ -226,8 +226,8 @@ enum TemplateLibrary {
     )
 
     private static let cleanLines = TemplateSpec(
-        id: "ck.modern.clean-lines", name: "Clean Lines", category: .modern,
-        tagline: "Name, contact and photo in a soft steel panel, with crisp hairline titles.",
+        id: "ck.modern.clean-lines", name: String(localized: "Clean Lines"), category: .modern,
+        tagline: String(localized: "Name, contact and photo in a soft steel panel, with crisp hairline titles."),
         industries: [.technology, .general, .business], levels: [.entry, .mid], designStyle: .compact,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .tintedCard, headingStyle: .uppercaseRule,
@@ -242,8 +242,8 @@ enum TemplateLibrary {
     )
 
     private static let modernClassic = TemplateSpec(
-        id: "ck.modern.modern-classic", name: "Modern Classic", category: .modern,
-        tagline: "Georgia name on a heavy tobacco rule, Gill Sans text and a linen side panel.",
+        id: "ck.modern.modern-classic", name: String(localized: "Modern Classic"), category: .modern,
+        tagline: String(localized: "Georgia name on a heavy tobacco rule, Gill Sans text and a linen side panel."),
         industries: [.education, .healthcare, .general], levels: [.mid, .senior], designStyle: .classic,
         isATSFriendly: false, typicalPages: 2,
         layout: .headerThenTwoColumn, sidebarFraction: 0.29, header: .ruledMonogram, headingStyle: .smallCapsAccent,
@@ -258,8 +258,8 @@ enum TemplateLibrary {
     )
 
     private static let professionalGrid = TemplateSpec(
-        id: "ck.modern.professional-grid", name: "Professional Grid", category: .modern,
-        tagline: "Prussian blue band with the photo, boxed labels and a skills rail.",
+        id: "ck.modern.professional-grid", name: String(localized: "Professional Grid"), category: .modern,
+        tagline: String(localized: "Prussian blue band with the photo, boxed labels and a skills rail."),
         industries: [.business, .general], levels: [.mid, .senior], designStyle: .bold,
         isATSFriendly: false, typicalPages: 2,
         layout: .headerThenTwoColumn, sidebarFraction: 0.31, header: .banner, headingStyle: .boxedLabel,
@@ -276,8 +276,8 @@ enum TemplateLibrary {
     // MARK: Creative
 
     private static let creativeDesigner = TemplateSpec(
-        id: "ck.creative.creative-designer", name: "Creative Designer", category: .creative,
-        tagline: "Wide aubergine sidebar topped by a full-bleed portrait, with skill pills.",
+        id: "ck.creative.creative-designer", name: String(localized: "Creative Designer"), category: .creative,
+        tagline: String(localized: "Wide aubergine sidebar topped by a full-bleed portrait, with skill pills."),
         industries: [.creative, .technology], levels: [.entry, .mid], designStyle: .bold,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarLeft, sidebarFraction: 0.38, header: .sidebarCard, headingStyle: .accentBar,
@@ -292,8 +292,8 @@ enum TemplateLibrary {
     )
 
     private static let marketingProfessional = TemplateSpec(
-        id: "ck.creative.marketing-professional", name: "Marketing Professional", category: .creative,
-        tagline: "Indigo band with a centered portrait and solid indigo section bars.",
+        id: "ck.creative.marketing-professional", name: String(localized: "Marketing Professional"), category: .creative,
+        tagline: String(localized: "Indigo band with a centered portrait and solid indigo section bars."),
         industries: [.creative, .business], levels: [.mid, .senior], designStyle: .bold,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .bannerCentered, headingStyle: .fullBar,
@@ -308,8 +308,8 @@ enum TemplateLibrary {
     )
 
     private static let visualPortfolio = TemplateSpec(
-        id: "ck.creative.visual-portfolio", name: "Visual Portfolio", category: .creative,
-        tagline: "Projects first, a greige sidebar with the photo and sienna dotted leaders.",
+        id: "ck.creative.visual-portfolio", name: String(localized: "Visual Portfolio"), category: .creative,
+        tagline: String(localized: "Projects first, a greige sidebar with the photo and sienna dotted leaders."),
         industries: [.creative], levels: [.entry, .mid], designStyle: .editorial,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarRight, sidebarFraction: 0.37, header: .sidebarCard, headingStyle: .dottedRule,
@@ -324,8 +324,8 @@ enum TemplateLibrary {
     )
 
     private static let creativeMinimal = TemplateSpec(
-        id: "ck.creative.creative-minimal", name: "Creative Minimal", category: .creative,
-        tagline: "A tall olive initial or your photo beside the name, titles in the margin.",
+        id: "ck.creative.creative-minimal", name: String(localized: "Creative Minimal"), category: .creative,
+        tagline: String(localized: "A tall olive initial or your photo beside the name, titles in the margin."),
         industries: [.creative, .general], levels: [.entry, .mid], designStyle: .minimal,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .initialLetter, headingStyle: .sideLabel,
@@ -340,8 +340,8 @@ enum TemplateLibrary {
     )
 
     private static let editorial = TemplateSpec(
-        id: "ck.creative.editorial", name: "Editorial", category: .creative,
-        tagline: "Crimson top bar, a large Didot name and titles in the margin, like a magazine.",
+        id: "ck.creative.editorial", name: String(localized: "Editorial"), category: .creative,
+        tagline: String(localized: "Crimson top bar, a large Didot name and titles in the margin, like a magazine."),
         industries: [.creative, .general], levels: [.mid, .senior], designStyle: .editorial,
         isATSFriendly: false, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .ruledMonogram, headingStyle: .sideLabel,
@@ -359,8 +359,8 @@ enum TemplateLibrary {
     // MARK: Academic
 
     private static let academicCv = TemplateSpec(
-        id: "ck.academic.academic-cv", name: "Academic CV", category: .academic,
-        tagline: "Spaced capital name between hairlines and heavy rules over dense sections.",
+        id: "ck.academic.academic-cv", name: String(localized: "Academic CV"), category: .academic,
+        tagline: String(localized: "Spaced capital name between hairlines and heavy rules over dense sections."),
         industries: [.academia, .education], levels: [.mid, .senior], designStyle: .classic,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .smallCapsCentered, headingStyle: .ruleAbove,
@@ -375,8 +375,8 @@ enum TemplateLibrary {
     )
 
     private static let researcher = TemplateSpec(
-        id: "ck.academic.researcher", name: "Researcher", category: .academic,
-        tagline: "Initials in a sea green disc, Baskerville titles and an honours rail.",
+        id: "ck.academic.researcher", name: String(localized: "Researcher"), category: .academic,
+        tagline: String(localized: "Initials in a sea green disc, Baskerville titles and an honours rail."),
         industries: [.academia], levels: [.mid, .senior], designStyle: .editorial,
         isATSFriendly: false, typicalPages: 2,
         layout: .headerThenTwoColumn, sidebarFraction: 0.29, header: .monogramBadge, headingStyle: .dottedRule,
@@ -391,8 +391,8 @@ enum TemplateLibrary {
     )
 
     private static let universityGraduate = TemplateSpec(
-        id: "ck.academic.university-graduate", name: "University Graduate", category: .academic,
-        tagline: "Centered Charter name, a violet strip down the page edge, education first.",
+        id: "ck.academic.university-graduate", name: String(localized: "University Graduate"), category: .academic,
+        tagline: String(localized: "Centered Charter name, a violet strip down the page edge, education first."),
         industries: [.general, .academia, .business], levels: [.student, .entry], designStyle: .minimal,
         isATSFriendly: true, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .centered, headingStyle: .accentBar,
@@ -408,8 +408,8 @@ enum TemplateLibrary {
     )
 
     private static let scientificCv = TemplateSpec(
-        id: "ck.academic.scientific-cv", name: "Scientific CV", category: .academic,
-        tagline: "Contact stacked right, titles in a left margin and Georgia for long lists.",
+        id: "ck.academic.scientific-cv", name: String(localized: "Scientific CV"), category: .academic,
+        tagline: String(localized: "Contact stacked right, titles in a left margin and Georgia for long lists."),
         industries: [.academia, .healthcare], levels: [.mid, .senior], designStyle: .editorial,
         isATSFriendly: false, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .splitContact, headingStyle: .sideLabel,
@@ -426,8 +426,8 @@ enum TemplateLibrary {
     // MARK: Entry Level
 
     private static let freshGraduate = TemplateSpec(
-        id: "ck.entry.fresh-graduate", name: "Fresh Graduate", category: .entryLevel,
-        tagline: "Your initials or photo in a green disc, skill pills and friendly underlines.",
+        id: "ck.entry.fresh-graduate", name: String(localized: "Fresh Graduate"), category: .entryLevel,
+        tagline: String(localized: "Your initials or photo in a green disc, skill pills and friendly underlines."),
         industries: [.general, .business], levels: [.entry], designStyle: .classic,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .monogramBadge, headingStyle: .underlineAccent,
@@ -442,8 +442,8 @@ enum TemplateLibrary {
     )
 
     private static let studentResume = TemplateSpec(
-        id: "ck.entry.student-resume", name: "Student Resume", category: .entryLevel,
-        tagline: "Pale sky sidebar for skills and languages, with boxed blue labels.",
+        id: "ck.entry.student-resume", name: String(localized: "Student Resume"), category: .entryLevel,
+        tagline: String(localized: "Pale sky sidebar for skills and languages, with boxed blue labels."),
         industries: [.general, .education], levels: [.student], designStyle: .bold,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarLeft, sidebarFraction: 0.32, header: .sidebarCard, headingStyle: .boxedLabel,
@@ -458,8 +458,8 @@ enum TemplateLibrary {
     )
 
     private static let internshipResume = TemplateSpec(
-        id: "ck.entry.internship-resume", name: "Internship Resume", category: .entryLevel,
-        tagline: "Burnt orange band with the photo, Georgia titles and internships first.",
+        id: "ck.entry.internship-resume", name: String(localized: "Internship Resume"), category: .entryLevel,
+        tagline: String(localized: "Burnt orange band with the photo, Georgia titles and internships first."),
         industries: [.general, .business, .technology], levels: [.student, .entry], designStyle: .minimal,
         isATSFriendly: false, typicalPages: 1,
         layout: .singleColumn, sidebarFraction: 0.3, header: .banner, headingStyle: .plainBold,
@@ -474,8 +474,8 @@ enum TemplateLibrary {
     )
 
     private static let firstJob = TemplateSpec(
-        id: "ck.entry.first-job", name: "First Job", category: .entryLevel,
-        tagline: "Narrow aqua sidebar with the photo and a dotted timeline for first roles.",
+        id: "ck.entry.first-job", name: String(localized: "First Job"), category: .entryLevel,
+        tagline: String(localized: "Narrow aqua sidebar with the photo and a dotted timeline for first roles."),
         industries: [.general], levels: [.student, .entry], designStyle: .minimal,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarLeft, sidebarFraction: 0.28, header: .sidebarCard, headingStyle: .leftBorder,
@@ -492,8 +492,8 @@ enum TemplateLibrary {
     // MARK: Technical
 
     private static let softwareEngineer = TemplateSpec(
-        id: "ck.technical.software-engineer", name: "Software Engineer", category: .technical,
-        tagline: "Menlo name and titles in code blue on cool paper. Projects near the top.",
+        id: "ck.technical.software-engineer", name: String(localized: "Software Engineer"), category: .technical,
+        tagline: String(localized: "Menlo name and titles in code blue on cool paper. Projects near the top."),
         industries: [.technology], levels: [.mid, .senior], designStyle: .compact,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .leftAligned, headingStyle: .uppercaseRule,
@@ -509,8 +509,8 @@ enum TemplateLibrary {
     )
 
     private static let itProfessional = TemplateSpec(
-        id: "ck.technical.it-professional", name: "IT Professional", category: .technical,
-        tagline: "Heavy emerald rule under the name, an emerald foot bar and piped skills.",
+        id: "ck.technical.it-professional", name: String(localized: "IT Professional"), category: .technical,
+        tagline: String(localized: "Heavy emerald rule under the name, an emerald foot bar and piped skills."),
         industries: [.technology, .business], levels: [.mid, .senior], designStyle: .compact,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .ruledMonogram, headingStyle: .underlineAccent,
@@ -526,8 +526,8 @@ enum TemplateLibrary {
     )
 
     private static let dataAnalyst = TemplateSpec(
-        id: "ck.technical.data-analyst", name: "Data Analyst", category: .technical,
-        tagline: "Deep petrol sidebar on the right with the photo, tools and certificates.",
+        id: "ck.technical.data-analyst", name: String(localized: "Data Analyst"), category: .technical,
+        tagline: String(localized: "Deep petrol sidebar on the right with the photo, tools and certificates."),
         industries: [.technology, .business], levels: [.entry, .mid], designStyle: .bold,
         isATSFriendly: false, typicalPages: 1,
         layout: .sidebarRight, sidebarFraction: 0.32, header: .sidebarCard, headingStyle: .uppercaseRule,
@@ -542,8 +542,8 @@ enum TemplateLibrary {
     )
 
     private static let productManager = TemplateSpec(
-        id: "ck.technical.product-manager", name: "Product Manager", category: .technical,
-        tagline: "Amber bar beside a New York name, small caps titles over Avenir text.",
+        id: "ck.technical.product-manager", name: String(localized: "Product Manager"), category: .technical,
+        tagline: String(localized: "Amber bar beside a New York name, small caps titles over Avenir text."),
         industries: [.technology, .business], levels: [.mid, .senior], designStyle: .minimal,
         isATSFriendly: true, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .accentRuleLeft, headingStyle: .smallCapsAccent,
@@ -558,8 +558,8 @@ enum TemplateLibrary {
     )
 
     private static let projectManager = TemplateSpec(
-        id: "ck.technical.project-manager", name: "Project Manager", category: .technical,
-        tagline: "A tall petrol initial or your photo, and a delivery timeline with dots.",
+        id: "ck.technical.project-manager", name: String(localized: "Project Manager"), category: .technical,
+        tagline: String(localized: "A tall petrol initial or your photo, and a delivery timeline with dots."),
         industries: [.business, .technology, .general], levels: [.mid, .senior], designStyle: .classic,
         isATSFriendly: false, typicalPages: 2,
         layout: .singleColumn, sidebarFraction: 0.3, header: .initialLetter, headingStyle: .leftBorder,

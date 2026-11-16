@@ -132,8 +132,8 @@ struct EdDisclosureCard<Accessory: View, Content: View>: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(subtitle.isEmpty ? title : "\(title), \(subtitle)")
-                .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
-                .accessibilityHint(isExpanded ? "Hides the fields" : "Shows the fields")
+                .accessibilityValue(isExpanded ? String(localized: "Expanded") : String(localized: "Collapsed"))
+                .accessibilityHint(isExpanded ? String(localized: "Hides the fields") : String(localized: "Shows the fields"))
                 .accessibilityAddTraits(.isHeader)
                 accessory()
                     .padding(.trailing, CK.Space.s)
@@ -190,7 +190,7 @@ struct EdTextButton: View {
 
 /// Ellipsis menu button with a 44 pt target.
 struct EdMoreMenu<MenuContent: View>: View {
-    var label: String = "More actions"
+    var label: String = String(localized: "More actions")
     @ViewBuilder var content: () -> MenuContent
 
     var body: some View {

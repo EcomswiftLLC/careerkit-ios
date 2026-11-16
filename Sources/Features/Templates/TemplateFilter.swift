@@ -6,6 +6,14 @@ struct CKTemplateFilter: Equatable {
         case onePage = "One page"
         case multiPage = "Multi page"
         var id: String { rawValue }
+
+        /// Localized label for the filter menu.
+        var displayName: String {
+            switch self {
+            case .onePage: return String(localized: "One page")
+            case .multiPage: return String(localized: "Multi page")
+            }
+        }
     }
 
     var query: String = ""
@@ -36,8 +44,7 @@ struct CKTemplateFilter: Equatable {
     }
 
     func apply(to templates: [TemplateSpec]) -> [TemplateSpec] {
-        let tokens: [String] = trimmedQuery
-            .lowercased()
+        let tokens: [String] = CKTemplateFilter.fold(trimmedQuery)
             .split(whereSeparator: { $0.isWhitespace })
             .map { String($0) }
 
@@ -62,19 +69,37 @@ struct CKTemplateFilter: Equatable {
         }
     }
 
-    /// Lower-cased text a search query is matched against.
+    /// Lower-cased text a search query is matched against. Holds the localized words and the English
+    /// raw values, so a search works in the app language and in English.
+    /// `name` and `tagline` are already localized by the template library.
     static func searchText(for template: TemplateSpec) -> String {
         var parts: [String] = [
             template.name,
             template.tagline,
+            template.category.displayName,
             template.category.rawValue,
+            template.designStyle.displayName,
             template.designStyle.rawValue
         ]
+        parts.append(contentsOf: template.industries.map { $0.displayName })
         parts.append(contentsOf: template.industries.map { $0.rawValue })
+        parts.append(contentsOf: template.levels.map { $0.displayName })
         parts.append(contentsOf: template.levels.map { $0.rawValue })
-        if template.isATSFriendly { parts.append("ats friendly") }
-        if template.supportsPhoto { parts.append("photo picture") }
-        return parts.joined(separator: " ").lowercased()
+        // English search words stay as they are (not shown anywhere), the localized badge words are added.
+        if template.isATSFriendly {
+            parts.append("ats friendly")
+            parts.append(String(localized: "ATS friendly"))
+        }
+        if template.supportsPhoto {
+            parts.append("photo picture")
+            parts.append(String(localized: "Photo"))
+        }
+        return fold(parts.joined(separator: " "))
+    }
+
+    /// Lower case without accents, so "tecnico" finds "Técnico" and "modele" finds "Modèle".
+    static func fold(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: nil).lowercased()
     }
 
     /// Groups templates by category in the enum's order, skipping empty groups.

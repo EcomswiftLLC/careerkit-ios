@@ -54,8 +54,8 @@ struct EdStyleGroup<Content: View>: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(title), \(summary)")
-                .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
-                .accessibilityHint(isExpanded ? "Hides the options" : "Shows the options")
+                .accessibilityValue(isExpanded ? String(localized: "Expanded") : String(localized: "Collapsed"))
+                .accessibilityHint(isExpanded ? String(localized: "Hides the options") : String(localized: "Shows the options"))
 
                 if isModified {
                     Button(action: onReset) {
@@ -68,7 +68,7 @@ struct EdStyleGroup<Content: View>: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.trailing, CK.Space.s)
-                    .accessibilityLabel("Reset \(title.lowercased()) to template")
+                    .accessibilityLabel(String(localized: "Reset \(title) to template"))
                 }
             }
             if isExpanded {
@@ -166,7 +166,7 @@ struct EdSampleChip<Sample: View>: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
-        .accessibilityValue(isTemplateChoice ? "Template default" : "")
+        .accessibilityValue(isTemplateChoice ? String(localized: "Template default") : "")
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : [.isButton])
     }
 }
@@ -235,7 +235,7 @@ struct EdChoiceChip: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityText.isEmpty ? title : accessibilityText)
-        .accessibilityValue(isTemplateChoice ? "Template default" : "")
+        .accessibilityValue(isTemplateChoice ? String(localized: "Template default") : "")
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : [.isButton])
     }
 }
