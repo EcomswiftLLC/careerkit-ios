@@ -163,7 +163,9 @@ final class TemplateSampleContentTests: XCTestCase {
             if template.typicalPages == 1 {
                 onePage.append(words)
                 XCTAssertLessThanOrEqual(words, 560, "\(template.name) has too much text for one page")
-                XCTAssertGreaterThanOrEqual(words, 220, "\(template.name) has too little text for one page")
+                // A large centered portrait (photo templates) leaves less room, so the sample fills the page with fewer words.
+                let minimum = template.photo == .none ? 220 : 180
+                XCTAssertGreaterThanOrEqual(words, minimum, "\(template.name) has too little text for one page")
             } else {
                 twoPage.append(words)
                 XCTAssertGreaterThanOrEqual(words, 400, "\(template.name) has too little text for two pages")
