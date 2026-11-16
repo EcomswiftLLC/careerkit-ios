@@ -39,7 +39,11 @@ final class RenderCanvas {
 
     func addLink(_ url: URL, rect: CGRect) {
         guard let context = pdfContext, rect.width > 0, rect.height > 0 else { return }
-        context.setURL(url, for: rect)
+        // Link annotations are stored in PDF page space (origin at the bottom left), while all drawing here
+        // uses UIKit space (origin at the top left), so the rectangle has to be flipped.
+        let pageHeight = context.pdfContextBounds.height
+        let flipped = CGRect(x: rect.minX, y: pageHeight - rect.maxY, width: rect.width, height: rect.height)
+        context.setURL(url, for: flipped)
     }
 }
 
