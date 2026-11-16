@@ -1,0 +1,3 @@
+{
+ "industry.education": {"_comment": "Industry filter value (field of work), not the resume section. Own key so it can differ from the Education section heading.", "en": "Education", "es": "Educación", "fr": "Enseignement", "de": "Bildung", "zh-Hans": "教育"}
+}

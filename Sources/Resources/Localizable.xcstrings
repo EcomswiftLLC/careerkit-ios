@@ -153,7 +153,32 @@
     },
     "%@ The document has %lld.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Das Dokument hat %lld."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ El documento tiene %lld."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Le document compte %lld."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 文档共有 %lld。"
+          }
+        }
+      }
     },
     "%@ and %@, %@ size": {
       "comment": "Style panel summary: heading font, body font, text size percentage (e.g. 100%).",
@@ -307,11 +332,61 @@
     },
     "%@ more items were not found.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ weitere Elemente wurden nicht gefunden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontraron %@ elementos más."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ autres éléments sont introuvables."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "另有 %@ 项未找到。"
+          }
+        }
+      }
     },
     "%@ moved to position %lld of %@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ an Position %lld von %@ verschoben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ se movió a la posición %lld de %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ déplacé en position %lld sur %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已移到第 %lld 位，共 %@ 位"
+          }
+        }
+      }
     },
     "%@ moved to position %lld of %lld": {
       "comment": "VoiceOver announcement after reordering a section.",
@@ -345,15 +420,126 @@
     },
     "%@ pages": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ Seite"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ Seiten"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ página"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ páginas"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ page"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ pages"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@页"
+          }
+        }
+      }
     },
     "%@ percent": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Prozent"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ por ciento"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pour cent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "百分之%@"
+          }
+        }
+      }
     },
     "%@ percent complete": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zu %@ Prozent fertig"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "completado al %@ por ciento"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "terminé à %@ pour cent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成百分之%@"
+          }
+        }
+      }
     },
     "%@ resume": {
       "comment": "Default title of a new resume. %@ is the template name, e.g. Executive.",
@@ -387,7 +573,32 @@
     },
     "%@ sample, page %@ of %@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beispiel %@, Seite %@ von %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejemplo de %@, página %@ de %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exemple %@, page %@ sur %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 示例，第 %@ 页，共 %@ 页"
+          }
+        }
+      }
     },
     "%@ sample, page %lld of %lld": {
       "comment": "VoiceOver label of a rendered sample page. %@ is the template name.",
@@ -511,7 +722,68 @@
     },
     "%@ templates": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ Vorlage"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ Vorlagen"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ plantilla"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ plantillas"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ modèle"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%@ modèles"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 个模板"
+          }
+        }
+      }
     },
     "%@ will not be added.": {
       "comment": "The placeholder is a section title.",
@@ -845,7 +1117,32 @@
     },
     "%@: first %@, second %@%@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: erster %@, zweiter %@%@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: primero %@, segundo %@%@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ : premier %@, second %@%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@：第一个 %@，第二个 %@%@"
+          }
+        }
+      }
     },
     "%@: first %@, second %@, different": {
       "comment": "My Resumes > Compare versions. Same as above when the values differ.",
@@ -2401,11 +2698,61 @@
     },
     "1 page": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Seite"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 página"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 页"
+          }
+        }
+      }
     },
     "1 template": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Vorlage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 plantilla"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 modèle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 个模板"
+          }
+        }
+      }
     },
     "30 designs, all free": {
       "comment": "Home",
@@ -2967,7 +3314,32 @@
     },
     "Aa": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aa"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aa"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aa"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aa"
+          }
+        }
+      }
     },
     "About": {
       "comment": "Profile",
@@ -12246,7 +12618,32 @@
     },
     "Excel": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excel"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excel"
+          }
+        }
+      }
     },
     "Executive": {
       "comment": "Resume and cover letter template name, and career level filter value.",
@@ -12667,11 +13064,61 @@
     },
     "Figma": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma"
+          }
+        }
+      }
     },
     "Figma, Excel": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma, Excel"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma, Excel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma, Excel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Figma、Excel"
+          }
+        }
+      }
     },
     "File type": {
       "comment": "Export sheet",
@@ -20353,7 +20800,32 @@
     },
     "Not found in the PDF text: %@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht im PDF-Text gefunden: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró en el texto del PDF: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introuvable dans le texte du PDF : %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 PDF 文本中未找到：%@"
+          }
+        }
+      }
     },
     "Not found in your resume": {
       "extractionState": "manual",
@@ -20713,7 +21185,32 @@
     },
     "OK": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
+          }
+        }
+      }
     },
     "On-device writing help": {
       "comment": "Profile",
@@ -21574,19 +22071,119 @@
     },
     "Page %@ of %@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite %@ von %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Página %@ de %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page %@ sur %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第%@页，共%@页"
+          }
+        }
+      }
     },
     "Page %lld has no text.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite %lld enthält keinen Text."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La página %lld no tiene texto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La page %lld ne contient aucun texte."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 页没有文字。"
+          }
+        }
+      }
     },
     "Page %lld is not %@ size.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite %lld hat nicht das Format %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La página %lld no tiene el tamaño %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La page %lld n’est pas au format %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 页不是 %@ 尺寸。"
+          }
+        }
+      }
     },
     "Page %lld of %@": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite %lld von %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Página %lld de %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page %lld sur %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第%lld页，共%@页"
+          }
+        }
+      }
     },
     "Page %lld of %lld": {
       "comment": "Document preview; Onboarding",
@@ -22735,7 +23332,32 @@
     },
     "Position %lld of %@. Swipe up or down for move actions.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position %lld von %@. Zum Verschieben nach oben oder unten wischen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posición %lld de %@. Desliza hacia arriba o abajo para moverla."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position %lld sur %@. Balayez vers le haut ou le bas pour la déplacer."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 位，共 %@ 位。上下轻扫可移动。"
+          }
+        }
+      }
     },
     "Position %lld of %lld. Swipe up or down for move actions.": {
       "extractionState": "manual",
@@ -25645,7 +26267,32 @@
     },
     "SQL": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQL"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQL"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQL"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQL"
+          }
+        }
+      }
     },
     "Sage": {
       "comment": "Color swatch name.",
@@ -29344,19 +29991,119 @@
     },
     "Swift": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift"
+          }
+        }
+      }
     },
     "Swift | Figma | SQL": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift | Figma | SQL"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift | Figma | SQL"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift | Figma | SQL"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift | Figma | SQL"
+          }
+        }
+      }
     },
     "Swift, Figma, SQL, Excel": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, Figma, SQL, Excel"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, Figma, SQL, Excel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, Figma, SQL, Excel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift、Figma、SQL、Excel"
+          }
+        }
+      }
     },
     "Swift, SQL": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, SQL"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, SQL"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift, SQL"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swift、SQL"
+          }
+        }
+      }
     },
     "Switching templates changes the look only. Your text stays as it is.": {
       "comment": "Cover letter template picker",
@@ -30569,19 +31316,119 @@
     },
     "The PDF could not be opened.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das PDF konnte nicht geöffnet werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo abrir el PDF."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’ouvrir le PDF."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法打开该 PDF。"
+          }
+        }
+      }
     },
     "The PDF has %lld pages but %@ were expected.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das PDF hat %lld Seiten, erwartet wurden %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El PDF tiene %lld páginas, pero se esperaban %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le PDF compte %lld pages, mais %@ étaient attendues."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该 PDF 有 %lld 页，但预期为 %@ 页。"
+          }
+        }
+      }
     },
     "The PDF has no pages.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das PDF enthält keine Seiten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El PDF no tiene páginas."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le PDF ne contient aucune page."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "该 PDF 没有页面。"
+          }
+        }
+      }
     },
     "The PDF text contains characters that could not be read.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der PDF-Text enthält Zeichen, die nicht gelesen werden konnten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El texto del PDF contiene caracteres que no se pudieron leer."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le texte du PDF contient des caractères illisibles."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PDF 文本中包含无法读取的字符。"
+          }
+        }
+      }
     },
     "The address \"%@\" does not look complete. Make sure it has a name, an @ sign and a domain.": {
       "extractionState": "manual",
@@ -31075,7 +31922,32 @@
     },
     "The photo only appears on templates that have a photo area. Some employers prefer resumes without one.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Foto erscheint nur bei Vorlagen mit Fotobereich. Manche Arbeitgeber bevorzugen Lebensläufe ohne Foto."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La foto solo aparece en las plantillas que tienen un área de foto. Algunos empleadores prefieren currículums sin ella."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La photo n’apparaît que sur les modèles dotés d’une zone photo. Certains employeurs préfèrent les CV sans photo."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "照片仅会显示在带有照片区域的模板上。有些雇主更倾向于不带照片的简历。"
+          }
+        }
+      }
     },
     "The section and everything in it will be removed.": {
       "extractionState": "manual",
@@ -36252,7 +37124,32 @@
     },
     "Your photo shows on the %@ templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ihr Foto erscheint in den %@ Vorlagen mit der Markierung Foto. Vorlagen ohne Fotobereich blenden es aus. In manchen Ländern bevorzugen Arbeitgeber Lebensläufe ohne Foto."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu foto aparece en las %@ plantillas marcadas con Foto. Las plantillas sin espacio para foto la mantienen oculta. En algunos países, las empresas prefieren currículums sin foto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre photo apparaît sur les %@ modèles marqués Photo. Les modèles sans emplacement photo la masquent. Dans certains pays, les employeurs préfèrent les CV sans photo."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的照片会显示在标有“照片”的 %@ 个模板中。没有照片区域的模板会隐藏照片。在一些国家，雇主更喜欢不带照片的简历。"
+          }
+        }
+      }
     },
     "Your photo shows on the %lld templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.": {
       "extractionState": "manual",
@@ -36547,7 +37444,32 @@
     },
     "Zoom %@ percent": {
       "extractionState": "manual",
-      "localizations": {}
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom %@ Prozent"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom al %@ por ciento"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom à %@ pour cent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缩放百分之 %@"
+          }
+        }
+      }
     },
     "Zoom %lld percent": {
       "comment": "VoiceOver value of the crop area.",
@@ -36698,18 +37620,6 @@
           }
         }
       }
-    },
-    "arrow.left.and.right": {
-      "extractionState": "manual",
-      "localizations": {}
-    },
-    "chevron.left": {
-      "extractionState": "manual",
-      "localizations": {}
-    },
-    "chevron.right": {
-      "extractionState": "manual",
-      "localizations": {}
     },
     "copy": {
       "comment": "Backup and restore. Suffix added to the title of a duplicated document: 'Design CV copy'. One word, lower case where natural.",
@@ -36897,10 +37807,6 @@
         }
       }
     },
-    "minus.magnifyingglass": {
-      "extractionState": "manual",
-      "localizations": {}
-    },
     "most complete": {
       "comment": "My Resumes sort menu. Used in '3 resumes, sorted by most complete'.",
       "extractionState": "manual",
@@ -36960,10 +37866,6 @@
           }
         }
       }
-    },
-    "plus.magnifyingglass": {
-      "extractionState": "manual",
-      "localizations": {}
     },
     "restored": {
       "comment": "Backup and restore. Marker in parentheses on a restored copy: 'CV (restored)'.",

@@ -1,0 +1,86 @@
+{
+ "%@ moved to position %lld of %@": {
+  "es": "%@ se movió a la posición %lld de %@",
+  "fr": "%@ déplacé en position %lld sur %@",
+  "de": "%@ an Position %lld von %@ verschoben",
+  "zh-Hans": "%@ 已移到第 %lld 位，共 %@ 位"
+ },
+ "%@ pages": {
+  "es": {
+   "one": "%@ página",
+   "other": "%@ páginas"
+  },
+  "fr": {
+   "one": "%@ page",
+   "other": "%@ pages"
+  },
+  "de": {
+   "one": "%@ Seite",
+   "other": "%@ Seiten"
+  },
+  "zh-Hans": "%@页"
+ },
+ "%@ percent": {
+  "es": "%@ por ciento",
+  "fr": "%@ pour cent",
+  "de": "%@ Prozent",
+  "zh-Hans": "百分之%@"
+ },
+ "%@ percent complete": {
+  "es": "completado al %@ por ciento",
+  "fr": "terminé à %@ pour cent",
+  "de": "zu %@ Prozent fertig",
+  "zh-Hans": "已完成百分之%@"
+ },
+ "%@ sample, page %@ of %@": {
+  "es": "Ejemplo de %@, página %@ de %@",
+  "fr": "Exemple %@, page %@ sur %@",
+  "de": "Beispiel %@, Seite %@ von %@",
+  "zh-Hans": "%@ 示例，第 %@ 页，共 %@ 页"
+ },
+ "%@ templates": {
+  "es": {
+   "one": "%@ plantilla",
+   "other": "%@ plantillas"
+  },
+  "fr": {
+   "one": "%@ modèle",
+   "other": "%@ modèles"
+  },
+  "de": {
+   "one": "%@ Vorlage",
+   "other": "%@ Vorlagen"
+  },
+  "zh-Hans": "%@ 个模板"
+ },
+ "Page %@ of %@": {
+  "es": "Página %@ de %@",
+  "fr": "Page %@ sur %@",
+  "de": "Seite %@ von %@",
+  "zh-Hans": "第%@页，共%@页"
+ },
+ "Page %lld of %@": {
+  "es": "Página %lld de %@",
+  "fr": "Page %lld sur %@",
+  "de": "Seite %lld von %@",
+  "zh-Hans": "第%lld页，共%@页"
+ },
+ "Position %lld of %@. Swipe up or down for move actions.": {
+  "es": "Posición %lld de %@. Desliza hacia arriba o abajo para moverla.",
+  "fr": "Position %lld sur %@. Balayez vers le haut ou le bas pour la déplacer.",
+  "de": "Position %lld von %@. Zum Verschieben nach oben oder unten wischen.",
+  "zh-Hans": "第 %lld 位，共 %@ 位。上下轻扫可移动。"
+ },
+ "Your photo shows on the %@ templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.": {
+  "es": "Tu foto aparece en las %@ plantillas marcadas con Foto. Las plantillas sin espacio para foto la mantienen oculta. En algunos países, las empresas prefieren currículums sin foto.",
+  "fr": "Votre photo apparaît sur les %@ modèles marqués Photo. Les modèles sans emplacement photo la masquent. Dans certains pays, les employeurs préfèrent les CV sans photo.",
+  "de": "Ihr Foto erscheint in den %@ Vorlagen mit der Markierung Foto. Vorlagen ohne Fotobereich blenden es aus. In manchen Ländern bevorzugen Arbeitgeber Lebensläufe ohne Foto.",
+  "zh-Hans": "你的照片会显示在标有“照片”的 %@ 个模板中。没有照片区域的模板会隐藏照片。在一些国家，雇主更喜欢不带照片的简历。"
+ },
+ "Zoom %@ percent": {
+  "es": "Zoom al %@ por ciento",
+  "fr": "Zoom à %@ pour cent",
+  "de": "Zoom %@ Prozent",
+  "zh-Hans": "缩放百分之 %@"
+ }
+}

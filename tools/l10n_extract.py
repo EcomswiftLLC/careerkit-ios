@@ -82,6 +82,8 @@ def scan():
         for m in CALL_RE.finditer(code):
             lit = m.group(1) if m.group(1) is not None else m.group(2)
             key = normalise(lit)
+            if re.fullmatch(r'[a-z0-9]+(\.[a-z0-9]+)+', key):  # SF Symbol names are not text
+                continue
             if WORDY.search(re.sub(r'%(?:\d+\$)?(?:lld|ld|d|@|f|lf|s)', '', key)):
                 found.setdefault(key, set()).add(str(p.relative_to(ROOT)))
             spans.append(m.span(1) if m.group(1) is not None else m.span(2))
