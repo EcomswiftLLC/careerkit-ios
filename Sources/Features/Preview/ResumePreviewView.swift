@@ -11,7 +11,7 @@ struct ResumePreviewView: View {
         let resume = store.resume(id: resumeID)
         Group {
             if let resume {
-                PreviewPane(renderer: renderer, accessibilityName: "Preview of \(resume.title)")
+                PreviewPane(renderer: renderer, accessibilityName: CKPreviewNames.preview(of: resume.title))
                     .onChange(of: resume) { _, updated in
                         renderer.schedule(delay: 0.2, work: EditorRender.work(for: updated))
                     }
@@ -21,14 +21,21 @@ struct ResumePreviewView: View {
                         }
                     }
             } else {
-                EdUnavailableView(title: "This resume is no longer available",
-                                  message: "It may have been deleted. Go back to My Resumes to choose another.")
+                EdUnavailableView(title: String(localized: "This resume is no longer available"),
+                                  message: String(localized: "It may have been deleted. Go back to My Resumes to choose another."))
             }
         }
         .background(CK.Palette.ivory.ignoresSafeArea())
-        .navigationTitle(resume?.title ?? "Preview")
+        .navigationTitle(resume?.title ?? String(localized: "Preview"))
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear { renderer.cancel() }
+    }
+}
+
+/// Accessibility names for preview panes.
+enum CKPreviewNames {
+    static func preview(of title: String) -> String {
+        String(localized: "Preview of \(title)")
     }
 }
 

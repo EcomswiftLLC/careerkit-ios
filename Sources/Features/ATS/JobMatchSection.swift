@@ -63,7 +63,7 @@ struct JobMatchSection: View {
                         Text("Clear")
                     }
                     .buttonStyle(.ckSecondary)
-                    .frame(maxWidth: 140)
+                    .frame(maxWidth: 190)
                     .accessibilityHint("Removes the pasted job ad and the results")
                 }
             }
@@ -134,7 +134,8 @@ struct JobMatchSection: View {
 
     private func chipGroup(title: String, keywords: [JobMatchKeyword], found: Bool) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
-            Text("\(title) (\(keywords.count))")
+            // The title is already localized; only a count in parentheses is added.
+            Text(verbatim: "\(title) (\(keywords.count))")
                 .font(CK.Font.label)
                 .foregroundStyle(CK.Palette.ink)
                 .accessibilityAddTraits(.isHeader)
@@ -163,6 +164,7 @@ struct JobMatchSection: View {
                 ForEach(Array(groups.enumerated()), id: \.offset) { pair in
                     let kind: SectionKind = pair.element.0
                     let terms: String = pair.element.1.map { $0.term }.joined(separator: ", ")
+                    let rowLabel: String = kind.defaultTitle + ": " + terms
                     HStack(alignment: .top, spacing: CK.Space.s + 4) {
                         Image(systemName: kind.systemImage)
                             .font(.system(size: 15))
@@ -182,7 +184,7 @@ struct JobMatchSection: View {
                     }
                     .padding(.vertical, CK.Space.s + 2)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(kind.defaultTitle): \(terms)")
+                    .accessibilityLabel(Text(verbatim: rowLabel))
                     if pair.offset < groups.count - 1 {
                         CKHairline().padding(.leading, 36)
                     }

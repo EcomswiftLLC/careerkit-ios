@@ -273,12 +273,15 @@ struct CKResumeTile: View {
     var width: CGFloat = 168
     var menuStyle: CKResumeActionMenu.Style = .compact
 
+    /// Named `percent` so the catalog key reads "%lld percent complete".
+    private var percent: Int { CKResumeMeta.completionPercent(resume) }
+
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.s + 2) {
             Button { actions.edit(resume) } label: {
                 CKResumeThumbnail(resume: resume, width: width)
                     .overlay(alignment: .bottomTrailing) {
-                        Text("\(CKResumeMeta.completionPercent(resume))%")
+                        Text("\(percent)%")
                             .font(.caption2.weight(.semibold))
                             .monospacedDigit()
                             .foregroundStyle(CK.Palette.forest)
@@ -292,7 +295,7 @@ struct CKResumeTile: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("Edit \(resume.title)"))
-            .accessibilityValue(Text("\(CKResumeMeta.completionPercent(resume)) percent complete"))
+            .accessibilityValue(Text("\(percent) percent complete"))
 
             HStack(alignment: .top, spacing: 0) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -307,7 +310,7 @@ struct CKResumeTile: View {
                     Text(CKDate.edited(resume.updatedAt))
                         .font(CK.Font.caption)
                         .foregroundStyle(CK.Palette.graphite)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
                 Spacer(minLength: 0)
                 Menu {
@@ -336,6 +339,8 @@ struct CKResumeRow: View {
     let actions: CKResumeActions
     var menuStyle: CKResumeActionMenu.Style = .full
 
+    private var percent: Int { CKResumeMeta.completionPercent(resume) }
+
     var body: some View {
         HStack(spacing: CK.Space.m) {
             Button { actions.edit(resume) } label: {
@@ -354,7 +359,7 @@ struct CKResumeRow: View {
                         Text(rowDetail)
                             .font(CK.Font.caption)
                             .foregroundStyle(CK.Palette.graphite)
-                            .lineLimit(1)
+                            .lineLimit(2)
                     }
                     Spacer(minLength: CK.Space.s)
                     ProgressRing(value: resume.completion, size: 44, lineWidth: 4)
@@ -364,7 +369,7 @@ struct CKResumeRow: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("\(resume.title), \(CKResumeMeta.templateName(resume)), \(CKDate.edited(resume.updatedAt))"))
-            .accessibilityValue(Text("\(CKResumeMeta.completionPercent(resume)) percent complete"))
+            .accessibilityValue(Text("\(percent) percent complete"))
             .accessibilityHint(Text("Opens the editor"))
 
             Menu {

@@ -48,7 +48,7 @@ This writes the four HTML pages into `website/careerkit/`. The pages show the ad
 - Screenshots and the app preview do not exist: they need the running app. The plan, captions, size spec and framing script are ready.
 - Apple's age rating and App Privacy questionnaires change; the answers are drafts to compare with the live forms. Google's AdMob data table was not re-fetched by me; I followed `docs/handoff/ads.md`.
 - Keywords and category are judgement, not data. No search volume was checked.
-- Name availability of "Resume Builder: CareerKit" is only known after the app record exists.
+- Name availability of "Resume & CV Maker: CareerKit" is only known after the app record exists.
 - The app links to `https://ecomswiftllc.github.io/careerkit/privacy` and `/terms` (no trailing slash, see `CKLinks.swift`). The static site uses folder URLs with a trailing slash, so the host must serve both (most do with a redirect). Check this when deploying.
 
 ## Open product decision that touches these documents

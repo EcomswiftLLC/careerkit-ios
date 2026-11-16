@@ -7,19 +7,21 @@ enum DocumentExportError: Error {
 /// The one entry point for every export format. Takes the same models and templates as the PDF renderer
 /// and returns the file bytes. Pure and safe to call from a background task.
 enum DocumentExporter {
-    static func export(_ source: ExportSource, as format: DocumentExportFormat, date: Date = Date()) throws -> Data {
+    /// `language` sets the fixed words and date formats of text formats; it defaults to the app language.
+    static func export(_ source: ExportSource, as format: DocumentExportFormat, date: Date = Date(),
+                       language: String = ExportStrings.currentLanguage) throws -> Data {
         let data: Data
         switch format {
         case .pdf:
             data = renderPDF(source).pdfData
         case .docx:
-            data = DocxWriter.data(ExportDocumentBuilder.build(source), date: date)
+            data = DocxWriter.data(ExportDocumentBuilder.build(source, language: language), date: date)
         case .rtf:
-            data = RTFExporter.data(ExportDocumentBuilder.build(source))
+            data = RTFExporter.data(ExportDocumentBuilder.build(source, language: language))
         case .txt:
-            data = PlainTextExporter.data(ExportDocumentBuilder.build(source))
+            data = PlainTextExporter.data(ExportDocumentBuilder.build(source, language: language))
         case .html:
-            data = HTMLExporter.data(ExportDocumentBuilder.build(source))
+            data = HTMLExporter.data(ExportDocumentBuilder.build(source, language: language))
         }
         guard !data.isEmpty else { throw DocumentExportError.emptyOutput }
         return data

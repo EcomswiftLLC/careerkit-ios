@@ -4,7 +4,7 @@
 > **DRAFT FOR LEGAL REVIEW.** This text is a plain-language starting point. It is not legal advice and has not been reviewed by a lawyer. A qualified lawyer should review it, especially the limitation of liability, governing law and Apple terms sections, before it is published. Delete this notice (the block between the DRAFT-NOTICE markers) before release. The website build script removes it automatically.
 <!-- DRAFT-NOTICE-END -->
 
-**App:** Resume Builder: CareerKit ("CareerKit", "the app")
+**App:** Resume & CV Maker: CareerKit ("CareerKit", "the app")
 **Provider:** Ecom Swift LLC, 30 N Gould St #37906, Sheridan, WY 82801, United States ("we", "us")
 **Contact:** support@ecomswiftllc.com
 **Last updated:** November 16, 2026

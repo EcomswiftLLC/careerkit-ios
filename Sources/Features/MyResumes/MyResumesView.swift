@@ -124,15 +124,19 @@ struct MyResumesView: View {
 
     private func scopeTitle(_ scope: Scope) -> String {
         switch scope {
-        case .active: return String(localized: "Resumes (\(activeCount))")
-        case .archived: return String(localized: "Archived (\(archivedCount))")
+        case .active:
+            let count: Int = activeCount
+            return String(localized: "Resumes (\(count))")
+        case .archived:
+            let count: Int = archivedCount
+            return String(localized: "Archived (\(count))")
         }
     }
 
     private var summaryLine: String {
-        let count = items.count
-        let noun = count == 1 ? String(localized: "1 resume") : String(localized: "\(count) resumes")
-        return String(localized: "\(noun), sorted by \(sort.title.lowercased())")
+        let noun: String = CKCountText.resumes(items.count)
+        let order: String = sort.inlineTitle
+        return String(localized: "\(noun), sorted by \(order)")
     }
 
     private func listContent(_ actions: CKResumeActions) -> some View {
@@ -156,8 +160,11 @@ struct MyResumesView: View {
                         Button {
                             actions.toggleArchive(resume)
                         } label: {
-                            Label(resume.isArchived ? "Unarchive" : "Archive",
-                                  systemImage: resume.isArchived ? "tray.and.arrow.up" : "archivebox")
+                            if resume.isArchived {
+                                Label("Unarchive", systemImage: "tray.and.arrow.up")
+                            } else {
+                                Label("Archive", systemImage: "archivebox")
+                            }
                         }
                         .tint(CK.Palette.graphite)
                     }

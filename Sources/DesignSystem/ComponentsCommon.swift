@@ -81,6 +81,18 @@ enum CKDate {
     }
 }
 
+/// Counted nouns with proper plural forms per language ("1 resume", "3 resumes").
+/// The interpolated value must stay an Int named `count`, so the catalog key is "%lld resumes".
+enum CKCountText {
+    static func resumes(_ count: Int) -> String {
+        String(localized: "\(count) resumes")
+    }
+
+    static func coverLetters(_ count: Int) -> String {
+        String(localized: "\(count) cover letters")
+    }
+}
+
 enum CKDeferred {
     /// Runs `work` shortly after a sheet has finished dismissing, so a push or a second
     /// presentation does not collide with the dismissal.

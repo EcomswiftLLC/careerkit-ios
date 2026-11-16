@@ -31,7 +31,7 @@ struct NewCoverLetterSheet: View {
                             .font(CK.Font.callout)
                             .foregroundStyle(CK.Palette.graphite)
                     }
-                    EdField(label: "Letter title", text: $title, prompt: "Cover letter", capitalization: .words)
+                    EdField(label: String(localized: "Letter title"), text: $title, prompt: String(localized: "Cover letter"), capitalization: .words)
                     resumePicker
                     VStack(alignment: .leading, spacing: CK.Space.m) {
                         Text("Template").font(CK.Font.label).foregroundStyle(CK.Palette.ink)
@@ -73,7 +73,7 @@ struct NewCoverLetterSheet: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Linked resume").font(CK.Font.caption).foregroundStyle(CK.Palette.graphite)
-                    Text(linkedResume?.title ?? "None").font(CK.Font.body).foregroundStyle(CK.Palette.ink)
+                    Text(linkedResume?.title ?? String(localized: "None")).font(CK.Font.body).foregroundStyle(CK.Palette.ink)
                 }
                 Spacer()
                 Image(systemName: "chevron.up.chevron.down").font(.system(size: 13)).foregroundStyle(CK.Palette.graphite)
@@ -83,7 +83,14 @@ struct NewCoverLetterSheet: View {
             .background(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).fill(CK.Palette.surface))
             .overlay(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).strokeBorder(CK.Palette.hairline, lineWidth: 0.5))
         }
-        .accessibilityLabel("Linked resume, \(linkedResume?.title ?? "none")")
+        .accessibilityLabel(Text(linkedResumeAccessibilityLabel))
+    }
+
+    private var linkedResumeAccessibilityLabel: String {
+        if let title = linkedResume?.title {
+            return String(localized: "Linked resume, \(title)")
+        }
+        return String(localized: "Linked resume, none")
     }
 
     private func select(_ resume: Resume) {
@@ -96,7 +103,7 @@ struct NewCoverLetterSheet: View {
 
     private func create() {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        let name = trimmed.isEmpty ? "Cover letter" : trimmed
+        let name = trimmed.isEmpty ? String(localized: "Cover letter") : trimmed
         let resume = linkedResume
         var letter = ResumeFactory.newCoverLetter(templateID: templateID, title: name, from: resume)
         letter.linkedResumeID = resume?.id

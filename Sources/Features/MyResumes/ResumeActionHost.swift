@@ -79,7 +79,8 @@ struct ResumeActionHost<Content: View>: View {
 
     private func duplicate(_ resume: Resume) {
         if let copy = store.duplicate(resumeID: resume.id) {
-            toast = String(localized: "Duplicated as \"\(copy.title)\"")
+            let title: String = copy.title
+            toast = String(localized: "Duplicated as \"\(title)\"")
         }
     }
 
@@ -114,14 +115,18 @@ struct ResumeActionHost<Content: View>: View {
 
     private func performDelete(_ resume: Resume) {
         store.delete(resumeID: resume.id)
-        toast = String(localized: "Deleted \"\(resume.title)\"")
+        let title: String = resume.title
+        toast = String(localized: "Deleted \"\(title)\"")
     }
 
     private func changeTemplate(of id: UUID, to templateID: String) {
         guard var current = store.resume(id: id), current.templateID != templateID else { return }
         current.templateID = templateID
         store.upsert(current)
-        let name = TemplateLibrary.spec(id: templateID)?.name ?? String(localized: "the new template")
-        toast = String(localized: "Now using \(name)")
+        if let name = TemplateLibrary.spec(id: templateID)?.name {
+            toast = String(localized: "Now using \(name)")
+        } else {
+            toast = String(localized: "Now using the new template")
+        }
     }
 }

@@ -42,6 +42,12 @@ struct RenderStyle {
     var photoShape: RenderPhotoShape? = nil
     /// User choice for entry dates. nil keeps "Jan 2024".
     var dateFormat: ResumeDateFormat? = nil
+    /// Page background. White unless the template sets a paper tint.
+    var paper: UIColor = UIColor.white
+    /// Multiplier on every photo size (user's small, medium or large).
+    var photoScale: CGFloat = 1
+    /// True draws a thin accent ring around the photo.
+    var photoRing: Bool = false
 
     // MARK: Fonts
 
@@ -155,6 +161,11 @@ struct RenderStyle {
         result.headingCaseOverride = overrides.uppercaseHeadings
         result.photoShape = RenderPhotoShape.from(overrides.photoShape)
         result.dateFormat = overrides.dateFormat
+        if let paperHex = TemplateSpec.normalizedHex(template.paperHex) {
+            result.paper = UIColor(hexString: paperHex)
+        }
+        result.photoScale = CGFloat((overrides.photoSize ?? .medium).scale)
+        result.photoRing = overrides.photoBorder == .ring
         return result
     }
 

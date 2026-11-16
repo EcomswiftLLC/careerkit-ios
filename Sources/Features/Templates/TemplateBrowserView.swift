@@ -82,6 +82,7 @@ struct TemplateBrowserView: View {
                         value.rawValue
                     }
                     CKToggleChip(name: String(localized: "ATS friendly"), systemImage: "checkmark.seal", isOn: $filter.atsOnly)
+                    CKToggleChip(name: String(localized: "With photo"), systemImage: "person.crop.circle", isOn: $filter.photoOnly)
                     if filter.hasFacets {
                         Button {
                             filter.reset()

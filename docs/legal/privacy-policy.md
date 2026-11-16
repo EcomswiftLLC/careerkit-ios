@@ -4,7 +4,7 @@
 > **DRAFT FOR LEGAL REVIEW.** This text was written to match how the app is designed (local storage, no account, Google AdMob with consent). It is not legal advice and has not been reviewed by a lawyer. Have a qualified lawyer review it, and have the ads owner confirm the AdMob and consent details against the final build, before publishing. Delete this notice (the block between the DRAFT-NOTICE markers) before release. The website build script removes it automatically.
 <!-- DRAFT-NOTICE-END -->
 
-**App:** Resume Builder: CareerKit ("CareerKit")
+**App:** Resume & CV Maker: CareerKit ("CareerKit")
 **Company:** Ecom Swift LLC, 30 N Gould St #37906, Sheridan, WY 82801, United States
 **Contact:** support@ecomswiftllc.com
 **Last updated:** November 16, 2026

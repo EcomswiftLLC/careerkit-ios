@@ -67,9 +67,9 @@ final class CKPDFView: PDFView {
 struct PDFPreview: UIViewRepresentable {
     let data: Data
     var controller: PDFPreviewController?
-    var accessibilityName: String = "Document preview"
+    var accessibilityName: String = String(localized: "Document preview")
 
-    init(data: Data, controller: PDFPreviewController? = nil, accessibilityName: String = "Document preview") {
+    init(data: Data, controller: PDFPreviewController? = nil, accessibilityName: String = String(localized: "Document preview")) {
         self.data = data
         self.controller = controller
         self.accessibilityName = accessibilityName

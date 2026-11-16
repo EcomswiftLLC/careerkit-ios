@@ -15,6 +15,11 @@ enum EdStyleNames {
         case .accentRuleLeft: return String(localized: "Side bar")
         case .centeredAccent: return String(localized: "Centered color")
         case .doubleRule: return String(localized: "Double rule")
+        case .rightAligned: return String(localized: "Right")
+        case .tintedCard: return String(localized: "Panel")
+        case .bannerCentered: return String(localized: "Centered band")
+        case .initialLetter: return String(localized: "Big initial")
+        case .smallCapsCentered: return String(localized: "Spaced capitals")
         }
     }
 
@@ -31,6 +36,8 @@ enum EdStyleNames {
         case .centeredRule: return String(localized: "Centered")
         case .leftBorder: return String(localized: "Bar beside")
         case .tintedBand: return String(localized: "Tinted band")
+        case .fullBar: return String(localized: "Solid bar")
+        case .ruleAbove: return String(localized: "Rule above")
         }
     }
 
@@ -40,6 +47,7 @@ enum EdStyleNames {
         case .dateBelow: return String(localized: "Dates below")
         case .dateGutter: return String(localized: "Dates in margin")
         case .stacked: return String(localized: "Stacked")
+        case .timeline: return String(localized: "Timeline")
         }
     }
 
@@ -59,6 +67,22 @@ enum EdStyleNames {
         case .pipeList: return String(localized: "Dividers")
         case .groupedLines: return String(localized: "By group")
         case .bulletColumns: return String(localized: "Two columns")
+        case .pills: return String(localized: "Pills")
+        }
+    }
+
+    static func photoSize(_ size: PhotoSizeOption) -> String {
+        switch size {
+        case .small: return String(localized: "Small")
+        case .medium: return String(localized: "Medium")
+        case .large: return String(localized: "Large")
+        }
+    }
+
+    static func photoBorder(_ border: PhotoBorderOption) -> String {
+        switch border {
+        case .none: return String(localized: "None")
+        case .ring: return String(localized: "Thin ring")
         }
     }
 
@@ -199,6 +223,72 @@ enum EdSamples {
                 Spacer(minLength: 0)
                 S.body()
             }
+        case .rightAligned:
+            VStack(alignment: .trailing, spacing: 3) {
+                S.bar(30, 5, S.ink)
+                S.bar(10, 1.5, accent)
+                S.bar(20, 2.5, accent)
+                Spacer(minLength: 0)
+                S.body()
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        case .tintedCard:
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        S.bar(22, 4, S.ink)
+                        S.bar(14, 2.5, accent)
+                    }
+                    Spacer(minLength: 2)
+                    VStack(alignment: .trailing, spacing: 2) {
+                        S.bar(12, 2)
+                        S.bar(14, 2)
+                    }
+                }
+                .padding(4)
+                .background(RoundedRectangle(cornerRadius: 3).fill(accent.opacity(0.10)))
+                Spacer(minLength: 0)
+                S.body()
+            }
+        case .bannerCentered:
+            VStack(alignment: .center, spacing: 4) {
+                VStack(alignment: .center, spacing: 3) {
+                    Circle().fill(Color.white.opacity(0.85)).frame(width: 8, height: 8)
+                    S.bar(26, 4, Color.white)
+                    S.bar(30, 2, Color.white.opacity(0.7))
+                }
+                .padding(.vertical, 5)
+                .frame(maxWidth: .infinity)
+                .background(accent)
+                .padding(.horizontal, -7)
+                .padding(.top, -7)
+                Spacer(minLength: 0)
+                S.body()
+            }
+        case .initialLetter:
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center, spacing: 4) {
+                    Text(verbatim: "A")
+                        .font(.system(size: 20, weight: .regular, design: .serif))
+                        .foregroundStyle(accent)
+                    VStack(alignment: .leading, spacing: 2.5) {
+                        S.bar(24, 4, S.ink)
+                        S.bar(16, 2.5, accent)
+                    }
+                }
+                Spacer(minLength: 0)
+                S.body()
+            }
+        case .smallCapsCentered:
+            VStack(alignment: .center, spacing: 3) {
+                Rectangle().fill(accent).frame(height: 0.5)
+                S.bar(34, 3, S.ink)
+                S.bar(18, 2, accent)
+                Rectangle().fill(accent).frame(height: 0.5)
+                Spacer(minLength: 0)
+                S.body()
+            }
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -284,6 +374,21 @@ enum EdSamples {
                     .background(accent.opacity(0.12))
                 S.body()
             }
+        case .fullBar:
+            VStack(alignment: .leading, spacing: 4) {
+                S.bar(20, 3.5, Color.white)
+                    .padding(.horizontal, 3)
+                    .padding(.vertical, 2.5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(accent)
+                S.body()
+            }
+        case .ruleAbove:
+            VStack(alignment: .leading, spacing: 3) {
+                Rectangle().fill(S.ink).frame(height: 1.5)
+                S.bar(24, 3.5, S.ink)
+                S.body()
+            }
         }
     }
 
@@ -327,6 +432,20 @@ enum EdSamples {
                 S.bar(14, 2.5, accent)
                 S.body(44)
             }
+        case .timeline:
+            HStack(alignment: .top, spacing: 4) {
+                S.bar(8, 2.5, accent)
+                VStack(spacing: 0) {
+                    Circle().fill(accent).frame(width: 4, height: 4)
+                    Rectangle().fill(S.line).frame(width: 0.75)
+                }
+                .frame(width: 4)
+                VStack(alignment: .leading, spacing: 3) {
+                    S.bar(22, 3.5, S.ink)
+                    S.bar(14, 2.5)
+                    S.body(30)
+                }
+            }
         }
     }
 
@@ -360,6 +479,18 @@ enum EdSamples {
                     (Text("• ").foregroundColor(accent) + Text("Excel").foregroundColor(S.ink)).font(small)
                 }
             }
+        case .pills:
+            HStack(spacing: 3) {
+                ForEach(["Swift", "SQL", "Figma"], id: \.self) { word in
+                    Text(word)
+                        .font(small)
+                        .foregroundStyle(S.ink)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1.5)
+                        .background(Capsule().fill(accent.opacity(0.14)))
+                }
+            }
+            .lineLimit(1)
         }
     }
 }

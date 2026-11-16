@@ -38,9 +38,9 @@ struct CoverLetterEditorView: View {
             if let letter = Binding($draft.doc) {
                 editor(letter)
             } else if draft.isLoaded {
-                EdUnavailableView(title: "This letter is no longer available",
-                                  message: "It may have been deleted. Go back to your cover letters to choose another.",
-                                  backTitle: "Back",
+                EdUnavailableView(title: String(localized: "This letter is no longer available"),
+                                  message: String(localized: "It may have been deleted. Go back to your cover letters to choose another."),
+                                  backTitle: String(localized: "Back"),
                                   onBack: { dismiss() })
             } else {
                 CK.Palette.ivory.ignoresSafeArea()
@@ -120,7 +120,8 @@ struct CoverLetterEditorView: View {
     }
 
     private func preview(_ letter: Binding<CoverLetter>) -> some View {
-        PreviewPane(renderer: draft.renderer, accessibilityName: "Live preview of \(letter.wrappedValue.title)")
+        let title: String = letter.wrappedValue.title
+        return PreviewPane(renderer: draft.renderer, accessibilityName: String(localized: "Live preview of \(title)"))
     }
 
     // MARK: Toolbar
@@ -129,7 +130,7 @@ struct CoverLetterEditorView: View {
     private func toolbarContent(_ letter: Binding<CoverLetter>) -> some ToolbarContent {
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
-                Text(letter.wrappedValue.title.isEmpty ? "Untitled letter" : letter.wrappedValue.title)
+                Text(letter.wrappedValue.title.isEmpty ? String(localized: "Untitled letter") : letter.wrappedValue.title)
                     .ckHeadlineFont(16)
                     .foregroundStyle(CK.Palette.ink)
                     .lineLimit(1)
@@ -151,9 +152,13 @@ struct CoverLetterEditorView: View {
     /// A solid bar that runs to the screen edge, so nothing scrolls into view behind the labels.
     private var bottomToolbar: some View {
         HStack {
-            toolButton("Template", symbol: "rectangle.on.rectangle") { open(.templates) }
+            toolButton(String(localized: "Template"),
+                       hint: String(localized: "Choose another letter template. Your text stays the same."),
+                       symbol: "rectangle.on.rectangle") { open(.templates) }
             Spacer()
-            toolButton("Style", symbol: "paintpalette") { open(.style) }
+            toolButton(String(localized: "Style"),
+                       hint: String(localized: "Change color, fonts and spacing."),
+                       symbol: "paintpalette") { open(.style) }
         }
         .padding(.horizontal, CK.Space.xl)
         .padding(.top, CK.Space.xs)
@@ -161,11 +166,8 @@ struct CoverLetterEditorView: View {
         .overlay(alignment: .top) { Rectangle().fill(CK.Palette.hairline).frame(height: 0.5) }
     }
 
-    private func toolButton(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
-        let hint: String = title == "Template"
-            ? "Choose another letter template. Your text stays the same."
-            : "Change color, fonts and spacing."
-        return EdToolbarButton(title: title, symbol: symbol, hint: hint, action: action)
+    private func toolButton(_ title: String, hint: String, symbol: String, action: @escaping () -> Void) -> some View {
+        EdToolbarButton(title: title, symbol: symbol, hint: hint, action: action)
     }
 
     private func open(_ item: LetterSheet) {

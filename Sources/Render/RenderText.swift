@@ -36,6 +36,23 @@ final class RenderLinkDetector {
 /// Holds the PDF context for the page currently being drawn so text layouts can add link annotations.
 final class RenderCanvas {
     var pdfContext: UIGraphicsPDFRendererContext?
+    /// Set by tests to collect where the photo and the header text were drawn (page coordinates, page one).
+    var geometry: RenderGeometry?
+
+    func recordPhoto(_ rect: CGRect) {
+        geometry?.photoRects.append(rect)
+    }
+
+    /// Records the glyph boxes of a header text layout drawn with its top left at `origin`.
+    func recordHeaderText(_ layout: RenderTextLayout, at origin: CGPoint) {
+        guard let geometry = geometry, let first = layout.lines.first else { return }
+        let top: CGFloat = first.fragmentRect.minY
+        for line in layout.lines where line.usedRect.width > 0.5 {
+            let r = line.usedRect
+            geometry.headerTextRects.append(CGRect(x: origin.x + r.minX, y: origin.y + r.minY - top,
+                                                   width: r.width, height: r.height))
+        }
+    }
 
     func addLink(_ url: URL, rect: CGRect) {
         guard let context = pdfContext, rect.width > 0, rect.height > 0 else { return }
@@ -231,6 +248,21 @@ enum RenderDraw {
         UIBezierPath(roundedRect: rect, cornerRadius: radius).fill()
     }
 
+    static func stroke(_ rect: CGRect, _ color: UIColor, width: CGFloat) {
+        guard rect.width > 0, rect.height > 0, let cg = UIGraphicsGetCurrentContext() else { return }
+        cg.saveGState()
+        cg.setStrokeColor(color.cgColor)
+        cg.setLineWidth(width)
+        cg.stroke(rect)
+        cg.restoreGState()
+    }
+
+    static func fillCircle(center: CGPoint, radius: CGFloat, _ color: UIColor) {
+        guard radius > 0, let cg = UIGraphicsGetCurrentContext() else { return }
+        cg.setFillColor(color.cgColor)
+        cg.fillEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: 2 * radius, height: 2 * radius))
+    }
+
     static func dotted(from start: CGPoint, toX endX: CGFloat, color: UIColor, width: CGFloat = 0.9) {
         guard endX > start.x, let cg = UIGraphicsGetCurrentContext() else { return }
         cg.saveGState()
@@ -243,6 +275,12 @@ enum RenderDraw {
         cg.strokePath()
         cg.restoreGState()
     }
+}
+
+/// Where things were drawn, for layout tests. Filled only when `RenderCanvas.geometry` is set.
+final class RenderGeometry {
+    var photoRects: [CGRect] = []
+    var headerTextRects: [CGRect] = []
 }
 
 enum RenderPhotoShape {
@@ -268,8 +306,8 @@ enum RenderPhoto {
         return UIImage(data: data)
     }
 
-    /// Aspect fill crop into a circle or rounded square.
-    static func draw(_ image: UIImage, in rect: CGRect, shape: RenderPhotoShape) {
+    /// Aspect fill crop into a circle or rounded square, with an optional thin ring in `ring`.
+    static func draw(_ image: UIImage, in rect: CGRect, shape: RenderPhotoShape, ring: UIColor? = nil) {
         guard rect.width > 0, rect.height > 0,
               image.size.width > 0, image.size.height > 0,
               let cg = UIGraphicsGetCurrentContext() else { return }
@@ -289,6 +327,19 @@ enum RenderPhoto {
         let h: CGFloat = image.size.height * scale
         image.draw(in: CGRect(x: rect.midX - w / 2, y: rect.midY - h / 2, width: w, height: h))
         cg.restoreGState()
+        if let ring = ring {
+            let lineWidth: CGFloat = max(1, rect.width * 0.018)
+            let inset: CGRect = rect.insetBy(dx: lineWidth / 2, dy: lineWidth / 2)
+            let border: UIBezierPath
+            switch shape {
+            case .circle: border = UIBezierPath(ovalIn: inset)
+            case .rounded: border = UIBezierPath(roundedRect: inset, cornerRadius: inset.width * 0.12)
+            case .square: border = UIBezierPath(rect: inset)
+            }
+            border.lineWidth = lineWidth
+            ring.setStroke()
+            border.stroke()
+        }
     }
 }
 

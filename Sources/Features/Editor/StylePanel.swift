@@ -501,45 +501,8 @@ struct EdStyleControls: View {
 
     // MARK: Photo
 
-    private var photoModified: Bool { !style.showPhoto || style.photoShape != nil }
-
     private var photoGroup: some View {
-        let supportsPhoto: Bool = (defaults.template?.photo ?? .none) != .none
-        return EdStyleGroup(title: "Photo",
-                            summary: style.showPhoto ? (supportsPhoto ? "Shown" : "This template has no photo area") : "Hidden",
-                            systemImage: "person.crop.circle",
-                            isModified: photoModified,
-                            onReset: {
-                                style.showPhoto = true
-                                style.photoShape = nil
-                            },
-                            isExpanded: isExpanded("photo")) {
-            Toggle(isOn: $style.showPhoto) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Show photo").font(CK.Font.body).foregroundStyle(CK.Palette.ink)
-                    Text("Only templates with a photo area use it. Many employers prefer resumes without one.")
-                        .font(CK.Font.caption)
-                        .foregroundStyle(CK.Palette.graphite)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .tint(CK.Palette.forest)
-            .frame(minHeight: 44)
-
-            VStack(alignment: .leading, spacing: CK.Space.s) {
-                EdStyleLabel(title: "Photo shape")
-                EdFlowLayout(spacing: CK.Space.s) {
-                    EdChoiceChip(title: "Template", accessibilityText: "Template photo shape",
-                                 selected: style.photoShape == nil) { style.photoShape = nil }
-                    ForEach(PhotoShape.allCases) { shape in
-                        EdChoiceChip(title: EdStyleNames.photoShape(shape),
-                                     selected: style.photoShape == shape) { style.photoShape = shape }
-                    }
-                }
-            }
-            .disabled(!style.showPhoto)
-            .opacity(style.showPhoto ? 1 : 0.5)
-        }
+        EdPhotoStyleGroup(style: $style, template: defaults.template, isExpanded: isExpanded("photo"))
     }
 
     // MARK: Helpers

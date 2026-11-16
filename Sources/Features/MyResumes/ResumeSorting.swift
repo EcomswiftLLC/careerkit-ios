@@ -20,6 +20,18 @@ enum CKResumeSort: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The sort order as it reads after "sorted by" in the My Resumes summary line. Separate keys
+    /// (not `title.lowercased()`), so languages that capitalise nouns keep their own casing.
+    var inlineTitle: String {
+        switch self {
+        case .lastEdited: return String(localized: "last edited", comment: "Used in 'sorted by last edited'.")
+        case .created: return String(localized: "date created", comment: "Used in 'sorted by date created'.")
+        case .title: return String(localized: "name, A to Z", comment: "Used in 'sorted by name, A to Z'.")
+        case .completion: return String(localized: "most complete", comment: "Used in 'sorted by most complete'.")
+        case .template: return String(localized: "template", comment: "Used in 'sorted by template'.")
+        }
+    }
+
     func sorted(_ resumes: [Resume]) -> [Resume] {
         switch self {
         case .lastEdited:

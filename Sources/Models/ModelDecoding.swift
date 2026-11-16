@@ -233,7 +233,7 @@ extension CoverLetter {
         experienceParagraph = c.ck("experienceParagraph", "")
         interestParagraph = c.ck("interestParagraph", "")
         closing = c.ck("closing", "")
-        signOff = c.ck("signOff", "Sincerely,")
+        signOff = c.ck("signOff", String(localized: "Sincerely,", comment: "Default sign-off of a cover letter."))
 
         style = c.ck("style", StyleOverrides())
         schemaVersion = c.ck("schemaVersion", 1)

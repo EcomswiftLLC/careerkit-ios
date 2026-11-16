@@ -235,7 +235,8 @@ struct ResumeEditorView: View {
     private func sheetContent(_ item: EditorSheet, _ resume: Binding<Resume>) -> some View {
         switch item {
         case .templates:
-            TemplateSwitcherSheet(currentID: resume.wrappedValue.templateID) { id in
+            TemplateSwitcherSheet(currentID: resume.wrappedValue.templateID,
+                                  hasPhoto: resume.wrappedValue.personal.photoData != nil && resume.wrappedValue.style.showPhoto) { id in
                 resume.wrappedValue.templateID = id
             }
         case .style:

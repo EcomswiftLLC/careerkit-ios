@@ -219,6 +219,7 @@ struct ProgressRing: View {
     let value: Double   // 0...1
     var size: CGFloat = 44
     var lineWidth: CGFloat = 4
+    private var percent: Int { Int(value * 100) }
     var body: some View {
         ZStack {
             Circle().stroke(CK.Palette.stone, lineWidth: lineWidth)
@@ -227,13 +228,13 @@ struct ProgressRing: View {
                 .stroke(CK.Palette.forest, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.4), value: value)
-            Text("\(Int(value * 100))%")
+            Text("\(percent)%")
                 .font(.system(size: size * 0.26, weight: .semibold))
                 .foregroundStyle(CK.Palette.ink)
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Completion")
-        .accessibilityValue("\(Int(value * 100)) percent")
+        .accessibilityValue("\(percent) percent")
     }
 }

@@ -9,12 +9,33 @@ import Foundation
 extension TemplateSpec {
     /// Header styles the style panel offers. `sidebarCard` belongs to the sidebar templates only.
     static let offeredHeaderStyles: [HeaderStyle] = [.leftAligned, .centered, .splitContact, .ruledMonogram, .banner,
-                                                     .monogramBadge, .accentRuleLeft, .centeredAccent, .doubleRule]
+                                                     .monogramBadge, .accentRuleLeft, .centeredAccent, .doubleRule,
+                                                     .rightAligned, .tintedCard, .bannerCentered, .initialLetter, .smallCapsCentered]
     static let offeredHeadingStyles: [SectionHeadingStyle] = [.uppercaseRule, .smallCapsAccent, .accentBar, .boxedLabel, .plainBold, .dottedRule, .sideLabel,
-                                                              .underlineAccent, .centeredRule, .leftBorder, .tintedBand]
-    static let offeredEntryLayouts: [EntryLayout] = [.dateRight, .dateBelow, .dateGutter, .stacked]
+                                                              .underlineAccent, .centeredRule, .leftBorder, .tintedBand, .fullBar, .ruleAbove]
+    static let offeredEntryLayouts: [EntryLayout] = [.dateRight, .dateBelow, .dateGutter, .stacked, .timeline]
     static let offeredBullets: [BulletStyle] = [.disc, .dash, .square, .chevron, .none]
-    static let offeredSkillStyles: [SkillStyle] = [.commaList, .pipeList, .groupedLines, .bulletColumns]
+    static let offeredSkillStyles: [SkillStyle] = [.commaList, .pipeList, .groupedLines, .bulletColumns, .pills]
+
+    /// True when the template has a photo area at all.
+    var supportsPhoto: Bool { return photo != .none }
+
+    /// True when the header photo can be moved to the other side by the user.
+    var supportsPhotoFlip: Bool {
+        guard photo.isHeaderSide else { return false }
+        return TemplateSpec.headerAllowsPhotoFlip(header)
+    }
+
+    /// Header styles with a photo slot on either side of a text row.
+    static func headerAllowsPhotoFlip(_ style: HeaderStyle) -> Bool {
+        switch style {
+        case .leftAligned, .splitContact, .ruledMonogram, .banner, .accentRuleLeft, .doubleRule,
+             .rightAligned, .tintedCard, .centered, .centeredAccent:
+            return true
+        case .sidebarCard, .monogramBadge, .initialLetter, .bannerCentered, .smallCapsCentered:
+            return false
+        }
+    }
 
     /// True for layouts with a tinted full height sidebar.
     var hasSidebarColumn: Bool {
@@ -25,7 +46,7 @@ extension TemplateSpec {
     func supportsHeader(_ style: HeaderStyle) -> Bool {
         switch style {
         case .sidebarCard: return hasSidebarColumn
-        case .banner: return !hasSidebarColumn
+        case .banner, .bannerCentered: return !hasSidebarColumn
         default: return true
         }
     }
@@ -67,8 +88,16 @@ extension TemplateSpec {
         }
         // A photo that lived in the sidebar card moves to the header when the card is replaced.
         var newPhoto: PhotoPlacement = photo
-        if photo == .sidebarTop && newHeader != .sidebarCard {
+        if photo.isSidebar && newHeader != .sidebarCard {
             newPhoto = .headerRight
+        }
+        // A centered photo needs a centered header; anything else gets the right-hand slot.
+        if newPhoto == .headerCenter && newHeader != .centered && newHeader != .bannerCentered && newHeader != .centeredAccent {
+            newPhoto = .headerRight
+        }
+        // The user can move a header photo to the other side when the header has a slot there.
+        if let side = o.photoSide, newPhoto.isHeaderSide, TemplateSpec.headerAllowsPhotoFlip(newHeader) {
+            newPhoto = side == .left ? .headerLeft : .headerRight
         }
 
         var newHeading: SectionHeadingStyle = headingStyle
@@ -129,7 +158,10 @@ extension TemplateSpec {
             sectionSpacing: sectionSpacing * sectionFactor,
             entrySpacing: entrySpacing * entryFactor,
             mainSections: mainSections,
-            sidebarSections: sidebarSections
+            sidebarSections: sidebarSections,
+            pageAccent: pageAccent,
+            paperHex: paperHex,
+            railSide: railSide
         )
     }
 }

@@ -42,8 +42,10 @@ struct CKCompareVersionsView: View {
 
                     if let left = resume(for: leftID), let right = resume(for: rightID) {
                         HStack(alignment: .top, spacing: gap) {
-                            column(resume: left, selection: $leftID, side: String(localized: "First"))
-                            column(resume: right, selection: $rightID, side: String(localized: "Second"))
+                            column(resume: left, selection: $leftID, side: String(localized: "First"),
+                                   accessibilityName: String(localized: "First resume"))
+                            column(resume: right, selection: $rightID, side: String(localized: "Second"),
+                                   accessibilityName: String(localized: "Second resume"))
                         }
                         comparisonTable(left: left, right: right)
                     }
@@ -76,7 +78,7 @@ struct CKCompareVersionsView: View {
 
     // MARK: Columns
 
-    private func column(resume: Resume, selection: Binding<UUID>, side: String) -> some View {
+    private func column(resume: Resume, selection: Binding<UUID>, side: String, accessibilityName: String) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.s + 2) {
             Menu {
                 Picker(side, selection: selection) {
@@ -106,7 +108,7 @@ struct CKCompareVersionsView: View {
                         .strokeBorder(CK.Palette.hairline, lineWidth: 1)
                 )
             }
-            .accessibilityLabel(Text("\(side) resume"))
+            .accessibilityLabel(Text(accessibilityName))
             .accessibilityValue(Text(resume.title))
 
             CKResumeThumbnail(resume: resume, width: columnWidth)
@@ -173,7 +175,9 @@ struct CKCompareVersionsView: View {
             }
             .padding(.vertical, 12)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("\(label): first \(leftValue), second \(rightValue)\(differs ? ", different" : "")"))
+            .accessibilityLabel(Text(differs
+                ? String(localized: "\(label): first \(leftValue), second \(rightValue), different")
+                : String(localized: "\(label): first \(leftValue), second \(rightValue)")))
             CKHairline()
         }
     }

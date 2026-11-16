@@ -47,14 +47,14 @@ private struct ComparePane: View {
             header(resume)
             if let resume {
                 PreviewPane(renderer: renderer,
-                            accessibilityName: "Preview of \(resume.title)",
+                            accessibilityName: CKPreviewNames.preview(of: resume.title),
                             showsPageControls: true,
                             showsZoomControls: false)
                     .task(id: resume) {
                         renderer.schedule(delay: 0, work: EditorRender.work(for: resume))
                     }
             } else {
-                EdUnavailableView(title: "Not available", message: "This resume was deleted.")
+                EdUnavailableView(title: String(localized: "Not available"), message: String(localized: "This resume was deleted."))
             }
         }
         .frame(maxWidth: .infinity)
@@ -63,7 +63,7 @@ private struct ComparePane: View {
 
     private func header(_ resume: Resume?) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(resume?.title ?? "Unavailable")
+            Text(resume?.title ?? String(localized: "Unavailable"))
                 .ckHeadlineFont(16)
                 .foregroundStyle(CK.Palette.ink)
                 .lineLimit(1)
@@ -71,7 +71,7 @@ private struct ComparePane: View {
                 Text("\(EditorRender.template(id: resume.templateID).name), edited \(resume.updatedAt.formatted(date: .abbreviated, time: .omitted))")
                     .font(CK.Font.caption)
                     .foregroundStyle(CK.Palette.graphite)
-                    .lineLimit(1)
+                    .lineLimit(2)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

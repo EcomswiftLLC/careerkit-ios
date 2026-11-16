@@ -1,0 +1,2843 @@
+{
+ "_about": "Shell area: Home, My Resumes, Onboarding, Profile, Cover Letters, Preview, App, DesignSystem, Persistence, Ads, Models. Keys are the English source text.",
+ "\"%@\" uses the %@ design. The %@ letter template shares it, so the two documents look like a set.": {
+  "es": "«%@» usa el diseño %@. La plantilla de carta %@ comparte ese diseño, así que los dos documentos forman un conjunto.",
+  "fr": "« %@ » utilise le design %@. Le modèle de lettre %@ reprend ce design, vos deux documents forment donc un ensemble.",
+  "de": "„%@“ nutzt das Design %@. Die Anschreiben-Vorlage %@ verwendet dasselbe Design, sodass beide Dokumente zusammenpassen.",
+  "zh-Hans": "“%@”使用%@设计。%@求职信模板采用相同设计，两份文件风格一致。",
+  "_comment": "Cover letter editor form. 1: resume title, 2: resume template name, 3: letter template name. Keep the order."
+ },
+ "\"%@\" will be removed from this device. This cannot be undone.": {
+  "es": "«%@» se eliminará de este dispositivo. Esta acción no se puede deshacer.",
+  "fr": "« %@ » sera supprimé de cet appareil. Cette action est irréversible.",
+  "de": "„%@“ wird von diesem Gerät entfernt. Dies kann nicht rückgängig gemacht werden.",
+  "zh-Hans": "“%@”将从此设备中删除。此操作无法撤销。",
+  "_comment": "Cover Letters list; Resume quick actions (Home, My Resumes). Delete confirmation. %@ is the document title."
+ },
+ "%@ \"%@\" is the one you edited last.": {
+  "es": "%@ «%@» es el que editaste por última vez.",
+  "fr": "%@ « %@ » est le dernier que vous avez modifié.",
+  "de": "%@ „%@“ haben Sie zuletzt bearbeitet.",
+  "zh-Hans": "%@“%@”是你最近编辑的一份。",
+  "_comment": "Home. Home subtitle. 1: the sentence 'You have N resumes.', 2: resume title. Keep the order."
+ },
+ "%@ at %@": {
+  "es": "%@ en %@",
+  "fr": "%@ chez %@",
+  "de": "%@ bei %@",
+  "zh-Hans": "%@，%@",
+  "_comment": "Cover Letters list. Cover letter row subtitle: job title, then company, as in 'Designer at Northwind'."
+ },
+ "%@ suggestions": {
+  "es": "Sugerencias para %@",
+  "fr": "Suggestions pour %@",
+  "de": "Vorschläge für %@",
+  "zh-Hans": "%@建议",
+  "_comment": "Cover letter editor form. VoiceOver label of the Suggestions button. %@ is a letter part such as Introduction."
+ },
+ "%@, edited %@": {
+  "es": "%@, editado el %@",
+  "fr": "%@, modifié le %@",
+  "de": "%@, bearbeitet am %@",
+  "zh-Hans": "%@，编辑于%@",
+  "_comment": "Compare preview; Cover Letters list. 1: template name, 2: date."
+ },
+ "%@, sorted by %@": {
+  "es": "%@, ordenados por %@",
+  "fr": "%@, triés par %@",
+  "de": "%@, sortiert nach %@",
+  "zh-Hans": "%@，按%@排序",
+  "_comment": "My Resumes. 1: '3 resumes', 2: sort order in lower case such as 'last edited'."
+ },
+ "%@: first %@, second %@": {
+  "es": "%@: primero %@, segundo %@",
+  "fr": "%@ : premier %@, second %@",
+  "de": "%@: erster %@, zweiter %@",
+  "zh-Hans": "%@：第一份%@，第二份%@",
+  "_comment": "My Resumes > Compare versions. VoiceOver row in Compare versions. 1: row label, 2/3: values."
+ },
+ "%@: first %@, second %@, different": {
+  "es": "%@: primero %@, segundo %@, distintos",
+  "fr": "%@ : premier %@, second %@, différents",
+  "de": "%@: erster %@, zweiter %@, unterschiedlich",
+  "zh-Hans": "%@：第一份%@，第二份%@，不同",
+  "_comment": "My Resumes > Compare versions. Same as above when the values differ."
+ },
+ "%lld cover letters": {
+  "en": {
+   "one": "%lld cover letter",
+   "other": "%lld cover letters"
+  },
+  "es": {
+   "one": "%lld carta de presentación",
+   "other": "%lld cartas de presentación"
+  },
+  "fr": {
+   "one": "%lld lettre de motivation",
+   "other": "%lld lettres de motivation"
+  },
+  "de": {
+   "one": "%lld Anschreiben",
+   "other": "%lld Anschreiben"
+  },
+  "zh-Hans": "%lld封求职信",
+  "_comment": "Shared components"
+ },
+ "%lld documents": {
+  "en": {
+   "one": "%lld document",
+   "other": "%lld documents"
+  },
+  "es": {
+   "one": "%lld documento",
+   "other": "%lld documentos"
+  },
+  "fr": {
+   "one": "%lld document",
+   "other": "%lld documents"
+  },
+  "de": {
+   "one": "%lld Dokument",
+   "other": "%lld Dokumente"
+  },
+  "zh-Hans": "%lld份文档",
+  "_comment": "Backup and restore"
+ },
+ "%lld documents could not be opened": {
+  "en": {
+   "one": "%lld document could not be opened",
+   "other": "%lld documents could not be opened"
+  },
+  "es": {
+   "one": "No se pudo abrir %lld documento",
+   "other": "No se pudieron abrir %lld documentos"
+  },
+  "fr": {
+   "one": "%lld document n’a pas pu être ouvert",
+   "other": "%lld documents n’ont pas pu être ouverts"
+  },
+  "de": {
+   "one": "%lld Dokument konnte nicht geöffnet werden",
+   "other": "%lld Dokumente konnten nicht geöffnet werden"
+  },
+  "zh-Hans": "%lld份文档无法打开",
+  "_comment": "Profile"
+ },
+ "%lld documents in the file could not be read.": {
+  "en": {
+   "one": "%lld document in the file could not be read.",
+   "other": "%lld documents in the file could not be read."
+  },
+  "es": {
+   "one": "No se pudo leer %lld documento del archivo.",
+   "other": "No se pudieron leer %lld documentos del archivo."
+  },
+  "fr": {
+   "one": "%lld document du fichier n’a pas pu être lu.",
+   "other": "%lld documents du fichier n’ont pas pu être lus."
+  },
+  "de": {
+   "one": "%lld Dokument in der Datei konnte nicht gelesen werden.",
+   "other": "%lld Dokumente in der Datei konnten nicht gelesen werden."
+  },
+  "zh-Hans": "文件中有%lld份文档无法读取。",
+  "_comment": "Backup and restore"
+ },
+ "%lld documents were made with a newer version of CareerKit": {
+  "en": {
+   "one": "%lld document was made with a newer version of CareerKit",
+   "other": "%lld documents were made with a newer version of CareerKit"
+  },
+  "es": {
+   "one": "%lld documento se creó con una versión más reciente de CareerKit",
+   "other": "%lld documentos se crearon con una versión más reciente de CareerKit"
+  },
+  "fr": {
+   "one": "%lld document a été créé avec une version plus récente de CareerKit",
+   "other": "%lld documents ont été créés avec une version plus récente de CareerKit"
+  },
+  "de": {
+   "one": "%lld Dokument wurde mit einer neueren Version von CareerKit erstellt",
+   "other": "%lld Dokumente wurden mit einer neueren Version von CareerKit erstellt"
+  },
+  "zh-Hans": "%lld份文档由较新版本的 CareerKit 创建",
+  "_comment": "Profile"
+ },
+ "%lld pages": {
+  "en": {
+   "one": "%lld page",
+   "other": "%lld pages"
+  },
+  "es": {
+   "one": "%lld página",
+   "other": "%lld páginas"
+  },
+  "fr": {
+   "one": "%lld page",
+   "other": "%lld pages"
+  },
+  "de": {
+   "one": "%lld Seite",
+   "other": "%lld Seiten"
+  },
+  "zh-Hans": "%lld页",
+  "_comment": "Template cards and filters"
+ },
+ "%lld percent": {
+  "es": "%lld por ciento",
+  "fr": "%lld pour cent",
+  "de": "%lld Prozent",
+  "zh-Hans": "百分之%lld",
+  "_comment": "Progress ring. VoiceOver value of the completion ring."
+ },
+ "%lld percent complete": {
+  "es": "completado al %lld por ciento",
+  "fr": "terminé à %lld pour cent",
+  "de": "zu %lld Prozent fertig",
+  "zh-Hans": "已完成百分之%lld",
+  "_comment": "Resume cards and rows. VoiceOver value of a resume card."
+ },
+ "%lld resumes": {
+  "en": {
+   "one": "%lld resume",
+   "other": "%lld resumes"
+  },
+  "es": {
+   "one": "%lld currículum",
+   "other": "%lld currículums"
+  },
+  "fr": {
+   "one": "%lld CV",
+   "other": "%lld CV"
+  },
+  "de": {
+   "one": "%lld Lebenslauf",
+   "other": "%lld Lebensläufe"
+  },
+  "zh-Hans": "%lld份简历",
+  "_comment": "Shared components"
+ },
+ "%lld were added as separate copies marked restored, because this device has newer changes.": {
+  "en": {
+   "one": "%lld was added as a separate copy marked restored, because this device has newer changes.",
+   "other": "%lld were added as separate copies marked restored, because this device has newer changes."
+  },
+  "es": {
+   "one": "%lld se añadió como copia aparte marcada como restaurada, porque este dispositivo tiene cambios más recientes.",
+   "other": "%lld se añadieron como copias aparte marcadas como restauradas, porque este dispositivo tiene cambios más recientes."
+  },
+  "fr": {
+   "one": "%lld a été ajouté comme copie distincte marquée « restauré », car cet appareil contient des modifications plus récentes.",
+   "other": "%lld ont été ajoutés comme copies distinctes marquées « restauré », car cet appareil contient des modifications plus récentes."
+  },
+  "de": {
+   "one": "%lld wurde als separate Kopie mit dem Vermerk „wiederhergestellt“ hinzugefügt, weil dieses Gerät neuere Änderungen enthält.",
+   "other": "%lld wurden als separate Kopien mit dem Vermerk „wiederhergestellt“ hinzugefügt, weil dieses Gerät neuere Änderungen enthält."
+  },
+  "zh-Hans": "%lld份已作为标记为“已恢复”的单独副本添加，因为此设备上有更新的更改。",
+  "_comment": "Backup and restore"
+ },
+ "%lld%%": {
+  "es": "%lld %%",
+  "fr": "%lld %%",
+  "de": "%lld %%",
+  "zh-Hans": "%lld%%",
+  "_comment": "Progress ring; Resume cards and rows. Completion percentage on resume cards and the progress ring, as in '80%'. %% is a literal percent sign."
+ },
+ "30 designs, all free": {
+  "es": "30 diseños, todos gratis",
+  "fr": "30 designs, tous gratuits",
+  "de": "30 Designs, alle kostenlos",
+  "zh-Hans": "30款设计，全部免费",
+  "_comment": "Home"
+ },
+ "A small labelled banner appears at the end of the lists on Home, My Resumes, Templates, Cover Letters and Profile. It never appears in the editor, the preview or the export screen. You can report an ad from Profile.": {
+  "es": "Al final de las listas de Inicio, Mis currículums, Plantillas, Cartas y Perfil aparece un pequeño banner identificado como anuncio. Nunca aparece en el editor, la vista previa ni la pantalla de exportación. Puedes denunciar un anuncio desde Perfil.",
+  "fr": "Une petite bannière signalée comme publicité apparaît à la fin des listes dans Accueil, Mes CV, Modèles, Lettres et Profil. Elle n’apparaît jamais dans l’éditeur, l’aperçu ou l’écran d’export. Vous pouvez signaler une publicité depuis Profil.",
+  "de": "Am Ende der Listen in Start, Meine Lebensläufe, Vorlagen, Anschreiben und Profil erscheint ein kleines, als Anzeige gekennzeichnetes Banner. Es erscheint nie im Editor, in der Vorschau oder auf dem Exportbildschirm. Sie können eine Anzeige über Profil melden.",
+  "zh-Hans": "首页、我的简历、模板、求职信和个人资料的列表末尾会显示一个带有标签的小横幅广告。编辑器、预览和导出页面中绝不会出现广告。你可以在个人资料中举报广告。",
+  "_comment": "Profile > How exports work. Tab names must match the tab bar translations."
+ },
+ "About": {
+  "es": "Información",
+  "fr": "À propos",
+  "de": "Info",
+  "zh-Hans": "关于",
+  "_comment": "Profile"
+ },
+ "Ad privacy choices": {
+  "es": "Opciones de privacidad de anuncios",
+  "fr": "Choix de confidentialité publicitaire",
+  "de": "Datenschutzoptionen für Werbung",
+  "zh-Hans": "广告隐私选项",
+  "_comment": "Profile"
+ },
+ "Ad report": {
+  "es": "Denuncia de anuncio",
+  "fr": "Signalement de publicité",
+  "de": "Werbung melden",
+  "zh-Hans": "广告举报",
+  "_comment": "Profile. Email subject."
+ },
+ "Add documents from a backup file": {
+  "es": "Añade documentos desde un archivo de copia de seguridad",
+  "fr": "Ajouter des documents depuis un fichier de sauvegarde",
+  "de": "Dokumente aus einer Backup-Datei hinzufügen",
+  "zh-Hans": "从备份文件添加文档",
+  "_comment": "Profile"
+ },
+ "Adjust type, accent color, margins and spacing until the page suits you.": {
+  "es": "Ajusta la tipografía, el color de acento, los márgenes y el espaciado hasta que la página te convenza.",
+  "fr": "Ajustez la typographie, la couleur d’accent, les marges et les espacements jusqu’à obtenir la page qui vous convient.",
+  "de": "Passen Sie Schrift, Akzentfarbe, Ränder und Abstände an, bis die Seite Ihnen gefällt.",
+  "zh-Hans": "调整字体、强调色、页边距和间距，直到页面让你满意。",
+  "_comment": "Onboarding"
+ },
+ "Ads and exports": {
+  "es": "Anuncios y exportaciones",
+  "fr": "Publicités et exports",
+  "de": "Werbung und Exporte",
+  "zh-Hans": "广告与导出",
+  "_comment": "Profile"
+ },
+ "Ads come from Google AdMob and follow the consent choices you make. You can change them later in Profile.": {
+  "es": "Los anuncios proceden de Google AdMob y respetan las opciones de consentimiento que elijas. Puedes cambiarlas más adelante en Perfil.",
+  "fr": "Les publicités sont fournies par Google AdMob et respectent vos choix de consentement. Vous pourrez les modifier plus tard dans Profil.",
+  "de": "Die Werbung stammt von Google AdMob und richtet sich nach Ihren Einwilligungsentscheidungen. Sie können diese später unter Profil ändern.",
+  "zh-Hans": "广告由 Google AdMob 提供，并遵循你做出的同意选择。你之后可以在个人资料中更改这些选择。",
+  "_comment": "Onboarding"
+ },
+ "Advertisement": {
+  "es": "Anuncio",
+  "fr": "Publicité",
+  "de": "Anzeige",
+  "zh-Hans": "广告",
+  "_comment": "Banner ad label. Label above a banner ad. Must clearly mark the ad."
+ },
+ "All local data was deleted.": {
+  "es": "Se eliminaron todos los datos locales.",
+  "fr": "Toutes les données locales ont été supprimées.",
+  "de": "Alle lokalen Daten wurden gelöscht.",
+  "zh-Hans": "所有本地数据已删除。",
+  "_comment": "Profile"
+ },
+ "Any": {
+  "es": "Cualquiera",
+  "fr": "Tous",
+  "de": "Alle",
+  "zh-Hans": "不限",
+  "_comment": "Template cards and filters. Filter menu option meaning no filter."
+ },
+ "Appearance": {
+  "es": "Apariencia",
+  "fr": "Apparence",
+  "de": "Darstellung",
+  "zh-Hans": "外观",
+  "_comment": "Profile"
+ },
+ "Archive": {
+  "es": "Archivar",
+  "fr": "Archiver",
+  "de": "Archivieren",
+  "zh-Hans": "归档",
+  "_comment": "My Resumes; Resume cards and rows"
+ },
+ "Archive a resume to hide it from your main list. It stays on this device and you can bring it back at any time.": {
+  "es": "Archiva un currículum para ocultarlo de tu lista principal. Se queda en este dispositivo y puedes recuperarlo cuando quieras.",
+  "fr": "Archivez un CV pour le masquer de votre liste principale. Il reste sur cet appareil et vous pouvez le récupérer à tout moment.",
+  "de": "Archivieren Sie einen Lebenslauf, um ihn aus Ihrer Hauptliste auszublenden. Er bleibt auf diesem Gerät und Sie können ihn jederzeit zurückholen.",
+  "zh-Hans": "归档简历可将其从主列表中隐藏。它仍保留在此设备上，你可以随时将其恢复。",
+  "_comment": "My Resumes"
+ },
+ "Archived (%lld)": {
+  "es": "Archivados (%lld)",
+  "fr": "Archivés (%lld)",
+  "de": "Archiviert (%lld)",
+  "zh-Hans": "已归档（%lld）",
+  "_comment": "My Resumes. Filter chip."
+ },
+ "Archived. %@": {
+  "es": "Archivado. %@",
+  "fr": "Archivé. %@",
+  "de": "Archiviert. %@",
+  "zh-Hans": "已归档。%@",
+  "_comment": "Resume cards and rows. %@ is 'Edited 2 days ago'."
+ },
+ "Archived. Find it under Archived in My Resumes.": {
+  "es": "Archivado. Lo encontrarás en Archivados, en Mis currículums.",
+  "fr": "Archivé. Vous le trouverez dans Archivés, sous Mes CV.",
+  "de": "Archiviert. Sie finden ihn unter Archiviert in Meine Lebensläufe.",
+  "zh-Hans": "已归档。可在“我的简历”的“已归档”中找到。",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Asks you to confirm twice before anything is deleted": {
+  "es": "Te pide confirmar dos veces antes de eliminar nada",
+  "fr": "Demande deux confirmations avant toute suppression",
+  "de": "Fragt zweimal nach, bevor etwas gelöscht wird",
+  "zh-Hans": "删除任何内容前会请你确认两次",
+  "_comment": "Profile"
+ },
+ "ATS check": {
+  "es": "Revisión ATS",
+  "fr": "Vérification ATS",
+  "de": "ATS-Prüfung",
+  "zh-Hans": "ATS 检查",
+  "_comment": "Home"
+ },
+ "ATS friendly": {
+  "es": "Apto para ATS",
+  "fr": "Compatible ATS",
+  "de": "ATS-freundlich",
+  "zh-Hans": "适配 ATS",
+  "_comment": "Template cards and filters"
+ },
+ "ATS friendly layout": {
+  "es": "Diseño apto para ATS",
+  "fr": "Mise en page compatible ATS",
+  "de": "ATS-freundliches Layout",
+  "zh-Hans": "适配 ATS 的版式",
+  "_comment": "Template cards and filters"
+ },
+ "Awards": {
+  "es": "Premios",
+  "fr": "Distinctions",
+  "de": "Auszeichnungen",
+  "zh-Hans": "所获奖项",
+  "_comment": "Resume document content"
+ },
+ "Back": {
+  "es": "Volver",
+  "fr": "Retour",
+  "de": "Zurück",
+  "zh-Hans": "返回",
+  "_comment": "Cover letter editor"
+ },
+ "Backup not restored": {
+  "es": "No se restauró la copia de seguridad",
+  "fr": "Sauvegarde non restaurée",
+  "de": "Backup nicht wiederhergestellt",
+  "zh-Hans": "备份未恢复",
+  "_comment": "Profile"
+ },
+ "Backup restored": {
+  "es": "Copia de seguridad restaurada",
+  "fr": "Sauvegarde restaurée",
+  "de": "Backup wiederhergestellt",
+  "zh-Hans": "备份已恢复",
+  "_comment": "Profile"
+ },
+ "Banner ads": {
+  "es": "Banners publicitarios",
+  "fr": "Bannières publicitaires",
+  "de": "Werbebanner",
+  "zh-Hans": "横幅广告",
+  "_comment": "Profile > How exports work"
+ },
+ "Blank resume": {
+  "es": "Currículum en blanco",
+  "fr": "CV vierge",
+  "de": "Leerer Lebenslauf",
+  "zh-Hans": "空白简历",
+  "_comment": "Home; My Resumes"
+ },
+ "Browse all": {
+  "es": "Ver todas",
+  "fr": "Tout parcourir",
+  "de": "Alle ansehen",
+  "zh-Hans": "浏览全部",
+  "_comment": "Home"
+ },
+ "Build a clean, well-organised resume on your phone. There is no account to create, and your documents stay on this device.": {
+  "es": "Crea un currículum limpio y bien organizado desde tu teléfono. No tienes que crear ninguna cuenta y tus documentos se quedan en este dispositivo.",
+  "fr": "Créez un CV clair et bien organisé sur votre téléphone. Aucun compte à créer, et vos documents restent sur cet appareil.",
+  "de": "Erstellen Sie auf Ihrem Telefon einen klaren, gut gegliederten Lebenslauf. Ein Konto ist nicht nötig, und Ihre Dokumente bleiben auf diesem Gerät.",
+  "zh-Hans": "在手机上制作简洁、条理清晰的简历。无需创建账户，你的文档会保留在此设备上。",
+  "_comment": "Onboarding"
+ },
+ "Build a stronger job application with matching cover letters": {
+  "es": "Refuerza tu candidatura con cartas de presentación a juego",
+  "fr": "Renforcez votre candidature avec des lettres de motivation assorties",
+  "de": "Stärken Sie Ihre Bewerbung mit passenden Anschreiben",
+  "zh-Hans": "用风格匹配的求职信完善你的求职申请",
+  "_comment": "Onboarding"
+ },
+ "Bullet points": {
+  "es": "Viñetas",
+  "fr": "Puces",
+  "de": "Aufzählungspunkte",
+  "zh-Hans": "要点",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Cancel": {
+  "es": "Cancelar",
+  "fr": "Annuler",
+  "de": "Abbrechen",
+  "zh-Hans": "取消",
+  "_comment": "Cover Letters list; Cover letter editor form; Export sheet; Home; New cover letter sheet; Profile; Resume quick actions (Home, My Resumes)"
+ },
+ "Career tools": {
+  "es": "Herramientas profesionales",
+  "fr": "Outils carrière",
+  "de": "Karriere-Tools",
+  "zh-Hans": "求职工具",
+  "_comment": "Home"
+ },
+ "CareerKit %@, iOS %@": {
+  "es": "CareerKit %@, iOS %@",
+  "fr": "CareerKit %@, iOS %@",
+  "de": "CareerKit %@, iOS %@",
+  "zh-Hans": "CareerKit %@，iOS %@",
+  "_comment": "Profile. Device line added to feedback emails. 1: app version, 2: iOS version."
+ },
+ "CareerKit could not open this file. Save it to the Files app first, then try again.": {
+  "es": "CareerKit no pudo abrir este archivo. Guárdalo primero en la app Archivos y vuelve a intentarlo.",
+  "fr": "CareerKit n’a pas pu ouvrir ce fichier. Enregistrez-le d’abord dans l’app Fichiers, puis réessayez.",
+  "de": "CareerKit konnte diese Datei nicht öffnen. Speichern Sie sie zuerst in der App „Dateien“ und versuchen Sie es dann erneut.",
+  "zh-Hans": "CareerKit 无法打开此文件。请先将其存储到“文件”App，然后重试。",
+  "_comment": "Backup and restore"
+ },
+ "CareerKit feedback": {
+  "es": "Comentarios sobre CareerKit",
+  "fr": "Avis sur CareerKit",
+  "de": "Feedback zu CareerKit",
+  "zh-Hans": "CareerKit 反馈",
+  "_comment": "Profile. Email subject."
+ },
+ "CareerKit has no subscription and no paywall. This is the full picture of where ads appear and why.": {
+  "es": "CareerKit no tiene suscripción ni muro de pago. Aquí tienes toda la información sobre dónde aparecen los anuncios y por qué.",
+  "fr": "CareerKit n’a ni abonnement ni accès payant. Voici, en toute transparence, où les publicités apparaissent et pourquoi.",
+  "de": "CareerKit hat kein Abo und keine Bezahlschranke. Hier sehen Sie vollständig, wo Werbung erscheint und warum.",
+  "zh-Hans": "CareerKit 没有订阅，也没有付费墙。以下完整说明了广告出现的位置和原因。",
+  "_comment": "Profile > How exports work"
+ },
+ "CareerKit is free. Exporting a finished document needs one short rewarded video. Everything else has no ad wall.": {
+  "es": "CareerKit es gratis. Para exportar un documento terminado hay que ver un breve vídeo con recompensa. Todo lo demás funciona sin anuncios obligatorios.",
+  "fr": "CareerKit est gratuit. Pour exporter un document terminé, il faut regarder une courte vidéo avec récompense. Tout le reste est accessible sans publicité obligatoire.",
+  "de": "CareerKit ist kostenlos. Zum Exportieren eines fertigen Dokuments ist ein kurzes Video mit Belohnung nötig. Alles andere ist ohne Werbezwang nutzbar.",
+  "zh-Hans": "CareerKit 免费使用。导出完成的文档需要观看一段简短的激励视频。其他功能都不会强制显示广告。",
+  "_comment": "Onboarding"
+ },
+ "CareerKit is made by Ecom Swift LLC.": {
+  "es": "CareerKit está desarrollada por Ecom Swift LLC.",
+  "fr": "CareerKit est conçu par Ecom Swift LLC.",
+  "de": "CareerKit wird von Ecom Swift LLC entwickelt.",
+  "zh-Hans": "CareerKit 由 Ecom Swift LLC 开发。",
+  "_comment": "Profile. Keep the company name exactly."
+ },
+ "CareerKit support": {
+  "es": "Soporte de CareerKit",
+  "fr": "Assistance CareerKit",
+  "de": "CareerKit-Support",
+  "zh-Hans": "CareerKit 支持",
+  "_comment": "Profile. Email subject."
+ },
+ "Certifications": {
+  "es": "Certificaciones",
+  "fr": "Certifications",
+  "de": "Zertifikate",
+  "zh-Hans": "证书",
+  "_comment": "Resume document content"
+ },
+ "Change color, fonts and spacing.": {
+  "es": "Cambia el color, las fuentes y el espaciado.",
+  "fr": "Modifiez la couleur, les polices et les espacements.",
+  "de": "Farbe, Schriften und Abstände ändern.",
+  "zh-Hans": "更改颜色、字体和间距。",
+  "_comment": "Cover letter editor. VoiceOver hint of the Style button."
+ },
+ "Change template": {
+  "es": "Cambiar plantilla",
+  "fr": "Changer de modèle",
+  "de": "Vorlage ändern",
+  "zh-Hans": "更换模板",
+  "_comment": "Resume cards and rows"
+ },
+ "Choose a CareerKit backup file. Documents already on this device are kept.": {
+  "es": "Elige un archivo de copia de seguridad de CareerKit. Los documentos que ya hay en este dispositivo se conservan.",
+  "fr": "Choisissez un fichier de sauvegarde CareerKit. Les documents déjà présents sur cet appareil sont conservés.",
+  "de": "Wählen Sie eine CareerKit-Backup-Datei. Dokumente, die bereits auf diesem Gerät sind, bleiben erhalten.",
+  "zh-Hans": "选择一个 CareerKit 备份文件。此设备上已有的文档会被保留。",
+  "_comment": "Profile"
+ },
+ "Choose a template": {
+  "es": "Elegir una plantilla",
+  "fr": "Choisir un modèle",
+  "de": "Vorlage auswählen",
+  "zh-Hans": "选择模板",
+  "_comment": "My Resumes"
+ },
+ "Choose another letter template. Your text stays the same.": {
+  "es": "Elige otra plantilla de carta. Tu texto no cambia.",
+  "fr": "Choisissez un autre modèle de lettre. Votre texte reste identique.",
+  "de": "Eine andere Anschreiben-Vorlage wählen. Ihr Text bleibt unverändert.",
+  "zh-Hans": "选择其他求职信模板。你的文字内容保持不变。",
+  "_comment": "Cover letter editor"
+ },
+ "Choose from 30 professionally designed templates": {
+  "es": "Elige entre 30 plantillas de diseño profesional",
+  "fr": "Choisissez parmi 30 modèles conçus par des professionnels",
+  "de": "Wählen Sie aus 30 professionell gestalteten Vorlagen",
+  "zh-Hans": "从30款专业设计的模板中挑选",
+  "_comment": "Onboarding"
+ },
+ "Choose two resumes to compare. This shows what each one contains right now. It does not track edits over time.": {
+  "es": "Elige dos currículums para compararlos. Se muestra lo que contiene cada uno ahora mismo. No registra los cambios a lo largo del tiempo.",
+  "fr": "Choisissez deux CV à comparer. Vous voyez ce que chacun contient actuellement. Les modifications ne sont pas suivies dans le temps.",
+  "de": "Wählen Sie zwei Lebensläufe zum Vergleichen. Angezeigt wird, was jeder gerade enthält. Änderungen im Zeitverlauf werden nicht erfasst.",
+  "zh-Hans": "选择两份简历进行比较。这里显示的是每份简历当前的内容，不会记录随时间的修改。",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Choose where to send your %@.": {
+  "es": "Elige adónde enviar tu %@.",
+  "fr": "Choisissez où envoyer votre %@.",
+  "de": "Wählen Sie, wohin %@ gesendet werden soll.",
+  "zh-Hans": "选择要将%@发送到哪里。",
+  "_comment": "Export sheet. %@ is the file type noun, such as PDF."
+ },
+ "City, country": {
+  "es": "Ciudad, país",
+  "fr": "Ville, pays",
+  "de": "Stadt, Land",
+  "zh-Hans": "城市，国家/地区",
+  "_comment": "Cover letter editor form"
+ },
+ "Close": {
+  "es": "Cerrar",
+  "fr": "Fermer",
+  "de": "Schließen",
+  "zh-Hans": "关闭",
+  "_comment": "Cover letter editor form"
+ },
+ "Company": {
+  "es": "Empresa",
+  "fr": "Entreprise",
+  "de": "Unternehmen",
+  "zh-Hans": "公司",
+  "_comment": "Cover letter editor form"
+ },
+ "Company address": {
+  "es": "Dirección de la empresa",
+  "fr": "Adresse de l’entreprise",
+  "de": "Firmenadresse",
+  "zh-Hans": "公司地址",
+  "_comment": "Cover letter editor form"
+ },
+ "Company, hiring manager, role": {
+  "es": "Empresa, responsable de contratación, puesto",
+  "fr": "Entreprise, recruteur, poste",
+  "de": "Unternehmen, Ansprechperson, Stelle",
+  "zh-Hans": "公司、招聘负责人、职位",
+  "_comment": "Cover letter editor form"
+ },
+ "Company, role and manager names are filled in from your letter. Change anything so it sounds like you.": {
+  "es": "La empresa, el puesto y el nombre del responsable se rellenan a partir de tu carta. Cambia lo que quieras para que suene a ti.",
+  "fr": "L’entreprise, le poste et le nom du recruteur sont repris de votre lettre. Modifiez ce que vous voulez pour que le texte vous ressemble.",
+  "de": "Unternehmen, Stelle und Name der Ansprechperson werden aus Ihrem Anschreiben übernommen. Ändern Sie alles so, dass es nach Ihnen klingt.",
+  "zh-Hans": "公司、职位和负责人姓名会根据你的求职信自动填入。你可以随意修改，让内容更像你自己的表达。",
+  "_comment": "Cover letter editor form"
+ },
+ "Compare": {
+  "es": "Comparar",
+  "fr": "Comparer",
+  "de": "Vergleichen",
+  "zh-Hans": "比较",
+  "_comment": "Compare preview"
+ },
+ "Compare versions": {
+  "es": "Comparar versiones",
+  "fr": "Comparer des versions",
+  "de": "Versionen vergleichen",
+  "zh-Hans": "比较版本",
+  "_comment": "My Resumes; My Resumes > Compare versions"
+ },
+ "Completion": {
+  "es": "Progreso",
+  "fr": "Avancement",
+  "de": "Fortschritt",
+  "zh-Hans": "完成度",
+  "_comment": "My Resumes > Compare versions; Progress ring"
+ },
+ "Contact support": {
+  "es": "Contactar con soporte",
+  "fr": "Contacter l’assistance",
+  "de": "Support kontaktieren",
+  "zh-Hans": "联系支持",
+  "_comment": "Profile"
+ },
+ "Continue": {
+  "es": "Continuar",
+  "fr": "Continuer",
+  "de": "Weiter",
+  "zh-Hans": "继续",
+  "_comment": "Onboarding; Profile"
+ },
+ "copy": {
+  "es": "copia",
+  "fr": "copie",
+  "de": "Kopie",
+  "zh-Hans": "副本",
+  "_comment": "Backup and restore. Suffix added to the title of a duplicated document: 'Design CV copy'. One word, lower case where natural."
+ },
+ "Courses": {
+  "es": "Cursos",
+  "fr": "Formations suivies",
+  "de": "Kurse",
+  "zh-Hans": "课程",
+  "_comment": "Resume document content"
+ },
+ "Cover letter": {
+  "es": "Carta de presentación",
+  "fr": "Lettre de motivation",
+  "de": "Anschreiben",
+  "zh-Hans": "求职信",
+  "_comment": "Home; New cover letter sheet. Tool tile title, and the default title of a new letter."
+ },
+ "Cover Letters": {
+  "es": "Cartas",
+  "fr": "Lettres",
+  "de": "Anschreiben",
+  "zh-Hans": "求职信",
+  "_comment": "Tab bar. Tab bar label. Keep it short."
+ },
+ "Cover letters": {
+  "es": "Cartas de presentación",
+  "fr": "Lettres de motivation",
+  "de": "Anschreiben",
+  "zh-Hans": "求职信",
+  "_comment": "Cover Letters list. Screen title."
+ },
+ "Create a professional resume": {
+  "es": "Crea un currículum profesional",
+  "fr": "Créez un CV professionnel",
+  "de": "Erstellen Sie einen professionellen Lebenslauf",
+  "zh-Hans": "制作专业简历",
+  "_comment": "Onboarding"
+ },
+ "Create a resume first, then run the ATS check on it.": {
+  "es": "Crea primero un currículum y luego haz la revisión ATS.",
+  "fr": "Créez d’abord un CV, puis lancez la vérification ATS.",
+  "de": "Erstellen Sie zuerst einen Lebenslauf und führen Sie dann die ATS-Prüfung aus.",
+  "zh-Hans": "请先创建一份简历，然后再进行 ATS 检查。",
+  "_comment": "Home"
+ },
+ "Create from scratch": {
+  "es": "Crear desde cero",
+  "fr": "Partir de zéro",
+  "de": "Neu beginnen",
+  "zh-Hans": "从头创建",
+  "_comment": "Home"
+ },
+ "Create letter": {
+  "es": "Crear carta",
+  "fr": "Créer la lettre",
+  "de": "Anschreiben erstellen",
+  "zh-Hans": "创建求职信",
+  "_comment": "New cover letter sheet"
+ },
+ "Create new from this": {
+  "es": "Crear uno nuevo a partir de este",
+  "fr": "Créer un nouveau CV à partir de celui-ci",
+  "de": "Neuen daraus erstellen",
+  "zh-Hans": "以此为基础新建",
+  "_comment": "Resume cards and rows"
+ },
+ "Create new resume": {
+  "es": "Crear currículum nuevo",
+  "fr": "Créer un CV",
+  "de": "Neuen Lebenslauf erstellen",
+  "zh-Hans": "新建简历",
+  "_comment": "Home"
+ },
+ "Creates one backup file and opens the share sheet": {
+  "es": "Crea un archivo de copia de seguridad y abre el menú de compartir",
+  "fr": "Crée un fichier de sauvegarde et ouvre la feuille de partage",
+  "de": "Erstellt eine Backup-Datei und öffnet das Teilen-Menü",
+  "zh-Hans": "创建一个备份文件并打开共享面板",
+  "_comment": "Profile"
+ },
+ "Creating resumes and cover letters, editing, changing templates, previewing, the ATS check and saving drafts are all free, with no ad and no limit.": {
+  "es": "Crear currículums y cartas de presentación, editarlos, cambiar de plantilla, ver la vista previa, la revisión ATS y guardar borradores es gratis, sin anuncios y sin límites.",
+  "fr": "Créer des CV et des lettres de motivation, les modifier, changer de modèle, afficher l’aperçu, lancer la vérification ATS et enregistrer des brouillons : tout est gratuit, sans publicité et sans limite.",
+  "de": "Lebensläufe und Anschreiben erstellen und bearbeiten, Vorlagen wechseln, die Vorschau, die ATS-Prüfung und das Speichern von Entwürfen sind kostenlos, ohne Werbung und ohne Limit.",
+  "zh-Hans": "创建和编辑简历与求职信、更换模板、预览、ATS 检查以及保存草稿均免费，没有广告，也没有次数限制。",
+  "_comment": "Profile > How exports work"
+ },
+ "Custom Section": {
+  "es": "Sección personalizada",
+  "fr": "Section personnalisée",
+  "de": "Eigener Abschnitt",
+  "zh-Hans": "自定义板块",
+  "_comment": "Resume document content"
+ },
+ "Customize fonts, colors and layout": {
+  "es": "Personaliza fuentes, colores y diseño",
+  "fr": "Personnalisez polices, couleurs et mise en page",
+  "de": "Schriften, Farben und Layout anpassen",
+  "zh-Hans": "自定义字体、颜色和版式",
+  "_comment": "Onboarding"
+ },
+ "Dark": {
+  "es": "Oscuro",
+  "fr": "Sombre",
+  "de": "Dunkel",
+  "zh-Hans": "深色",
+  "_comment": "Profile > Appearance"
+ },
+ "Date": {
+  "es": "Fecha",
+  "fr": "Date",
+  "de": "Datum",
+  "zh-Hans": "日期",
+  "_comment": "Cover letter editor form"
+ },
+ "Date created": {
+  "es": "Fecha de creación",
+  "fr": "Date de création",
+  "de": "Erstellungsdatum",
+  "zh-Hans": "创建日期",
+  "_comment": "My Resumes sort menu"
+ },
+ "date created": {
+  "es": "fecha de creación",
+  "fr": "date de création",
+  "de": "Erstellungsdatum",
+  "zh-Hans": "创建日期",
+  "_comment": "My Resumes sort menu. Used in '3 resumes, sorted by date created'."
+ },
+ "Dear %@,": {
+  "es": "Estimado/a %@:",
+  "fr": "Bonjour %@,",
+  "de": "Guten Tag %@,",
+  "zh-Hans": "尊敬的%@：",
+  "_comment": "Cover letter document content. Default cover letter greeting with the recipient's name. Written into the letter."
+ },
+ "Dear Hiring Manager,": {
+  "es": "Estimado/a responsable de selección:",
+  "fr": "Madame, Monsieur,",
+  "de": "Sehr geehrte Damen und Herren,",
+  "zh-Hans": "尊敬的招聘负责人：",
+  "_comment": "Cover letter document content. Default cover letter greeting. Written into the letter."
+ },
+ "Default paper size": {
+  "es": "Tamaño de papel predeterminado",
+  "fr": "Format de papier par défaut",
+  "de": "Standard-Papierformat",
+  "zh-Hans": "默认纸张尺寸",
+  "_comment": "Profile"
+ },
+ "Delete": {
+  "es": "Eliminar",
+  "fr": "Supprimer",
+  "de": "Löschen",
+  "zh-Hans": "删除",
+  "_comment": "Cover Letters list; My Resumes; Resume cards and rows"
+ },
+ "Delete all local data": {
+  "es": "Eliminar todos los datos locales",
+  "fr": "Supprimer toutes les données locales",
+  "de": "Alle lokalen Daten löschen",
+  "zh-Hans": "删除所有本地数据",
+  "_comment": "Profile"
+ },
+ "Delete all local data?": {
+  "es": "¿Eliminar todos los datos locales?",
+  "fr": "Supprimer toutes les données locales ?",
+  "de": "Alle lokalen Daten löschen?",
+  "zh-Hans": "要删除所有本地数据吗？",
+  "_comment": "Profile"
+ },
+ "Delete everything": {
+  "es": "Eliminar todo",
+  "fr": "Tout supprimer",
+  "de": "Alles löschen",
+  "zh-Hans": "全部删除",
+  "_comment": "Profile"
+ },
+ "Delete everything permanently?": {
+  "es": "¿Eliminar todo de forma permanente?",
+  "fr": "Tout supprimer définitivement ?",
+  "de": "Alles endgültig löschen?",
+  "zh-Hans": "要永久删除所有内容吗？",
+  "_comment": "Profile"
+ },
+ "Delete files": {
+  "es": "Eliminar archivos",
+  "fr": "Supprimer les fichiers",
+  "de": "Dateien löschen",
+  "zh-Hans": "删除文件",
+  "_comment": "Profile"
+ },
+ "Delete letter": {
+  "es": "Eliminar carta",
+  "fr": "Supprimer la lettre",
+  "de": "Anschreiben löschen",
+  "zh-Hans": "删除求职信",
+  "_comment": "Cover Letters list"
+ },
+ "Delete resume": {
+  "es": "Eliminar currículum",
+  "fr": "Supprimer le CV",
+  "de": "Lebenslauf löschen",
+  "zh-Hans": "删除简历",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Delete the files": {
+  "es": "Eliminar los archivos",
+  "fr": "Supprimer les fichiers",
+  "de": "Dateien löschen",
+  "zh-Hans": "删除这些文件",
+  "_comment": "Profile"
+ },
+ "Delete the unreadable files?": {
+  "es": "¿Eliminar los archivos ilegibles?",
+  "fr": "Supprimer les fichiers illisibles ?",
+  "de": "Die unlesbaren Dateien löschen?",
+  "zh-Hans": "要删除无法读取的文件吗？",
+  "_comment": "Profile"
+ },
+ "Delete this cover letter?": {
+  "es": "¿Eliminar esta carta de presentación?",
+  "fr": "Supprimer cette lettre de motivation ?",
+  "de": "Dieses Anschreiben löschen?",
+  "zh-Hans": "要删除这封求职信吗？",
+  "_comment": "Cover Letters list"
+ },
+ "Delete this resume?": {
+  "es": "¿Eliminar este currículum?",
+  "fr": "Supprimer ce CV ?",
+  "de": "Diesen Lebenslauf löschen?",
+  "zh-Hans": "要删除这份简历吗？",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Deleted \"%@\"": {
+  "es": "Se eliminó «%@»",
+  "fr": "« %@ » supprimé",
+  "de": "„%@“ gelöscht",
+  "zh-Hans": "已删除“%@”",
+  "_comment": "Resume quick actions (Home, My Resumes). Toast."
+ },
+ "Document preview": {
+  "es": "Vista previa del documento",
+  "fr": "Aperçu du document",
+  "de": "Dokumentvorschau",
+  "zh-Hans": "文档预览",
+  "_comment": "Document preview"
+ },
+ "Documents and display": {
+  "es": "Documentos y visualización",
+  "fr": "Documents et affichage",
+  "de": "Dokumente und Darstellung",
+  "zh-Hans": "文档与显示",
+  "_comment": "Profile"
+ },
+ "Done": {
+  "es": "Listo",
+  "fr": "OK",
+  "de": "Fertig",
+  "zh-Hans": "完成",
+  "_comment": "Cover letter template picker; Export sheet; My Resumes > Compare versions"
+ },
+ "Duplicate": {
+  "es": "Duplicar",
+  "fr": "Dupliquer",
+  "de": "Duplizieren",
+  "zh-Hans": "复制",
+  "_comment": "Cover Letters list; My Resumes; Resume cards and rows"
+ },
+ "Duplicated as \"%@\"": {
+  "es": "Duplicado como «%@»",
+  "fr": "Dupliqué sous « %@ »",
+  "de": "Dupliziert als „%@“",
+  "zh-Hans": "已复制为“%@”",
+  "_comment": "Resume quick actions (Home, My Resumes). Toast."
+ },
+ "Edit": {
+  "es": "Editar",
+  "fr": "Modifier",
+  "de": "Bearbeiten",
+  "zh-Hans": "编辑",
+  "_comment": "Resume cards and rows"
+ },
+ "Edit %@": {
+  "es": "Editar %@",
+  "fr": "Modifier %@",
+  "de": "%@ bearbeiten",
+  "zh-Hans": "编辑%@",
+  "_comment": "Resume cards and rows. VoiceOver label. %@ is the resume title."
+ },
+ "Edited %@": {
+  "es": "Editado %@",
+  "fr": "Modifié %@",
+  "de": "Bearbeitet %@",
+  "zh-Hans": "编辑于%@",
+  "_comment": "Shared components. %@ is a relative date from the system, such as '2 days ago' / 'hace 2 días' / 'il y a 2 jours' / 'vor 2 Tagen' / '2天前'."
+ },
+ "Education": {
+  "es": "Formación",
+  "fr": "Formation",
+  "de": "Ausbildung",
+  "zh-Hans": "教育背景",
+  "_comment": "Resume document content"
+ },
+ "Email": {
+  "es": "Correo electrónico",
+  "fr": "E-mail",
+  "de": "E-Mail",
+  "zh-Hans": "电子邮件",
+  "_comment": "Cover letter editor form"
+ },
+ "Entries": {
+  "es": "Entradas",
+  "fr": "Entrées",
+  "de": "Einträge",
+  "zh-Hans": "条目",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Explain what draws you to this company.": {
+  "es": "Explica qué te atrae de esta empresa.",
+  "fr": "Expliquez ce qui vous attire dans cette entreprise.",
+  "de": "Erklären Sie, was Sie an diesem Unternehmen reizt.",
+  "zh-Hans": "说明这家公司吸引你的地方。",
+  "_comment": "Cover letter editor form"
+ },
+ "Export": {
+  "es": "Exportar",
+  "fr": "Exporter",
+  "de": "Exportieren",
+  "zh-Hans": "导出",
+  "_comment": "Cover letter editor; Resume preview screen"
+ },
+ "Export a backup first": {
+  "es": "Exportar antes una copia de seguridad",
+  "fr": "Exporter d’abord une sauvegarde",
+  "de": "Zuerst ein Backup exportieren",
+  "zh-Hans": "先导出备份",
+  "_comment": "Profile"
+ },
+ "Export as %@": {
+  "es": "Exportar como %@",
+  "fr": "Exporter en %@",
+  "de": "Als %@ exportieren",
+  "zh-Hans": "导出为%@",
+  "_comment": "Export sheet. Export sheet title. %@ is the file type, such as PDF."
+ },
+ "Export backup": {
+  "es": "Exportar copia de seguridad",
+  "fr": "Exporter une sauvegarde",
+  "de": "Backup exportieren",
+  "zh-Hans": "导出备份",
+  "_comment": "Profile"
+ },
+ "Export the files": {
+  "es": "Exportar los archivos",
+  "fr": "Exporter les fichiers",
+  "de": "Dateien exportieren",
+  "zh-Hans": "导出这些文件",
+  "_comment": "Profile"
+ },
+ "Export unlocked": {
+  "es": "Exportación desbloqueada",
+  "fr": "Export débloqué",
+  "de": "Export freigeschaltet",
+  "zh-Hans": "导出已解锁",
+  "_comment": "Export sheet"
+ },
+ "Export without video": {
+  "es": "Exportar sin vídeo",
+  "fr": "Exporter sans vidéo",
+  "de": "Ohne Video exportieren",
+  "zh-Hans": "不看视频直接导出",
+  "_comment": "Export sheet"
+ },
+ "File type": {
+  "es": "Tipo de archivo",
+  "fr": "Type de fichier",
+  "de": "Dateityp",
+  "zh-Hans": "文件类型",
+  "_comment": "Export sheet"
+ },
+ "File types you can export": {
+  "es": "Tipos de archivo que puedes exportar",
+  "fr": "Types de fichiers exportables",
+  "de": "Exportierbare Dateitypen",
+  "zh-Hans": "可导出的文件类型",
+  "_comment": "Profile > How exports work"
+ },
+ "Filter by industry, career level and style. Every template is free, and you can change templates later without retyping anything.": {
+  "es": "Filtra por sector, nivel profesional y estilo. Todas las plantillas son gratis y puedes cambiar de plantilla más adelante sin volver a escribir nada.",
+  "fr": "Filtrez par secteur, niveau d’expérience et style. Tous les modèles sont gratuits, et vous pouvez en changer plus tard sans rien ressaisir.",
+  "de": "Filtern Sie nach Branche, Karrierestufe und Stil. Alle Vorlagen sind kostenlos, und Sie können die Vorlage später wechseln, ohne etwas neu einzugeben.",
+  "zh-Hans": "可按行业、职业阶段和风格筛选。所有模板均免费，之后更换模板也无需重新输入任何内容。",
+  "_comment": "Onboarding"
+ },
+ "First": {
+  "es": "Primero",
+  "fr": "Premier",
+  "de": "Erster",
+  "zh-Hans": "第一份",
+  "_comment": "My Resumes > Compare versions. Compare versions: left resume picker."
+ },
+ "First resume": {
+  "es": "Primer currículum",
+  "fr": "Premier CV",
+  "de": "Erster Lebenslauf",
+  "zh-Hans": "第一份简历",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Fit to width": {
+  "es": "Ajustar al ancho",
+  "fr": "Ajuster à la largeur",
+  "de": "An Breite anpassen",
+  "zh-Hans": "适应宽度",
+  "_comment": "Document preview"
+ },
+ "Get started": {
+  "es": "Empezar",
+  "fr": "Commencer",
+  "de": "Los geht’s",
+  "zh-Hans": "开始使用",
+  "_comment": "Onboarding"
+ },
+ "Getting your video ready": {
+  "es": "Preparando tu vídeo",
+  "fr": "Préparation de votre vidéo",
+  "de": "Video wird vorbereitet",
+  "zh-Hans": "正在准备视频",
+  "_comment": "Export sheet"
+ },
+ "Give one or two examples of work that matches what they need.": {
+  "es": "Da uno o dos ejemplos de trabajos que encajen con lo que buscan.",
+  "fr": "Donnez un ou deux exemples de réalisations qui correspondent à leurs besoins.",
+  "de": "Nennen Sie ein oder zwei Beispiele aus Ihrer Arbeit, die zu den Anforderungen passen.",
+  "zh-Hans": "举一两个与对方需求相符的工作实例。",
+  "_comment": "Cover letter editor form"
+ },
+ "Good afternoon": {
+  "es": "Buenas tardes",
+  "fr": "Bonjour",
+  "de": "Guten Tag",
+  "zh-Hans": "下午好",
+  "_comment": "Home"
+ },
+ "Good afternoon, %@": {
+  "es": "Buenas tardes, %@",
+  "fr": "Bonjour, %@",
+  "de": "Guten Tag, %@",
+  "zh-Hans": "下午好，%@",
+  "_comment": "Home. Home greeting with the name."
+ },
+ "Good evening": {
+  "es": "Buenas noches",
+  "fr": "Bonsoir",
+  "de": "Guten Abend",
+  "zh-Hans": "晚上好",
+  "_comment": "Home"
+ },
+ "Good evening, %@": {
+  "es": "Buenas noches, %@",
+  "fr": "Bonsoir, %@",
+  "de": "Guten Abend, %@",
+  "zh-Hans": "晚上好，%@",
+  "_comment": "Home. Home greeting with the name."
+ },
+ "Good morning": {
+  "es": "Buenos días",
+  "fr": "Bonjour",
+  "de": "Guten Morgen",
+  "zh-Hans": "早上好",
+  "_comment": "Home"
+ },
+ "Good morning, %@": {
+  "es": "Buenos días, %@",
+  "fr": "Bonjour, %@",
+  "de": "Guten Morgen, %@",
+  "zh-Hans": "早上好，%@",
+  "_comment": "Home. Home greeting with the name."
+ },
+ "Greeting": {
+  "es": "Saludo",
+  "fr": "Formule d’appel",
+  "de": "Anrede",
+  "zh-Hans": "称呼",
+  "_comment": "Cover letter editor form"
+ },
+ "Greeting, body and sign-off": {
+  "es": "Saludo, cuerpo y despedida",
+  "fr": "Formule d’appel, corps et formule de politesse",
+  "de": "Anrede, Text und Grußformel",
+  "zh-Hans": "称呼、正文和结束语",
+  "_comment": "Cover letter editor form"
+ },
+ "Grid": {
+  "es": "Cuadrícula",
+  "fr": "Grille",
+  "de": "Raster",
+  "zh-Hans": "网格",
+  "_comment": "My Resumes"
+ },
+ "Has a photo area": {
+  "es": "Tiene espacio para foto",
+  "fr": "Comporte un emplacement photo",
+  "de": "Mit Fotobereich",
+  "zh-Hans": "含照片区域",
+  "_comment": "Template cards and filters. VoiceOver label of the Photo badge."
+ },
+ "has a photo area": {
+  "es": "tiene espacio para foto",
+  "fr": "comporte un emplacement photo",
+  "de": "mit Fotobereich",
+  "zh-Hans": "含照片区域",
+  "_comment": "Template cards and filters. Part of a template card's VoiceOver label, after the name and tagline, separated by commas."
+ },
+ "Hiring manager": {
+  "es": "Responsable de contratación",
+  "fr": "Recruteur",
+  "de": "Ansprechperson",
+  "zh-Hans": "招聘负责人",
+  "_comment": "Cover letter editor form"
+ },
+ "Home": {
+  "es": "Inicio",
+  "fr": "Accueil",
+  "de": "Start",
+  "zh-Hans": "首页",
+  "_comment": "Tab bar. Tab bar label."
+ },
+ "How CareerKit stays free": {
+  "es": "Cómo CareerKit sigue siendo gratis",
+  "fr": "Comment CareerKit reste gratuit",
+  "de": "So bleibt CareerKit kostenlos",
+  "zh-Hans": "CareerKit 如何保持免费",
+  "_comment": "Home"
+ },
+ "How exports work": {
+  "es": "Cómo funcionan las exportaciones",
+  "fr": "Fonctionnement des exports",
+  "de": "So funktionieren Exporte",
+  "zh-Hans": "导出说明",
+  "_comment": "Home; Profile; Profile > How exports work"
+ },
+ "If a video is not available": {
+  "es": "Si no hay ningún vídeo disponible",
+  "fr": "Si aucune vidéo n’est disponible",
+  "de": "Wenn kein Video verfügbar ist",
+  "zh-Hans": "如果没有可播放的视频",
+  "_comment": "Profile > How exports work"
+ },
+ "If no video can be shown, for example when you are offline or no ad is available, the app says so and lets you export without a video. Your document is never lost or locked.": {
+  "es": "Si no se puede mostrar ningún vídeo, por ejemplo, cuando no tienes conexión o no hay anuncios disponibles, la app te lo indica y te permite exportar sin vídeo. Tu documento nunca se pierde ni se bloquea.",
+  "fr": "Si aucune vidéo ne peut être diffusée, par exemple hors connexion ou lorsqu’aucune publicité n’est disponible, l’app vous le signale et vous permet d’exporter sans vidéo. Votre document n’est jamais perdu ni bloqué.",
+  "de": "Wenn kein Video gezeigt werden kann, etwa offline oder wenn keine Werbung verfügbar ist, teilt die App das mit und lässt Sie ohne Video exportieren. Ihr Dokument geht nie verloren und wird nie gesperrt.",
+  "zh-Hans": "如果无法播放视频（例如你处于离线状态或没有可用广告），App 会告知你，并允许你不看视频直接导出。你的文档绝不会丢失或被锁定。",
+  "_comment": "Profile > How exports work"
+ },
+ "Import an existing resume": {
+  "es": "Importar un currículum existente",
+  "fr": "Importer un CV existant",
+  "de": "Vorhandenen Lebenslauf importieren",
+  "zh-Hans": "导入现有简历",
+  "_comment": "Home"
+ },
+ "Import resume": {
+  "es": "Importar currículum",
+  "fr": "Importer un CV",
+  "de": "Lebenslauf importieren",
+  "zh-Hans": "导入简历",
+  "_comment": "My Resumes"
+ },
+ "Interests": {
+  "es": "Intereses",
+  "fr": "Centres d’intérêt",
+  "de": "Interessen",
+  "zh-Hans": "兴趣爱好",
+  "_comment": "Resume document content"
+ },
+ "Internships": {
+  "es": "Prácticas",
+  "fr": "Stages",
+  "de": "Praktika",
+  "zh-Hans": "实习经历",
+  "_comment": "Resume document content"
+ },
+ "It may have been deleted. Go back to My Resumes to choose another.": {
+  "es": "Puede que se haya eliminado. Vuelve a Mis currículums para elegir otro.",
+  "fr": "Il a peut-être été supprimé. Revenez à Mes CV pour en choisir un autre.",
+  "de": "Er wurde möglicherweise gelöscht. Wählen Sie in Meine Lebensläufe einen anderen aus.",
+  "zh-Hans": "它可能已被删除。请返回“我的简历”选择其他简历。",
+  "_comment": "Resume preview"
+ },
+ "It may have been deleted. Go back to your cover letters to choose another.": {
+  "es": "Puede que se haya eliminado. Vuelve a tus cartas de presentación para elegir otra.",
+  "fr": "Elle a peut-être été supprimée. Revenez à vos lettres de motivation pour en choisir une autre.",
+  "de": "Es wurde möglicherweise gelöscht. Wählen Sie in Ihren Anschreiben ein anderes aus.",
+  "zh-Hans": "它可能已被删除。请返回求职信列表选择其他求职信。",
+  "_comment": "Cover letter editor"
+ },
+ "Job description (optional)": {
+  "es": "Descripción del puesto (opcional)",
+  "fr": "Description du poste (facultatif)",
+  "de": "Stellenbeschreibung (optional)",
+  "zh-Hans": "职位描述（可选）",
+  "_comment": "Cover letter editor form"
+ },
+ "Job title you are applying for": {
+  "es": "Puesto al que te postulas",
+  "fr": "Intitulé du poste visé",
+  "de": "Stelle, auf die Sie sich bewerben",
+  "zh-Hans": "申请的职位名称",
+  "_comment": "Cover letter editor form"
+ },
+ "just now": {
+  "es": "justo ahora",
+  "fr": "à l’instant",
+  "de": "gerade eben",
+  "zh-Hans": "刚刚",
+  "_comment": "Shared components. Used in 'Edited just now'."
+ },
+ "Keep my data": {
+  "es": "Conservar mis datos",
+  "fr": "Conserver mes données",
+  "de": "Meine Daten behalten",
+  "zh-Hans": "保留我的数据",
+  "_comment": "Profile"
+ },
+ "Kept aside so nothing is lost. Export or delete the files.": {
+  "es": "Se guardan aparte para que no se pierda nada. Exporta o elimina los archivos.",
+  "fr": "Mis de côté pour que rien ne soit perdu. Exportez ou supprimez les fichiers.",
+  "de": "Separat aufbewahrt, damit nichts verloren geht. Exportieren oder löschen Sie die Dateien.",
+  "zh-Hans": "已单独保存，确保不会丢失任何内容。你可以导出或删除这些文件。",
+  "_comment": "Profile"
+ },
+ "Kept on this device. Used only for the greeting on Home.": {
+  "es": "Se guarda en este dispositivo. Solo se usa para el saludo de Inicio.",
+  "fr": "Conservé sur cet appareil. Utilisé uniquement pour le message d’accueil.",
+  "de": "Bleibt auf diesem Gerät. Wird nur für die Begrüßung auf Start verwendet.",
+  "zh-Hans": "仅保存在此设备上，只用于首页的问候语。",
+  "_comment": "Profile"
+ },
+ "Languages": {
+  "es": "Idiomas",
+  "fr": "Langues",
+  "de": "Sprachen",
+  "zh-Hans": "语言能力",
+  "_comment": "Resume document content"
+ },
+ "Last edited": {
+  "es": "Última edición",
+  "fr": "Dernière modification",
+  "de": "Zuletzt bearbeitet",
+  "zh-Hans": "最近编辑",
+  "_comment": "My Resumes sort menu"
+ },
+ "last edited": {
+  "es": "última edición",
+  "fr": "dernière modification",
+  "de": "Bearbeitungsdatum",
+  "zh-Hans": "最近编辑",
+  "_comment": "My Resumes sort menu. Used in '3 resumes, sorted by last edited'."
+ },
+ "Let's build your first resume.": {
+  "es": "Creemos tu primer currículum.",
+  "fr": "Créons votre premier CV.",
+  "de": "Erstellen Sie Ihren ersten Lebenslauf.",
+  "zh-Hans": "来制作你的第一份简历吧。",
+  "_comment": "Home"
+ },
+ "Letter": {
+  "es": "Carta",
+  "fr": "Lettre",
+  "de": "Anschreiben",
+  "zh-Hans": "信件正文",
+  "_comment": "Cover letter editor form"
+ },
+ "Letter templates": {
+  "es": "Plantillas de carta",
+  "fr": "Modèles de lettre",
+  "de": "Anschreiben-Vorlagen",
+  "zh-Hans": "求职信模板",
+  "_comment": "Cover letter template picker"
+ },
+ "Letter title": {
+  "es": "Título de la carta",
+  "fr": "Titre de la lettre",
+  "de": "Titel des Anschreibens",
+  "zh-Hans": "求职信标题",
+  "_comment": "Cover letter editor form; New cover letter sheet"
+ },
+ "Light": {
+  "es": "Claro",
+  "fr": "Clair",
+  "de": "Hell",
+  "zh-Hans": "浅色",
+  "_comment": "Profile > Appearance"
+ },
+ "Link a resume to fill in your contact details. You can change everything afterwards.": {
+  "es": "Vincula un currículum para rellenar tus datos de contacto. Después puedes cambiarlo todo.",
+  "fr": "Associez un CV pour remplir vos coordonnées. Vous pourrez tout modifier ensuite.",
+  "de": "Verknüpfen Sie einen Lebenslauf, um Ihre Kontaktdaten auszufüllen. Sie können danach alles ändern.",
+  "zh-Hans": "关联一份简历即可自动填入你的联系方式。之后你可以修改所有内容。",
+  "_comment": "New cover letter sheet"
+ },
+ "Linked resume": {
+  "es": "Currículum vinculado",
+  "fr": "CV associé",
+  "de": "Verknüpfter Lebenslauf",
+  "zh-Hans": "已关联的简历",
+  "_comment": "Cover letter editor form; New cover letter sheet"
+ },
+ "Linked resume, %@": {
+  "es": "Currículum vinculado: %@",
+  "fr": "CV associé : %@",
+  "de": "Verknüpfter Lebenslauf: %@",
+  "zh-Hans": "已关联简历：%@",
+  "_comment": "Cover letter editor form; New cover letter sheet. VoiceOver label."
+ },
+ "Linked resume, none": {
+  "es": "Currículum vinculado: ninguno",
+  "fr": "CV associé : aucun",
+  "de": "Verknüpfter Lebenslauf: keiner",
+  "zh-Hans": "已关联简历：无",
+  "_comment": "Cover letter editor form; New cover letter sheet"
+ },
+ "List": {
+  "es": "Lista",
+  "fr": "Liste",
+  "de": "Liste",
+  "zh-Hans": "列表",
+  "_comment": "My Resumes"
+ },
+ "Live preview of %@": {
+  "es": "Vista previa en directo de %@",
+  "fr": "Aperçu en direct de %@",
+  "de": "Live-Vorschau von %@",
+  "zh-Hans": "%@的实时预览",
+  "_comment": "Cover letter editor. VoiceOver label."
+ },
+ "Location": {
+  "es": "Ubicación",
+  "fr": "Lieu",
+  "de": "Ort",
+  "zh-Hans": "所在地",
+  "_comment": "Cover letter editor form"
+ },
+ "Match your resume": {
+  "es": "Combina con tu currículum",
+  "fr": "Assortissez-la à votre CV",
+  "de": "Passend zum Lebenslauf",
+  "zh-Hans": "与简历风格匹配",
+  "_comment": "Cover letter editor form"
+ },
+ "More actions for %@": {
+  "es": "Más acciones para %@",
+  "fr": "Autres actions pour %@",
+  "de": "Weitere Aktionen für %@",
+  "zh-Hans": "%@的更多操作",
+  "_comment": "Resume cards and rows. VoiceOver label."
+ },
+ "Most complete": {
+  "es": "Más completos",
+  "fr": "Les plus complets",
+  "de": "Am vollständigsten",
+  "zh-Hans": "完成度最高",
+  "_comment": "My Resumes sort menu"
+ },
+ "most complete": {
+  "es": "más completos",
+  "fr": "taux de complétion",
+  "de": "Vollständigkeit",
+  "zh-Hans": "完成度",
+  "_comment": "My Resumes sort menu. Used in '3 resumes, sorted by most complete'."
+ },
+ "Moved back to your resumes": {
+  "es": "Se ha devuelto a tus currículums",
+  "fr": "Remis dans vos CV",
+  "de": "Zurück in Ihren Lebensläufen",
+  "zh-Hans": "已移回你的简历列表",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "My Resumes": {
+  "es": "Mis currículums",
+  "fr": "Mes CV",
+  "de": "Meine Lebensläufe",
+  "zh-Hans": "我的简历",
+  "_comment": "My Resumes; Tab bar. Tab bar label and screen title."
+ },
+ "Name, A to Z": {
+  "es": "Nombre, de la A a la Z",
+  "fr": "Nom, de A à Z",
+  "de": "Name, A bis Z",
+  "zh-Hans": "名称（A 到 Z）",
+  "_comment": "My Resumes sort menu"
+ },
+ "name, A to Z": {
+  "es": "nombre, de la A a la Z",
+  "fr": "nom, de A à Z",
+  "de": "Name, A bis Z",
+  "zh-Hans": "名称（A 到 Z）",
+  "_comment": "My Resumes sort menu. Used in '3 resumes, sorted by name, A to Z'."
+ },
+ "Name, if you know it": {
+  "es": "Nombre, si lo sabes",
+  "fr": "Nom, si vous le connaissez",
+  "de": "Name, falls bekannt",
+  "zh-Hans": "姓名（如果知道）",
+  "_comment": "Cover letter editor form"
+ },
+ "New cover letter": {
+  "es": "Nueva carta de presentación",
+  "fr": "Nouvelle lettre de motivation",
+  "de": "Neues Anschreiben",
+  "zh-Hans": "新建求职信",
+  "_comment": "Cover Letters list; New cover letter sheet"
+ },
+ "New letter": {
+  "es": "Nueva carta",
+  "fr": "Nouvelle lettre",
+  "de": "Neues Anschreiben",
+  "zh-Hans": "新建求职信",
+  "_comment": "New cover letter sheet"
+ },
+ "New resume": {
+  "es": "Nuevo currículum",
+  "fr": "Nouveau CV",
+  "de": "Neuer Lebenslauf",
+  "zh-Hans": "新建简历",
+  "_comment": "My Resumes"
+ },
+ "Next page": {
+  "es": "Página siguiente",
+  "fr": "Page suivante",
+  "de": "Nächste Seite",
+  "zh-Hans": "下一页",
+  "_comment": "Document preview"
+ },
+ "No cover letters yet": {
+  "es": "Aún no hay cartas de presentación",
+  "fr": "Aucune lettre de motivation pour l’instant",
+  "de": "Noch keine Anschreiben",
+  "zh-Hans": "还没有求职信",
+  "_comment": "Cover Letters list"
+ },
+ "No letters match \"%@\"": {
+  "es": "Ninguna carta coincide con «%@»",
+  "fr": "Aucune lettre ne correspond à « %@ »",
+  "de": "Keine Anschreiben passen zu „%@“",
+  "zh-Hans": "没有与“%@”匹配的求职信",
+  "_comment": "Cover Letters list. Search empty state."
+ },
+ "No linked resume": {
+  "es": "Sin currículum vinculado",
+  "fr": "Aucun CV associé",
+  "de": "Kein verknüpfter Lebenslauf",
+  "zh-Hans": "不关联简历",
+  "_comment": "Cover letter editor form"
+ },
+ "No mail app is set up. Write to %@ from any mail account.": {
+  "es": "No hay ninguna app de correo configurada. Escribe a %@ desde cualquier cuenta de correo.",
+  "fr": "Aucune app de messagerie n’est configurée. Écrivez à %@ depuis n’importe quel compte de messagerie.",
+  "de": "Es ist keine Mail-App eingerichtet. Schreiben Sie von einem beliebigen E-Mail-Konto an %@.",
+  "zh-Hans": "未设置邮件应用。请使用任意邮箱账户发送邮件至 %@。",
+  "_comment": "Profile. %@ is the support email address."
+ },
+ "No matches": {
+  "es": "Sin resultados",
+  "fr": "Aucun résultat",
+  "de": "Keine Treffer",
+  "zh-Hans": "无匹配结果",
+  "_comment": "My Resumes"
+ },
+ "No resume": {
+  "es": "Ningún currículum",
+  "fr": "Aucun CV",
+  "de": "Kein Lebenslauf",
+  "zh-Hans": "不关联简历",
+  "_comment": "New cover letter sheet"
+ },
+ "No resumes yet": {
+  "es": "Aún no hay currículums",
+  "fr": "Aucun CV pour l’instant",
+  "de": "Noch keine Lebensläufe",
+  "zh-Hans": "还没有简历",
+  "_comment": "My Resumes"
+ },
+ "No video is available right now, so this export is free.": {
+  "es": "Ahora mismo no hay ningún vídeo disponible, así que esta exportación es gratis.",
+  "fr": "Aucune vidéo n’est disponible pour le moment, cet export est donc gratuit.",
+  "de": "Gerade ist kein Video verfügbar, daher ist dieser Export kostenlos.",
+  "zh-Hans": "目前没有可播放的视频，因此本次导出免费。",
+  "_comment": "Export sheet, no video available"
+ },
+ "No video right now": {
+  "es": "Ahora no hay vídeo",
+  "fr": "Pas de vidéo pour le moment",
+  "de": "Gerade kein Video",
+  "zh-Hans": "暂时没有视频",
+  "_comment": "Export sheet"
+ },
+ "None": {
+  "es": "Ninguno",
+  "fr": "Aucun",
+  "de": "Keiner",
+  "zh-Hans": "无",
+  "_comment": "Cover letter editor form; New cover letter sheet"
+ },
+ "Not available": {
+  "es": "No disponible",
+  "fr": "Indisponible",
+  "de": "Nicht verfügbar",
+  "zh-Hans": "不可用",
+  "_comment": "Compare preview"
+ },
+ "Not now": {
+  "es": "Ahora no",
+  "fr": "Plus tard",
+  "de": "Nicht jetzt",
+  "zh-Hans": "以后再说",
+  "_comment": "Export sheet"
+ },
+ "Nothing archived": {
+  "es": "No hay nada archivado",
+  "fr": "Aucun élément archivé",
+  "de": "Nichts archiviert",
+  "zh-Hans": "没有已归档的简历",
+  "_comment": "My Resumes"
+ },
+ "Nothing in this list matches \"%@\". Check the spelling or try a template name.": {
+  "es": "Nada de esta lista coincide con «%@». Revisa la ortografía o prueba con el nombre de una plantilla.",
+  "fr": "Aucun élément de cette liste ne correspond à « %@ ». Vérifiez l’orthographe ou essayez un nom de modèle.",
+  "de": "Nichts in dieser Liste passt zu „%@“. Prüfen Sie die Schreibweise oder versuchen Sie es mit einem Vorlagennamen.",
+  "zh-Hans": "此列表中没有与“%@”匹配的内容。请检查拼写，或尝试输入模板名称。",
+  "_comment": "My Resumes"
+ },
+ "Nothing new to restore": {
+  "es": "No hay nada nuevo que restaurar",
+  "fr": "Rien de nouveau à restaurer",
+  "de": "Nichts Neues zum Wiederherstellen",
+  "zh-Hans": "没有可恢复的新内容",
+  "_comment": "Profile"
+ },
+ "Nothing was exported. Your export is still available.": {
+  "es": "No se exportó nada. Tu exportación sigue disponible.",
+  "fr": "Rien n’a été exporté. Votre export reste disponible.",
+  "de": "Es wurde nichts exportiert. Ihr Export ist weiterhin verfügbar.",
+  "zh-Hans": "未导出任何内容。你的导出机会仍然可用。",
+  "_comment": "Export sheet"
+ },
+ "Now using %@": {
+  "es": "Ahora usa %@",
+  "fr": "Utilise désormais %@",
+  "de": "Verwendet jetzt %@",
+  "zh-Hans": "现在使用%@",
+  "_comment": "Resume quick actions (Home, My Resumes). Toast. %@ is a template name."
+ },
+ "Now using the new template": {
+  "es": "Ahora usa la nueva plantilla",
+  "fr": "Utilise désormais le nouveau modèle",
+  "de": "Verwendet jetzt die neue Vorlage",
+  "zh-Hans": "现在使用新模板",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "On-device writing help": {
+  "es": "Ayuda de redacción en el dispositivo",
+  "fr": "Aide à la rédaction sur l’appareil",
+  "de": "Schreibhilfe auf dem Gerät",
+  "zh-Hans": "设备端写作辅助",
+  "_comment": "Profile"
+ },
+ "One completed video covers one export of that document, in any file type, and stays valid for 24 hours. It is used up once the export finishes, so the next export asks again.": {
+  "es": "Un vídeo completo cubre una exportación de ese documento, en cualquier tipo de archivo, y es válido durante 24 horas. Se consume al terminar la exportación, así que la siguiente exportación vuelve a pedirlo.",
+  "fr": "Une vidéo regardée jusqu’au bout couvre un export de ce document, dans n’importe quel type de fichier, et reste valable 24 heures. Elle est utilisée une fois l’export terminé : l’export suivant en demande une nouvelle.",
+  "de": "Ein vollständig angesehenes Video gilt für einen Export dieses Dokuments in einem beliebigen Dateityp und bleibt 24 Stunden gültig. Es wird verbraucht, sobald der Export abgeschlossen ist, sodass beim nächsten Export erneut gefragt wird.",
+  "zh-Hans": "完整观看一段视频可导出该文档一次（任意文件类型），有效期为24小时。导出完成后即失效，下次导出时会再次询问。",
+  "_comment": "Profile > How exports work. Disclosure: exact meaning required (one video = one export, valid 24 hours)."
+ },
+ "Open full preview": {
+  "es": "Abrir vista previa completa",
+  "fr": "Ouvrir l’aperçu complet",
+  "de": "Vollständige Vorschau öffnen",
+  "zh-Hans": "打开完整预览",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Opens an email to CareerKit support about an ad you saw": {
+  "es": "Abre un correo para el soporte de CareerKit sobre un anuncio que viste",
+  "fr": "Ouvre un e-mail à l’assistance CareerKit au sujet d’une publicité que vous avez vue",
+  "de": "Öffnet eine E-Mail an den CareerKit-Support zu einer Werbung, die Sie gesehen haben",
+  "zh-Hans": "打开一封发给 CareerKit 支持团队的邮件，用于反馈你看到的广告",
+  "_comment": "Profile"
+ },
+ "Opens the editor": {
+  "es": "Abre el editor",
+  "fr": "Ouvre l’éditeur",
+  "de": "Öffnet den Editor",
+  "zh-Hans": "打开编辑器",
+  "_comment": "Resume cards and rows"
+ },
+ "Opens the export options": {
+  "es": "Abre las opciones de exportación",
+  "fr": "Ouvre les options d’export",
+  "de": "Öffnet die Exportoptionen",
+  "zh-Hans": "打开导出选项",
+  "_comment": "Cover letter editor"
+ },
+ "Opens the letter": {
+  "es": "Abre la carta",
+  "fr": "Ouvre la lettre",
+  "de": "Öffnet das Anschreiben",
+  "zh-Hans": "打开求职信",
+  "_comment": "Cover Letters list"
+ },
+ "Opens the options to share or save this resume as a PDF, Word, Rich Text, plain text or web page file": {
+  "es": "Abre las opciones para compartir o guardar este currículum como archivo PDF, Word, Rich Text, texto sin formato o página web",
+  "fr": "Ouvre les options pour partager ou enregistrer ce CV en fichier PDF, Word, Rich Text, texte brut ou page web",
+  "de": "Öffnet die Optionen, um diesen Lebenslauf als PDF, Word, Rich Text, reinen Text oder Webseite zu teilen oder zu sichern",
+  "zh-Hans": "打开选项，以 PDF、Word、Rich Text、纯文本或网页文件格式共享或存储此简历",
+  "_comment": "Resume preview screen"
+ },
+ "Page %lld of %lld": {
+  "es": "Página %lld de %lld",
+  "fr": "Page %lld sur %lld",
+  "de": "Seite %lld von %lld",
+  "zh-Hans": "第%lld页，共%lld页",
+  "_comment": "Document preview; Onboarding"
+ },
+ "Paper size": {
+  "es": "Tamaño del papel",
+  "fr": "Format du papier",
+  "de": "Papierformat",
+  "zh-Hans": "纸张尺寸",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Paste the advert here to keep it beside your letter": {
+  "es": "Pega aquí la oferta para tenerla junto a tu carta",
+  "fr": "Collez l’annonce ici pour la garder à côté de votre lettre",
+  "de": "Fügen Sie die Stellenanzeige hier ein, um sie neben Ihrem Anschreiben zu haben",
+  "zh-Hans": "将招聘广告粘贴到这里，方便对照撰写求职信",
+  "_comment": "Cover letter editor form"
+ },
+ "PDF keeps your design exactly and is the best choice for most applications. Word (.docx) and Rich Text open as editable documents in Word, Pages or Google Docs. Plain text is for pasting into online application forms. A web page opens in any browser. Printing is available for PDF.": {
+  "es": "PDF conserva tu diseño exactamente y es la mejor opción para la mayoría de las candidaturas. Word (.docx) y Rich Text se abren como documentos editables en Word, Pages o Google Docs. El texto sin formato sirve para pegarlo en formularios de solicitud en línea. Una página web se abre en cualquier navegador. La impresión está disponible para PDF.",
+  "fr": "Le PDF conserve exactement votre design et convient à la plupart des candidatures. Word (.docx) et Rich Text s’ouvrent comme documents modifiables dans Word, Pages ou Google Docs. Le texte brut sert à coller votre contenu dans les formulaires de candidature en ligne. Une page web s’ouvre dans n’importe quel navigateur. L’impression est disponible pour le PDF.",
+  "de": "PDF behält Ihr Design exakt bei und ist für die meisten Bewerbungen die beste Wahl. Word (.docx) und Rich Text öffnen sich als bearbeitbare Dokumente in Word, Pages oder Google Docs. Reiner Text eignet sich zum Einfügen in Online-Bewerbungsformulare. Eine Webseite öffnet sich in jedem Browser. Drucken ist für PDF verfügbar.",
+  "zh-Hans": "PDF 能完整保留你的设计，适合大多数求职申请。Word（.docx）和 Rich Text 可在 Word、Pages 或 Google Docs 中作为可编辑文档打开。纯文本适合粘贴到在线申请表中。网页可在任何浏览器中打开。PDF 支持打印。",
+  "_comment": "Profile > How exports work. Keep PDF, Word, Rich Text, Pages and Google Docs as names."
+ },
+ "Phone": {
+  "es": "Teléfono",
+  "fr": "Téléphone",
+  "de": "Telefon",
+  "zh-Hans": "电话",
+  "_comment": "Cover letter editor form"
+ },
+ "Photo": {
+  "es": "Foto",
+  "fr": "Photo",
+  "de": "Foto",
+  "zh-Hans": "照片",
+  "_comment": "Template cards and filters. Badge on a template card for templates with a photo area."
+ },
+ "Pick a template and fill in the sections, or begin on a blank page. Everything stays on this device.": {
+  "es": "Elige una plantilla y completa las secciones, o empieza en una página en blanco. Todo se queda en este dispositivo.",
+  "fr": "Choisissez un modèle et remplissez les sections, ou partez d’une page vierge. Tout reste sur cet appareil.",
+  "de": "Wählen Sie eine Vorlage und füllen Sie die Abschnitte aus, oder beginnen Sie mit einer leeren Seite. Alles bleibt auf diesem Gerät.",
+  "zh-Hans": "选择一个模板并填写各个板块，或从空白页开始。所有内容都保留在此设备上。",
+  "_comment": "Home"
+ },
+ "Pick the resume to review. The check gives general formatting guidance. It is not a score from any employer's system.": {
+  "es": "Elige el currículum que quieres revisar. La revisión ofrece pautas generales de formato. No es una puntuación del sistema de ninguna empresa.",
+  "fr": "Choisissez le CV à vérifier. La vérification donne des conseils généraux de mise en forme. Ce n’est pas une note issue du système d’un employeur.",
+  "de": "Wählen Sie den Lebenslauf, der geprüft werden soll. Die Prüfung gibt allgemeine Hinweise zur Formatierung. Sie ist keine Bewertung aus dem System eines Arbeitgebers.",
+  "zh-Hans": "选择要检查的简历。此检查提供一般性的格式建议，并非任何雇主系统给出的评分。",
+  "_comment": "Home"
+ },
+ "Preparing your %@": {
+  "es": "Preparando tu %@",
+  "fr": "Préparation de votre %@",
+  "de": "%@ wird vorbereitet",
+  "zh-Hans": "正在准备%@",
+  "_comment": "Export sheet. %@ is the file type noun."
+ },
+ "Present": {
+  "es": "Actualidad",
+  "fr": "Aujourd’hui",
+  "de": "Heute",
+  "zh-Hans": "至今",
+  "_comment": "Resume document content. Written on the resume: 'Jan 2020 – Present'."
+ },
+ "Preview": {
+  "es": "Vista previa",
+  "fr": "Aperçu",
+  "de": "Vorschau",
+  "zh-Hans": "预览",
+  "_comment": "Resume cards and rows; Resume preview"
+ },
+ "Preview of %@": {
+  "es": "Vista previa de %@",
+  "fr": "Aperçu de %@",
+  "de": "Vorschau von %@",
+  "zh-Hans": "%@的预览",
+  "_comment": "Resume preview. VoiceOver label."
+ },
+ "Previous page": {
+  "es": "Página anterior",
+  "fr": "Page précédente",
+  "de": "Vorherige Seite",
+  "zh-Hans": "上一页",
+  "_comment": "Document preview"
+ },
+ "Print": {
+  "es": "Imprimir",
+  "fr": "Imprimer",
+  "de": "Drucken",
+  "zh-Hans": "打印",
+  "_comment": "Export sheet"
+ },
+ "Privacy and legal": {
+  "es": "Privacidad y aspectos legales",
+  "fr": "Confidentialité et mentions légales",
+  "de": "Datenschutz und Rechtliches",
+  "zh-Hans": "隐私与法律",
+  "_comment": "Profile"
+ },
+ "Privacy policy": {
+  "es": "Política de privacidad",
+  "fr": "Politique de confidentialité",
+  "de": "Datenschutzerklärung",
+  "zh-Hans": "隐私政策",
+  "_comment": "Profile"
+ },
+ "Professional Memberships": {
+  "es": "Afiliaciones profesionales",
+  "fr": "Associations professionnelles",
+  "de": "Mitgliedschaften",
+  "zh-Hans": "专业协会",
+  "_comment": "Resume document content"
+ },
+ "Professional Summary": {
+  "es": "Perfil profesional",
+  "fr": "Profil professionnel",
+  "de": "Profil",
+  "zh-Hans": "个人简介",
+  "_comment": "Resume document content"
+ },
+ "Profile": {
+  "es": "Perfil",
+  "fr": "Profil",
+  "de": "Profil",
+  "zh-Hans": "个人资料",
+  "_comment": "Profile; Tab bar. Tab bar label and screen title."
+ },
+ "Profile and settings": {
+  "es": "Perfil y ajustes",
+  "fr": "Profil et réglages",
+  "de": "Profil und Einstellungen",
+  "zh-Hans": "个人资料与设置",
+  "_comment": "Home"
+ },
+ "Projects": {
+  "es": "Proyectos",
+  "fr": "Projets",
+  "de": "Projekte",
+  "zh-Hans": "项目经历",
+  "_comment": "Resume document content"
+ },
+ "Publications": {
+  "es": "Publicaciones",
+  "fr": "Publications",
+  "de": "Veröffentlichungen",
+  "zh-Hans": "出版物",
+  "_comment": "Resume document content"
+ },
+ "Rate CareerKit": {
+  "es": "Valorar CareerKit",
+  "fr": "Évaluer CareerKit",
+  "de": "CareerKit bewerten",
+  "zh-Hans": "为 CareerKit 评分",
+  "_comment": "Profile"
+ },
+ "Reads a PDF or pasted text on this device": {
+  "es": "Lee un PDF o texto pegado en este dispositivo",
+  "fr": "Lit un PDF ou du texte collé sur cet appareil",
+  "de": "Liest ein PDF oder eingefügten Text auf diesem Gerät",
+  "zh-Hans": "在此设备上读取 PDF 或粘贴的文字",
+  "_comment": "Home"
+ },
+ "Ready to export": {
+  "es": "Listo para exportar",
+  "fr": "Prêt à exporter",
+  "de": "Bereit zum Exportieren",
+  "zh-Hans": "可以导出",
+  "_comment": "Export sheet"
+ },
+ "Recent resumes": {
+  "es": "Currículums recientes",
+  "fr": "CV récents",
+  "de": "Letzte Lebensläufe",
+  "zh-Hans": "最近的简历",
+  "_comment": "Home"
+ },
+ "Recipient and job": {
+  "es": "Destinatario y puesto",
+  "fr": "Destinataire et poste",
+  "de": "Empfänger und Stelle",
+  "zh-Hans": "收件人与职位",
+  "_comment": "Cover letter editor form"
+ },
+ "References": {
+  "es": "Referencias",
+  "fr": "Références",
+  "de": "Referenzen",
+  "zh-Hans": "推荐人",
+  "_comment": "Resume document content"
+ },
+ "Rename": {
+  "es": "Cambiar nombre",
+  "fr": "Renommer",
+  "de": "Umbenennen",
+  "zh-Hans": "重命名",
+  "_comment": "Resume cards and rows"
+ },
+ "Rename resume": {
+  "es": "Cambiar nombre del currículum",
+  "fr": "Renommer le CV",
+  "de": "Lebenslauf umbenennen",
+  "zh-Hans": "重命名简历",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Renamed": {
+  "es": "Nombre cambiado",
+  "fr": "Renommé",
+  "de": "Umbenannt",
+  "zh-Hans": "已重命名",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Replace": {
+  "es": "Reemplazar",
+  "fr": "Remplacer",
+  "de": "Ersetzen",
+  "zh-Hans": "替换",
+  "_comment": "Cover letter editor form"
+ },
+ "Replace sender details with resume details": {
+  "es": "Reemplazar los datos del remitente por los del currículum",
+  "fr": "Remplacer les coordonnées de l’expéditeur par celles du CV",
+  "de": "Absenderdaten durch Lebenslaufdaten ersetzen",
+  "zh-Hans": "用简历信息替换发件人信息",
+  "_comment": "Cover letter editor form"
+ },
+ "Replace sender details?": {
+  "es": "¿Reemplazar los datos del remitente?",
+  "fr": "Remplacer les coordonnées de l’expéditeur ?",
+  "de": "Absenderdaten ersetzen?",
+  "zh-Hans": "要替换发件人信息吗？",
+  "_comment": "Cover letter editor form"
+ },
+ "Report an ad": {
+  "es": "Denunciar un anuncio",
+  "fr": "Signaler une publicité",
+  "de": "Werbung melden",
+  "zh-Hans": "举报广告",
+  "_comment": "Profile"
+ },
+ "Restore from backup": {
+  "es": "Restaurar desde copia de seguridad",
+  "fr": "Restaurer une sauvegarde",
+  "de": "Aus Backup wiederherstellen",
+  "zh-Hans": "从备份恢复",
+  "_comment": "Profile"
+ },
+ "restored": {
+  "es": "restaurado",
+  "fr": "restauré",
+  "de": "wiederhergestellt",
+  "zh-Hans": "已恢复",
+  "_comment": "Backup and restore. Marker in parentheses on a restored copy: 'CV (restored)'."
+ },
+ "Restored %@, skipped %lld.": {
+  "es": "Restaurados: %@. Omitidos: %lld.",
+  "fr": "Restauré(s) : %@. Ignoré(s) : %lld.",
+  "de": "Wiederhergestellt: %@. Übersprungen: %lld.",
+  "zh-Hans": "已恢复%@，已跳过%lld份。",
+  "_comment": "Backup and restore. 1: '3 documents' (already plural-aware), 2: number of skipped documents."
+ },
+ "Resume name": {
+  "es": "Nombre del currículum",
+  "fr": "Nom du CV",
+  "de": "Name des Lebenslaufs",
+  "zh-Hans": "简历名称",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Resumes (%lld)": {
+  "es": "Currículums (%lld)",
+  "fr": "CV (%lld)",
+  "de": "Lebensläufe (%lld)",
+  "zh-Hans": "简历（%lld）",
+  "_comment": "My Resumes. Filter chip."
+ },
+ "Resumes and cover letters stay on this device, and there is no account. Ads are provided by Google AdMob and follow the consent choices you make. If your region requires it, Profile shows an Ad privacy choices row where you can change them.": {
+  "es": "Los currículums y las cartas de presentación se quedan en este dispositivo y no hay ninguna cuenta. Los anuncios los proporciona Google AdMob y respetan las opciones de consentimiento que elijas. Si tu región lo exige, Perfil muestra la fila Opciones de privacidad de anuncios, donde puedes cambiarlas.",
+  "fr": "Les CV et les lettres de motivation restent sur cet appareil, et il n’y a pas de compte. Les publicités sont fournies par Google AdMob et respectent vos choix de consentement. Si votre région l’exige, Profil affiche une ligne Choix de confidentialité publicitaire pour les modifier.",
+  "de": "Lebensläufe und Anschreiben bleiben auf diesem Gerät, und es gibt kein Konto. Die Werbung wird von Google AdMob bereitgestellt und richtet sich nach Ihren Einwilligungsentscheidungen. Wenn Ihre Region es erfordert, zeigt Profil die Zeile „Datenschutzoptionen für Werbung“, in der Sie diese ändern können.",
+  "zh-Hans": "简历和求职信保留在此设备上，无需账户。广告由 Google AdMob 提供，并遵循你做出的同意选择。如果你所在地区有此要求，个人资料中会显示“广告隐私选项”一行，你可以在那里更改选择。",
+  "_comment": "Profile > How exports work. Must name the 'Ad privacy choices' row exactly as translated."
+ },
+ "Review one resume's formatting": {
+  "es": "Revisa el formato de un currículum",
+  "fr": "Vérifiez la mise en forme d’un CV",
+  "de": "Formatierung eines Lebenslaufs prüfen",
+  "zh-Hans": "检查一份简历的格式",
+  "_comment": "Home"
+ },
+ "Review privacy choices": {
+  "es": "Revisar opciones de privacidad",
+  "fr": "Revoir les choix de confidentialité",
+  "de": "Datenschutzoptionen prüfen",
+  "zh-Hans": "查看隐私选项",
+  "_comment": "Export sheet"
+ },
+ "Save": {
+  "es": "Guardar",
+  "fr": "Enregistrer",
+  "de": "Sichern",
+  "zh-Hans": "存储",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "Save a copy of everything": {
+  "es": "Guarda una copia de todo",
+  "fr": "Enregistrer une copie de tout",
+  "de": "Eine Kopie von allem sichern",
+  "zh-Hans": "存储所有内容的副本",
+  "_comment": "Profile"
+ },
+ "Save to Files": {
+  "es": "Guardar en Archivos",
+  "fr": "Enregistrer dans Fichiers",
+  "de": "In „Dateien“ sichern",
+  "zh-Hans": "存储到“文件”",
+  "_comment": "Export sheet"
+ },
+ "Say which role you are applying for and why you are a good fit.": {
+  "es": "Indica a qué puesto te postulas y por qué encajas bien.",
+  "fr": "Indiquez le poste visé et pourquoi votre profil correspond.",
+  "de": "Nennen Sie die Stelle, auf die Sie sich bewerben, und warum Sie gut passen.",
+  "zh-Hans": "说明你申请的职位，以及你为什么适合这个职位。",
+  "_comment": "Cover letter editor form"
+ },
+ "Search letters": {
+  "es": "Buscar cartas",
+  "fr": "Rechercher des lettres",
+  "de": "Anschreiben durchsuchen",
+  "zh-Hans": "搜索求职信",
+  "_comment": "Cover Letters list"
+ },
+ "Search resumes": {
+  "es": "Buscar currículums",
+  "fr": "Rechercher des CV",
+  "de": "Lebensläufe durchsuchen",
+  "zh-Hans": "搜索简历",
+  "_comment": "My Resumes"
+ },
+ "Second": {
+  "es": "Segundo",
+  "fr": "Second",
+  "de": "Zweiter",
+  "zh-Hans": "第二份",
+  "_comment": "My Resumes > Compare versions. Compare versions: right resume picker."
+ },
+ "Second resume": {
+  "es": "Segundo currículum",
+  "fr": "Second CV",
+  "de": "Zweiter Lebenslauf",
+  "zh-Hans": "第二份简历",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Sections with content": {
+  "es": "Secciones con contenido",
+  "fr": "Sections remplies",
+  "de": "Abschnitte mit Inhalt",
+  "zh-Hans": "有内容的板块",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "See all": {
+  "es": "Ver todo",
+  "fr": "Tout afficher",
+  "de": "Alle anzeigen",
+  "zh-Hans": "查看全部",
+  "_comment": "Home"
+ },
+ "Selected": {
+  "es": "Seleccionada",
+  "fr": "Sélectionné",
+  "de": "Ausgewählt",
+  "zh-Hans": "已选择",
+  "_comment": "Cover letter template picker"
+ },
+ "Send feedback": {
+  "es": "Enviar comentarios",
+  "fr": "Envoyer un avis",
+  "de": "Feedback senden",
+  "zh-Hans": "发送反馈",
+  "_comment": "Profile"
+ },
+ "Sender": {
+  "es": "Remitente",
+  "fr": "Expéditeur",
+  "de": "Absender",
+  "zh-Hans": "发件人",
+  "_comment": "Cover letter editor form"
+ },
+ "Share": {
+  "es": "Compartir",
+  "fr": "Partager",
+  "de": "Teilen",
+  "zh-Hans": "共享",
+  "_comment": "Export sheet"
+ },
+ "Shown in your list and used as the file name when you export.": {
+  "es": "Aparece en tu lista y se usa como nombre de archivo al exportar.",
+  "fr": "Affiché dans votre liste et utilisé comme nom de fichier lors de l’export.",
+  "de": "Wird in Ihrer Liste angezeigt und beim Exportieren als Dateiname verwendet.",
+  "zh-Hans": "显示在列表中，导出时用作文件名。",
+  "_comment": "Cover letter editor form"
+ },
+ "Shows options to export or delete the unreadable files": {
+  "es": "Muestra opciones para exportar o eliminar los archivos ilegibles",
+  "fr": "Affiche les options pour exporter ou supprimer les fichiers illisibles",
+  "de": "Zeigt Optionen zum Exportieren oder Löschen der unlesbaren Dateien",
+  "zh-Hans": "显示导出或删除无法读取文件的选项",
+  "_comment": "Profile"
+ },
+ "Side by side": {
+  "es": "En paralelo",
+  "fr": "Côte à côte",
+  "de": "Nebeneinander",
+  "zh-Hans": "并排对比",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Sign-off": {
+  "es": "Despedida",
+  "fr": "Formule de politesse",
+  "de": "Grußformel",
+  "zh-Hans": "结束语",
+  "_comment": "Cover letter editor form"
+ },
+ "Sincerely,": {
+  "es": "Atentamente,",
+  "fr": "Cordialement,",
+  "de": "Mit freundlichen Grüßen",
+  "zh-Hans": "此致敬礼",
+  "_comment": "Cover letter document content; Document defaults. Default sign-off written into the letter."
+ },
+ "Skills": {
+  "es": "Habilidades",
+  "fr": "Compétences",
+  "de": "Kenntnisse",
+  "zh-Hans": "技能",
+  "_comment": "Resume document content"
+ },
+ "Skip": {
+  "es": "Omitir",
+  "fr": "Passer",
+  "de": "Überspringen",
+  "zh-Hans": "跳过",
+  "_comment": "Onboarding"
+ },
+ "Some data could not be deleted. Restart the app and try again.": {
+  "es": "No se pudieron eliminar algunos datos. Reinicia la app y vuelve a intentarlo.",
+  "fr": "Certaines données n’ont pas pu être supprimées. Redémarrez l’app et réessayez.",
+  "de": "Einige Daten konnten nicht gelöscht werden. Starten Sie die App neu und versuchen Sie es erneut.",
+  "zh-Hans": "部分数据无法删除。请重新启动 App 后重试。",
+  "_comment": "Profile"
+ },
+ "Some files could not be deleted. Restart the app and try again.": {
+  "es": "No se pudieron eliminar algunos archivos. Reinicia la app y vuelve a intentarlo.",
+  "fr": "Certains fichiers n’ont pas pu être supprimés. Redémarrez l’app et réessayez.",
+  "de": "Einige Dateien konnten nicht gelöscht werden. Starten Sie die App neu und versuchen Sie es erneut.",
+  "zh-Hans": "部分文件无法删除。请重新启动 App 后重试。",
+  "_comment": "Profile"
+ },
+ "Something went wrong, so nothing was exported. Your export is still available. Please try again.": {
+  "es": "Algo salió mal y no se exportó nada. Tu exportación sigue disponible. Vuelve a intentarlo.",
+  "fr": "Un problème est survenu et rien n’a été exporté. Votre export reste disponible. Veuillez réessayer.",
+  "de": "Etwas ist schiefgelaufen, daher wurde nichts exportiert. Ihr Export ist weiterhin verfügbar. Bitte versuchen Sie es erneut.",
+  "zh-Hans": "出现问题，未导出任何内容。你的导出机会仍然可用，请重试。",
+  "_comment": "Export sheet"
+ },
+ "Sort and view": {
+  "es": "Ordenar y ver",
+  "fr": "Tri et affichage",
+  "de": "Sortieren und Ansicht",
+  "zh-Hans": "排序与视图",
+  "_comment": "My Resumes"
+ },
+ "Sort by": {
+  "es": "Ordenar por",
+  "fr": "Trier par",
+  "de": "Sortieren nach",
+  "zh-Hans": "排序方式",
+  "_comment": "My Resumes"
+ },
+ "Start from a template, or begin on a blank page. Everything is saved on this device.": {
+  "es": "Empieza con una plantilla o en una página en blanco. Todo se guarda en este dispositivo.",
+  "fr": "Partez d’un modèle ou d’une page vierge. Tout est enregistré sur cet appareil.",
+  "de": "Beginnen Sie mit einer Vorlage oder einer leeren Seite. Alles wird auf diesem Gerät gespeichert.",
+  "zh-Hans": "从模板开始，或从空白页开始。所有内容都保存在此设备上。",
+  "_comment": "My Resumes"
+ },
+ "Start from scratch": {
+  "es": "Empezar desde cero",
+  "fr": "Partir de zéro",
+  "de": "Neu beginnen",
+  "zh-Hans": "从头开始",
+  "_comment": "My Resumes"
+ },
+ "Start on an empty page": {
+  "es": "Empieza en una página vacía",
+  "fr": "Commencez sur une page vierge",
+  "de": "Mit einer leeren Seite beginnen",
+  "zh-Hans": "从空白页开始",
+  "_comment": "Home"
+ },
+ "Start your first resume": {
+  "es": "Empieza tu primer currículum",
+  "fr": "Commencez votre premier CV",
+  "de": "Ihr erster Lebenslauf",
+  "zh-Hans": "开始制作第一份简历",
+  "_comment": "Home"
+ },
+ "Stored on this device: %@ and %@. A backup is a single file you can keep anywhere. Restoring adds its documents and keeps the ones already here.": {
+  "es": "Guardado en este dispositivo: %@ y %@. Una copia de seguridad es un único archivo que puedes guardar donde quieras. Al restaurarla, se añaden sus documentos y se conservan los que ya hay aquí.",
+  "fr": "Stocké sur cet appareil : %@ et %@. Une sauvegarde est un fichier unique que vous pouvez conserver où vous voulez. La restauration ajoute ses documents et conserve ceux déjà présents.",
+  "de": "Auf diesem Gerät gespeichert: %@ und %@. Ein Backup ist eine einzelne Datei, die Sie überall aufbewahren können. Beim Wiederherstellen werden die Dokumente daraus hinzugefügt, vorhandene bleiben erhalten.",
+  "zh-Hans": "此设备上存储了%@和%@。备份是一个文件，可以保存在任何地方。恢复时会添加备份中的文档，并保留此设备上已有的文档。",
+  "_comment": "Profile. 1: '2 resumes', 2: '1 cover letter'."
+ },
+ "Style": {
+  "es": "Estilo",
+  "fr": "Style",
+  "de": "Stil",
+  "zh-Hans": "样式",
+  "_comment": "Cover letter editor"
+ },
+ "Suggestions": {
+  "es": "Sugerencias",
+  "fr": "Suggestions",
+  "de": "Vorschläge",
+  "zh-Hans": "建议",
+  "_comment": "Cover letter editor form"
+ },
+ "Suggestions are made on this device. Your text is not sent anywhere.": {
+  "es": "Las sugerencias se generan en este dispositivo. Tu texto no se envía a ningún sitio.",
+  "fr": "Les suggestions sont générées sur cet appareil. Votre texte n’est envoyé nulle part.",
+  "de": "Vorschläge werden auf diesem Gerät erstellt. Ihr Text wird nirgendwohin gesendet.",
+  "zh-Hans": "建议在此设备上生成，你的文字不会被发送到任何地方。",
+  "_comment": "Profile"
+ },
+ "Support": {
+  "es": "Soporte",
+  "fr": "Assistance",
+  "de": "Support",
+  "zh-Hans": "支持",
+  "_comment": "Profile"
+ },
+ "Swap sides": {
+  "es": "Intercambiar lados",
+  "fr": "Inverser les côtés",
+  "de": "Seiten tauschen",
+  "zh-Hans": "交换左右",
+  "_comment": "Compare preview"
+ },
+ "Switching templates changes the look only. Your text stays as it is.": {
+  "es": "Cambiar de plantilla solo cambia el aspecto. Tu texto no cambia.",
+  "fr": "Changer de modèle modifie uniquement l’apparence. Votre texte reste tel quel.",
+  "de": "Ein Vorlagenwechsel ändert nur das Aussehen. Ihr Text bleibt, wie er ist.",
+  "zh-Hans": "更换模板只会改变外观，你的文字内容保持不变。",
+  "_comment": "Cover letter template picker"
+ },
+ "System": {
+  "es": "Sistema",
+  "fr": "Système",
+  "de": "System",
+  "zh-Hans": "跟随系统",
+  "_comment": "Profile > Appearance"
+ },
+ "Tell us about the ad:\n- What did it show?\n- Where in CareerKit did you see it?\n- Roughly when did you see it?\n\nIf you can, attach a screenshot of the ad.": {
+  "es": "Cuéntanos cómo era el anuncio:\n- ¿Qué mostraba?\n- ¿En qué parte de CareerKit lo viste?\n- ¿Cuándo lo viste, aproximadamente?\n\nSi puedes, adjunta una captura de pantalla del anuncio.",
+  "fr": "Décrivez-nous la publicité :\n- Que montrait-elle ?\n- Où l’avez-vous vue dans CareerKit ?\n- Quand l’avez-vous vue, approximativement ?\n\nSi possible, joignez une capture d’écran de la publicité.",
+  "de": "Beschreiben Sie bitte die Werbung:\n- Was wurde gezeigt?\n- Wo in CareerKit haben Sie sie gesehen?\n- Wann ungefähr haben Sie sie gesehen?\n\nFügen Sie nach Möglichkeit einen Screenshot der Werbung bei.",
+  "zh-Hans": "请告诉我们这则广告的情况：\n- 广告显示了什么内容？\n- 你在 CareerKit 的哪个位置看到的？\n- 大约是什么时候看到的？\n\n如果可以，请附上广告的截图。",
+  "_comment": "Profile > Report an ad email. Body of the 'Report an ad' email (Profile). Keep the line breaks and dashes."
+ },
+ "Template": {
+  "es": "Plantilla",
+  "fr": "Modèle",
+  "de": "Vorlage",
+  "zh-Hans": "模板",
+  "_comment": "Cover letter editor; My Resumes > Compare versions; My Resumes sort menu; New cover letter sheet; Resume cards and rows"
+ },
+ "template": {
+  "es": "plantilla",
+  "fr": "modèle",
+  "de": "Vorlage",
+  "zh-Hans": "模板",
+  "_comment": "My Resumes sort menu. Used in '3 resumes, sorted by template'."
+ },
+ "Templates": {
+  "es": "Plantillas",
+  "fr": "Modèles",
+  "de": "Vorlagen",
+  "zh-Hans": "模板",
+  "_comment": "Home; Tab bar"
+ },
+ "Ten cover letter templates share the look of your resume, so the two documents read as one set.": {
+  "es": "Diez plantillas de carta de presentación comparten el aspecto de tu currículum, así que los dos documentos forman un conjunto.",
+  "fr": "Dix modèles de lettre de motivation reprennent le style de votre CV : vos deux documents forment un ensemble.",
+  "de": "Zehn Anschreiben-Vorlagen greifen das Aussehen Ihres Lebenslaufs auf, sodass beide Dokumente wie aus einem Guss wirken.",
+  "zh-Hans": "十款求职信模板与你的简历外观一致，两份文件风格统一。",
+  "_comment": "Onboarding"
+ },
+ "Ten letter templates share the look of your resume. Your details are filled in from the resume you choose.": {
+  "es": "Diez plantillas de carta comparten el aspecto de tu currículum. Tus datos se rellenan a partir del currículum que elijas.",
+  "fr": "Dix modèles de lettre reprennent le style de votre CV. Vos coordonnées sont reprises du CV choisi.",
+  "de": "Zehn Anschreiben-Vorlagen greifen das Aussehen Ihres Lebenslaufs auf. Ihre Daten werden aus dem gewählten Lebenslauf übernommen.",
+  "zh-Hans": "十款求职信模板与你的简历外观一致，你的信息会根据所选简历自动填入。",
+  "_comment": "Home"
+ },
+ "Terms of use": {
+  "es": "Condiciones de uso",
+  "fr": "Conditions d’utilisation",
+  "de": "Nutzungsbedingungen",
+  "zh-Hans": "使用条款",
+  "_comment": "Profile"
+ },
+ "Thank the reader and say how to reach you.": {
+  "es": "Da las gracias al lector e indica cómo contactarte.",
+  "fr": "Remerciez le lecteur et indiquez comment vous joindre.",
+  "de": "Bedanken Sie sich und nennen Sie, wie man Sie erreicht.",
+  "zh-Hans": "感谢阅读者，并说明联系你的方式。",
+  "_comment": "Cover letter editor form"
+ },
+ "The backup could not be created. Free up some space and try again.": {
+  "es": "No se pudo crear la copia de seguridad. Libera espacio y vuelve a intentarlo.",
+  "fr": "La sauvegarde n’a pas pu être créée. Libérez de l’espace et réessayez.",
+  "de": "Das Backup konnte nicht erstellt werden. Geben Sie Speicherplatz frei und versuchen Sie es erneut.",
+  "zh-Hans": "无法创建备份。请释放一些空间后重试。",
+  "_comment": "Profile"
+ },
+ "The job description stays on this device. It is not added to your letter.": {
+  "es": "La descripción del puesto se queda en este dispositivo. No se añade a tu carta.",
+  "fr": "La description du poste reste sur cet appareil. Elle n’est pas ajoutée à votre lettre.",
+  "de": "Die Stellenbeschreibung bleibt auf diesem Gerät. Sie wird nicht in Ihr Anschreiben übernommen.",
+  "zh-Hans": "职位描述仅保存在此设备上，不会添加到你的求职信中。",
+  "_comment": "Cover letter editor form"
+ },
+ "The name is only for you. It does not appear on the document.": {
+  "es": "El nombre es solo para ti. No aparece en el documento.",
+  "fr": "Ce nom est réservé à votre usage. Il n’apparaît pas sur le document.",
+  "de": "Der Name ist nur für Sie. Er erscheint nicht im Dokument.",
+  "zh-Hans": "此名称仅供你自己查看，不会显示在文档中。",
+  "_comment": "Resume quick actions (Home, My Resumes)"
+ },
+ "The paper size is used for new documents. Existing ones keep their own size.": {
+  "es": "El tamaño de papel se usa para los documentos nuevos. Los existentes conservan su tamaño.",
+  "fr": "Ce format est utilisé pour les nouveaux documents. Les documents existants gardent leur format.",
+  "de": "Das Papierformat gilt für neue Dokumente. Vorhandene behalten ihr Format.",
+  "zh-Hans": "此纸张尺寸用于新文档，现有文档保留原来的尺寸。",
+  "_comment": "Profile"
+ },
+ "The unreadable files were deleted.": {
+  "es": "Se eliminaron los archivos ilegibles.",
+  "fr": "Les fichiers illisibles ont été supprimés.",
+  "de": "Die unlesbaren Dateien wurden gelöscht.",
+  "zh-Hans": "无法读取的文件已删除。",
+  "_comment": "Profile"
+ },
+ "The video could not start, so this export is free.": {
+  "es": "El vídeo no pudo empezar, así que esta exportación es gratis.",
+  "fr": "La vidéo n’a pas pu démarrer, cet export est donc gratuit.",
+  "de": "Das Video konnte nicht starten, daher ist dieser Export kostenlos.",
+  "zh-Hans": "视频无法播放，因此本次导出免费。",
+  "_comment": "Export sheet, no video available"
+ },
+ "The video did not load in time, so this export is free.": {
+  "es": "El vídeo no se cargó a tiempo, así que esta exportación es gratis.",
+  "fr": "La vidéo ne s’est pas chargée à temps, cet export est donc gratuit.",
+  "de": "Das Video wurde nicht rechtzeitig geladen, daher ist dieser Export kostenlos.",
+  "zh-Hans": "视频未能及时加载，因此本次导出免费。",
+  "_comment": "Export sheet, no video available"
+ },
+ "The video only starts after you tap the button above.": {
+  "es": "El vídeo solo empieza cuando tocas el botón de arriba.",
+  "fr": "La vidéo ne démarre qu’après avoir touché le bouton ci-dessus.",
+  "de": "Das Video startet erst, wenn Sie oben auf die Taste tippen.",
+  "zh-Hans": "只有在你轻点上方按钮后，视频才会开始播放。",
+  "_comment": "Export sheet"
+ },
+ "The video was closed before the end, so this export is still locked. You can watch it again from the start.": {
+  "es": "El vídeo se cerró antes de terminar, así que esta exportación sigue bloqueada. Puedes volver a verlo desde el principio.",
+  "fr": "La vidéo a été fermée avant la fin, cet export reste donc verrouillé. Vous pouvez la regarder à nouveau depuis le début.",
+  "de": "Das Video wurde vor dem Ende geschlossen, daher bleibt dieser Export gesperrt. Sie können es noch einmal von Anfang an ansehen.",
+  "zh-Hans": "视频在结束前被关闭，因此本次导出仍处于锁定状态。你可以从头再看一遍。",
+  "_comment": "Export sheet"
+ },
+ "Their title": {
+  "es": "Su cargo",
+  "fr": "Sa fonction",
+  "de": "Position",
+  "zh-Hans": "对方职位",
+  "_comment": "Cover letter editor form"
+ },
+ "There is no subscription and no paywall. Banner ads appear at the bottom of browse screens, and never in the editor. Exporting a finished document needs one short rewarded video that you choose to watch. Writing, editing, previewing and the ATS check never show an ad.": {
+  "es": "No hay suscripción ni muro de pago. Los banners publicitarios aparecen al final de las pantallas de navegación y nunca en el editor. Para exportar un documento terminado hay que ver un breve vídeo con recompensa, que tú decides ver. Escribir, editar, ver la vista previa y la revisión ATS nunca muestran anuncios.",
+  "fr": "Pas d’abonnement ni d’accès payant. Des bannières publicitaires apparaissent en bas des écrans de navigation, jamais dans l’éditeur. Pour exporter un document terminé, il faut regarder une courte vidéo avec récompense, que vous choisissez de lancer. La rédaction, la modification, l’aperçu et la vérification ATS n’affichent jamais de publicité.",
+  "de": "Es gibt kein Abo und keine Bezahlschranke. Werbebanner erscheinen unten auf den Übersichtsseiten und nie im Editor. Zum Exportieren eines fertigen Dokuments ist ein kurzes Video mit Belohnung nötig, das Sie selbst starten. Beim Schreiben, Bearbeiten, in der Vorschau und bei der ATS-Prüfung wird nie Werbung angezeigt.",
+  "zh-Hans": "没有订阅，也没有付费墙。横幅广告显示在浏览页面底部，绝不会出现在编辑器中。导出完成的文档需要观看一段由你自行选择播放的简短激励视频。写作、编辑、预览和 ATS 检查时绝不会显示广告。",
+  "_comment": "Home"
+ },
+ "These files were damaged or could not be read. Export them to keep a copy or to send to support.": {
+  "es": "Estos archivos estaban dañados o no se pudieron leer. Expórtalos para guardar una copia o enviarlos al soporte.",
+  "fr": "Ces fichiers sont endommagés ou illisibles. Exportez-les pour en garder une copie ou les envoyer à l’assistance.",
+  "de": "Diese Dateien waren beschädigt oder konnten nicht gelesen werden. Exportieren Sie sie, um eine Kopie zu behalten oder sie an den Support zu senden.",
+  "zh-Hans": "这些文件已损坏或无法读取。你可以将其导出，以保留副本或发送给支持团队。",
+  "_comment": "Profile"
+ },
+ "They cannot be recovered afterwards. Your other documents are not affected.": {
+  "es": "Después no se podrán recuperar. Tus demás documentos no se verán afectados.",
+  "fr": "Ils ne pourront pas être récupérés. Vos autres documents ne sont pas concernés.",
+  "de": "Sie können danach nicht wiederhergestellt werden. Ihre anderen Dokumente sind nicht betroffen.",
+  "zh-Hans": "删除后将无法恢复。你的其他文档不受影响。",
+  "_comment": "Profile"
+ },
+ "This backup was made with a newer version of CareerKit. Update the app, then try again.": {
+  "es": "Esta copia de seguridad se creó con una versión más reciente de CareerKit. Actualiza la app y vuelve a intentarlo.",
+  "fr": "Cette sauvegarde a été créée avec une version plus récente de CareerKit. Mettez l’app à jour, puis réessayez.",
+  "de": "Dieses Backup wurde mit einer neueren Version von CareerKit erstellt. Aktualisieren Sie die App und versuchen Sie es dann erneut.",
+  "zh-Hans": "此备份由较新版本的 CareerKit 创建。请更新 App 后重试。",
+  "_comment": "Backup and restore"
+ },
+ "This file could not be read as a CareerKit backup.": {
+  "es": "Este archivo no se pudo leer como copia de seguridad de CareerKit.",
+  "fr": "Ce fichier n’a pas pu être lu comme une sauvegarde CareerKit.",
+  "de": "Diese Datei konnte nicht als CareerKit-Backup gelesen werden.",
+  "zh-Hans": "无法将此文件读取为 CareerKit 备份。",
+  "_comment": "Backup and restore"
+ },
+ "This file is not a CareerKit backup. Choose a file whose name starts with CareerKit-Backup.": {
+  "es": "Este archivo no es una copia de seguridad de CareerKit. Elige un archivo cuyo nombre empiece por CareerKit-Backup.",
+  "fr": "Ce fichier n’est pas une sauvegarde CareerKit. Choisissez un fichier dont le nom commence par CareerKit-Backup.",
+  "de": "Diese Datei ist kein CareerKit-Backup. Wählen Sie eine Datei, deren Name mit CareerKit-Backup beginnt.",
+  "zh-Hans": "此文件不是 CareerKit 备份。请选择文件名以 CareerKit-Backup 开头的文件。",
+  "_comment": "Backup and restore. Keep CareerKit-Backup exactly (it is the file name)."
+ },
+ "This file is too large to be a CareerKit backup.": {
+  "es": "Este archivo es demasiado grande para ser una copia de seguridad de CareerKit.",
+  "fr": "Ce fichier est trop volumineux pour être une sauvegarde CareerKit.",
+  "de": "Diese Datei ist zu groß für ein CareerKit-Backup.",
+  "zh-Hans": "此文件过大，不可能是 CareerKit 备份。",
+  "_comment": "Backup and restore"
+ },
+ "This letter is no longer available": {
+  "es": "Esta carta ya no está disponible",
+  "fr": "Cette lettre n’est plus disponible",
+  "de": "Dieses Anschreiben ist nicht mehr verfügbar",
+  "zh-Hans": "这封求职信已不可用",
+  "_comment": "Cover letter editor"
+ },
+ "This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved export passes.": {
+  "es": "Se eliminarán todos los currículums y cartas de presentación guardados en CareerKit en este dispositivo, incluidos los archivos ilegibles y los pases de exportación guardados.",
+  "fr": "Cela supprime tous les CV et lettres de motivation enregistrés dans CareerKit sur cet appareil, y compris les fichiers illisibles et les exports débloqués en attente.",
+  "de": "Dadurch werden alle in CareerKit auf diesem Gerät gespeicherten Lebensläufe und Anschreiben entfernt, einschließlich unlesbarer Dateien und gespeicherter Exportfreigaben.",
+  "zh-Hans": "这将删除此设备上 CareerKit 中存储的所有简历和求职信，包括无法读取的文件和已保存的导出许可。",
+  "_comment": "Profile. Delete-all confirmation. Must be precise."
+ },
+ "This resume is no longer available": {
+  "es": "Este currículum ya no está disponible",
+  "fr": "Ce CV n’est plus disponible",
+  "de": "Dieser Lebenslauf ist nicht mehr verfügbar",
+  "zh-Hans": "这份简历已不可用",
+  "_comment": "Resume preview"
+ },
+ "This resume was deleted.": {
+  "es": "Este currículum se eliminó.",
+  "fr": "Ce CV a été supprimé.",
+  "de": "Dieser Lebenslauf wurde gelöscht.",
+  "zh-Hans": "这份简历已被删除。",
+  "_comment": "Compare preview"
+ },
+ "To export this document again, tap Export. Each new export starts with one short video when one is available.": {
+  "es": "Para volver a exportar este documento, toca Exportar. Cada nueva exportación empieza con un breve vídeo cuando hay uno disponible.",
+  "fr": "Pour exporter à nouveau ce document, touchez Exporter. Chaque nouvel export commence par une courte vidéo lorsqu’une vidéo est disponible.",
+  "de": "Um dieses Dokument erneut zu exportieren, tippen Sie auf „Exportieren“. Jeder neue Export beginnt mit einem kurzen Video, sofern eines verfügbar ist.",
+  "zh-Hans": "如需再次导出此文档，请轻点“导出”。每次新的导出都会先播放一段简短视频（如有可用视频）。",
+  "_comment": "Export sheet. 'Export' must match the Export button translation."
+ },
+ "To print, choose PDF above. It keeps your page layout exactly.": {
+  "es": "Para imprimir, elige PDF arriba. Conserva exactamente el diseño de tu página.",
+  "fr": "Pour imprimer, choisissez PDF ci-dessus. Il conserve exactement votre mise en page.",
+  "de": "Zum Drucken wählen Sie oben PDF. Damit bleibt Ihr Seitenlayout exakt erhalten.",
+  "zh-Hans": "如需打印，请在上方选择 PDF，它会完整保留你的页面版式。",
+  "_comment": "Export sheet"
+ },
+ "Try a company name, a job title or part of the letter title.": {
+  "es": "Prueba con el nombre de una empresa, un puesto o parte del título de la carta.",
+  "fr": "Essayez un nom d’entreprise, un intitulé de poste ou une partie du titre de la lettre.",
+  "de": "Versuchen Sie es mit einem Firmennamen, einer Stellenbezeichnung oder einem Teil des Titels.",
+  "zh-Hans": "请尝试输入公司名称、职位名称或求职信标题中的部分文字。",
+  "_comment": "Cover Letters list"
+ },
+ "Try again": {
+  "es": "Reintentar",
+  "fr": "Réessayer",
+  "de": "Erneut versuchen",
+  "zh-Hans": "重试",
+  "_comment": "Export sheet"
+ },
+ "Try the video again": {
+  "es": "Volver a intentar el vídeo",
+  "fr": "Relancer la vidéo",
+  "de": "Video erneut versuchen",
+  "zh-Hans": "再次尝试播放视频",
+  "_comment": "Export sheet"
+ },
+ "Turning a finished document into a file leaves the app: saving it to Files, sharing it, or printing it. Each of those starts with one optional short video.": {
+  "es": "Convertir un documento terminado en un archivo implica sacarlo de la app: guardarlo en Archivos, compartirlo o imprimirlo. Cada una de esas acciones empieza con un breve vídeo opcional.",
+  "fr": "Transformer un document terminé en fichier le fait sortir de l’app : l’enregistrer dans Fichiers, le partager ou l’imprimer. Chacune de ces actions commence par une courte vidéo facultative.",
+  "de": "Wenn ein fertiges Dokument zu einer Datei wird, verlässt es die App: beim Sichern in „Dateien“, beim Teilen oder beim Drucken. Jede dieser Aktionen beginnt mit einem kurzen, optionalen Video.",
+  "zh-Hans": "将完成的文档生成为文件会使其离开 App，包括存储到“文件”、共享或打印。每项操作开始前都会提供一段可选的简短视频。",
+  "_comment": "Profile > How exports work"
+ },
+ "Unarchive": {
+  "es": "Desarchivar",
+  "fr": "Désarchiver",
+  "de": "Wiederherstellen",
+  "zh-Hans": "取消归档",
+  "_comment": "My Resumes; Resume cards and rows"
+ },
+ "Unavailable": {
+  "es": "No disponible",
+  "fr": "Indisponible",
+  "de": "Nicht verfügbar",
+  "zh-Hans": "不可用",
+  "_comment": "Compare preview"
+ },
+ "Unreadable documents": {
+  "es": "Documentos ilegibles",
+  "fr": "Documents illisibles",
+  "de": "Unlesbare Dokumente",
+  "zh-Hans": "无法读取的文档",
+  "_comment": "Profile"
+ },
+ "Untitled": {
+  "es": "Sin título",
+  "fr": "Sans titre",
+  "de": "Ohne Titel",
+  "zh-Hans": "未命名",
+  "_comment": "Backup and restore"
+ },
+ "Untitled cover letter": {
+  "es": "Carta de presentación sin título",
+  "fr": "Lettre de motivation sans titre",
+  "de": "Anschreiben ohne Titel",
+  "zh-Hans": "未命名求职信",
+  "_comment": "Document defaults"
+ },
+ "Untitled letter": {
+  "es": "Carta sin título",
+  "fr": "Lettre sans titre",
+  "de": "Anschreiben ohne Titel",
+  "zh-Hans": "未命名求职信",
+  "_comment": "Cover Letters list; Cover letter editor"
+ },
+ "Untitled resume": {
+  "es": "Currículum sin título",
+  "fr": "CV sans titre",
+  "de": "Lebenslauf ohne Titel",
+  "zh-Hans": "未命名简历",
+  "_comment": "Document defaults"
+ },
+ "Update CareerKit from the App Store to open them. They are kept unchanged.": {
+  "es": "Actualiza CareerKit desde el App Store para abrirlos. Se conservan sin cambios.",
+  "fr": "Mettez CareerKit à jour depuis l’App Store pour les ouvrir. Ils sont conservés tels quels.",
+  "de": "Aktualisieren Sie CareerKit im App Store, um sie zu öffnen. Sie bleiben unverändert erhalten.",
+  "zh-Hans": "请从 App Store 更新 CareerKit 以打开这些文档。它们会保持原样。",
+  "_comment": "Profile"
+ },
+ "Updating": {
+  "es": "Actualizando",
+  "fr": "Mise à jour",
+  "de": "Wird aktualisiert",
+  "zh-Hans": "正在更新",
+  "_comment": "Document preview"
+ },
+ "Updating preview": {
+  "es": "Actualizando la vista previa",
+  "fr": "Mise à jour de l’aperçu",
+  "de": "Vorschau wird aktualisiert",
+  "zh-Hans": "正在更新预览",
+  "_comment": "Document preview"
+ },
+ "US Letter": {
+  "es": "Carta (EE. UU.)",
+  "fr": "US Letter",
+  "de": "US-Letter",
+  "zh-Hans": "美式信纸",
+  "_comment": "Resume document content. Paper size name."
+ },
+ "Use %@": {
+  "es": "Usar %@",
+  "fr": "Utiliser %@",
+  "de": "%@ verwenden",
+  "zh-Hans": "使用%@",
+  "_comment": "Cover letter editor form. Button. %@ is a letter template name."
+ },
+ "Use this": {
+  "es": "Usar esta",
+  "fr": "Utiliser",
+  "de": "Verwenden",
+  "zh-Hans": "使用此项",
+  "_comment": "Cover letter editor form"
+ },
+ "Version": {
+  "es": "Versión",
+  "fr": "Version",
+  "de": "Version",
+  "zh-Hans": "版本",
+  "_comment": "Profile"
+ },
+ "Video not finished": {
+  "es": "Vídeo no terminado",
+  "fr": "Vidéo non terminée",
+  "de": "Video nicht beendet",
+  "zh-Hans": "视频未看完",
+  "_comment": "Export sheet"
+ },
+ "Videos are not available in this version of the app, so this export is free.": {
+  "es": "Los vídeos no están disponibles en esta versión de la app, así que esta exportación es gratis.",
+  "fr": "Les vidéos ne sont pas disponibles dans cette version de l’app, cet export est donc gratuit.",
+  "de": "In dieser Version der App sind keine Videos verfügbar, daher ist dieser Export kostenlos.",
+  "zh-Hans": "此版本的 App 不提供视频，因此本次导出免费。",
+  "_comment": "Export sheet, no video available"
+ },
+ "Videos cannot play with your current ad privacy choices, so this export is free.": {
+  "es": "Los vídeos no se pueden reproducir con tus opciones actuales de privacidad de anuncios, así que esta exportación es gratis.",
+  "fr": "Les vidéos ne peuvent pas être lues avec vos choix de confidentialité publicitaire actuels, cet export est donc gratuit.",
+  "de": "Mit Ihren aktuellen Datenschutzoptionen für Werbung können keine Videos abgespielt werden, daher ist dieser Export kostenlos.",
+  "zh-Hans": "根据你当前的广告隐私选项，视频无法播放，因此本次导出免费。",
+  "_comment": "Export sheet, no video available"
+ },
+ "View as": {
+  "es": "Ver como",
+  "fr": "Afficher en",
+  "de": "Anzeigen als",
+  "zh-Hans": "显示方式",
+  "_comment": "My Resumes"
+ },
+ "Volunteer Experience": {
+  "es": "Voluntariado",
+  "fr": "Bénévolat",
+  "de": "Ehrenamt",
+  "zh-Hans": "志愿经历",
+  "_comment": "Resume document content"
+ },
+ "Watch again": {
+  "es": "Ver de nuevo",
+  "fr": "Regarder à nouveau",
+  "de": "Erneut ansehen",
+  "zh-Hans": "重新观看",
+  "_comment": "Export sheet"
+ },
+ "Watch an ad to export": {
+  "es": "Ver un anuncio para exportar",
+  "fr": "Regarder une publicité pour exporter",
+  "de": "Werbung ansehen und exportieren",
+  "zh-Hans": "观看广告以导出",
+  "_comment": "Export sheet"
+ },
+ "Watch one short video to export this document once. After the video, the export stays unlocked for 24 hours, so you can finish later. Creating, editing and previewing stay free.": {
+  "es": "Mira un breve vídeo para exportar este documento una vez. Después del vídeo, la exportación queda desbloqueada durante 24 horas, así que puedes terminar más tarde. Crear, editar y ver la vista previa sigue siendo gratis.",
+  "fr": "Regardez une courte vidéo pour exporter ce document une fois. Après la vidéo, l’export reste débloqué pendant 24 heures : vous pouvez donc terminer plus tard. La création, la modification et l’aperçu restent gratuits.",
+  "de": "Sehen Sie sich ein kurzes Video an, um dieses Dokument einmal zu exportieren. Nach dem Video bleibt der Export 24 Stunden freigeschaltet, sodass Sie später fertig werden können. Erstellen, Bearbeiten und die Vorschau bleiben kostenlos.",
+  "zh-Hans": "观看一段简短视频即可导出此文档一次。看完视频后，导出将在24小时内保持解锁，你可以稍后再完成。创建、编辑和预览始终免费。",
+  "_comment": "Export sheet. Disclosure: one video = one export of this document, unlocked for 24 hours. Translate precisely."
+ },
+ "We could not prepare your %@. Your export is still available.": {
+  "es": "No pudimos preparar tu %@. Tu exportación sigue disponible.",
+  "fr": "Impossible de préparer votre %@. Votre export reste disponible.",
+  "de": "%@ konnte nicht vorbereitet werden. Ihr Export ist weiterhin verfügbar.",
+  "zh-Hans": "无法准备%@。你的导出机会仍然可用。",
+  "_comment": "Export sheet. %@ is the file type noun."
+ },
+ "Welcome to CareerKit": {
+  "es": "Te damos la bienvenida a CareerKit",
+  "fr": "Bienvenue dans CareerKit",
+  "de": "Willkommen bei CareerKit",
+  "zh-Hans": "欢迎使用 CareerKit",
+  "_comment": "Onboarding"
+ },
+ "What is free": {
+  "es": "Qué es gratis",
+  "fr": "Ce qui est gratuit",
+  "de": "Was kostenlos ist",
+  "zh-Hans": "哪些功能免费",
+  "_comment": "Profile > How exports work"
+ },
+ "What needs a short video": {
+  "es": "Qué requiere un breve vídeo",
+  "fr": "Ce qui nécessite une courte vidéo",
+  "de": "Wofür ein kurzes Video nötig ist",
+  "zh-Hans": "哪些操作需要观看简短视频",
+  "_comment": "Profile > How exports work"
+ },
+ "What one video covers": {
+  "es": "Qué cubre un vídeo",
+  "fr": "Ce que couvre une vidéo",
+  "de": "Was ein Video abdeckt",
+  "zh-Hans": "一段视频的作用范围",
+  "_comment": "Profile > How exports work"
+ },
+ "Words": {
+  "es": "Palabras",
+  "fr": "Mots",
+  "de": "Wörter",
+  "zh-Hans": "字数",
+  "_comment": "My Resumes > Compare versions"
+ },
+ "Work Experience": {
+  "es": "Experiencia laboral",
+  "fr": "Expérience professionnelle",
+  "de": "Berufserfahrung",
+  "zh-Hans": "工作经历",
+  "_comment": "Resume document content"
+ },
+ "Work through guided sections for experience, education and skills. The page updates as you type, so you always see what you will send.": {
+  "es": "Completa secciones guiadas de experiencia, formación y habilidades. La página se actualiza mientras escribes, así que siempre ves lo que vas a enviar.",
+  "fr": "Remplissez des sections guidées pour l’expérience, la formation et les compétences. La page se met à jour pendant la saisie : vous voyez toujours ce que vous allez envoyer.",
+  "de": "Füllen Sie geführte Abschnitte zu Erfahrung, Ausbildung und Kenntnissen aus. Die Seite aktualisiert sich während der Eingabe, sodass Sie immer sehen, was Sie versenden.",
+  "zh-Hans": "按引导填写工作经历、教育背景和技能等板块。页面会随输入实时更新，让你随时看到将要发送的内容。",
+  "_comment": "Onboarding"
+ },
+ "Write a matching cover letter": {
+  "es": "Escribe una carta de presentación a juego",
+  "fr": "Rédigez une lettre de motivation assortie",
+  "de": "Passendes Anschreiben verfassen",
+  "zh-Hans": "撰写风格匹配的求职信",
+  "_comment": "Home"
+ },
+ "Write a matching cover letter. Opens Cover Letters.": {
+  "es": "Escribe una carta de presentación a juego. Abre Cartas.",
+  "fr": "Rédigez une lettre de motivation assortie. Ouvre Lettres.",
+  "de": "Passendes Anschreiben verfassen. Öffnet Anschreiben.",
+  "zh-Hans": "撰写风格匹配的求职信。打开“求职信”。",
+  "_comment": "Home. VoiceOver label. The tab name must match the tab bar."
+ },
+ "Write one letter per job. Pick a template, link a resume to fill in your details, and export when it reads well.": {
+  "es": "Escribe una carta por oferta. Elige una plantilla, vincula un currículum para rellenar tus datos y exporta cuando te convenza.",
+  "fr": "Rédigez une lettre par offre. Choisissez un modèle, associez un CV pour remplir vos coordonnées, puis exportez quand le texte vous convient.",
+  "de": "Schreiben Sie ein Anschreiben pro Stelle. Wählen Sie eine Vorlage, verknüpfen Sie einen Lebenslauf für Ihre Daten und exportieren Sie, wenn der Text passt.",
+  "zh-Hans": "每个职位写一封求职信。选择模板，关联简历以填入你的信息，满意后再导出。",
+  "_comment": "Cover Letters list"
+ },
+ "Write one to go with it": {
+  "es": "Escribe una que lo acompañe",
+  "fr": "Rédigez-en une assortie",
+  "de": "Ein passendes verfassen",
+  "zh-Hans": "写一封与之搭配的求职信",
+  "_comment": "Home"
+ },
+ "You have %lld resumes.": {
+  "en": {
+   "one": "You have %lld resume.",
+   "other": "You have %lld resumes."
+  },
+  "es": {
+   "one": "Tienes %lld currículum.",
+   "other": "Tienes %lld currículums."
+  },
+  "fr": {
+   "one": "Vous avez %lld CV.",
+   "other": "Vous avez %lld CV."
+  },
+  "de": {
+   "one": "Sie haben %lld Lebenslauf.",
+   "other": "Sie haben %lld Lebensläufe."
+  },
+  "zh-Hans": "你有%lld份简历。",
+  "_comment": "Home. First sentence of the Home subtitle. Followed by the sentence with the last edited title."
+ },
+ "Your data": {
+  "es": "Tus datos",
+  "fr": "Vos données",
+  "de": "Ihre Daten",
+  "zh-Hans": "你的数据",
+  "_comment": "Profile"
+ },
+ "Your documents and your choices": {
+  "es": "Tus documentos y tus decisiones",
+  "fr": "Vos documents et vos choix",
+  "de": "Ihre Dokumente und Ihre Entscheidungen",
+  "zh-Hans": "你的文档与选择",
+  "_comment": "Profile > How exports work"
+ },
+ "Your export is done": {
+  "es": "Exportación completada",
+  "fr": "Export terminé",
+  "de": "Export abgeschlossen",
+  "zh-Hans": "导出已完成",
+  "_comment": "Export sheet"
+ },
+ "Your name": {
+  "es": "Tu nombre",
+  "fr": "Votre nom",
+  "de": "Ihr Name",
+  "zh-Hans": "你的姓名",
+  "_comment": "Cover letter editor form"
+ },
+ "Your name (optional)": {
+  "es": "Tu nombre (opcional)",
+  "fr": "Votre prénom (facultatif)",
+  "de": "Ihr Name (optional)",
+  "zh-Hans": "你的名字（可选）",
+  "_comment": "Profile"
+ },
+ "Your name and contact details": {
+  "es": "Tu nombre y datos de contacto",
+  "fr": "Votre nom et vos coordonnées",
+  "de": "Ihr Name und Ihre Kontaktdaten",
+  "zh-Hans": "你的姓名和联系方式",
+  "_comment": "Cover letter editor form"
+ },
+ "Your name, title, email, phone and location in this letter will be overwritten with the values from the resume.": {
+  "es": "Tu nombre, cargo, correo electrónico, teléfono y ubicación en esta carta se sustituirán por los del currículum.",
+  "fr": "Votre nom, votre fonction, votre e-mail, votre téléphone et votre lieu dans cette lettre seront remplacés par ceux du CV.",
+  "de": "Name, Position, E-Mail, Telefon und Ort in diesem Anschreiben werden durch die Angaben aus dem Lebenslauf ersetzt.",
+  "zh-Hans": "此求职信中的姓名、职位、电子邮件、电话和所在地将被简历中的信息覆盖。",
+  "_comment": "Cover letter editor form"
+ },
+ "Your resumes, cover letters and drafts cannot be recovered afterwards unless you saved a backup file.": {
+  "es": "Después no podrás recuperar tus currículums, cartas de presentación ni borradores, salvo que hayas guardado un archivo de copia de seguridad.",
+  "fr": "Vos CV, lettres de motivation et brouillons ne pourront pas être récupérés ensuite, sauf si vous avez enregistré un fichier de sauvegarde.",
+  "de": "Ihre Lebensläufe, Anschreiben und Entwürfe können danach nicht wiederhergestellt werden, es sei denn, Sie haben eine Backup-Datei gesichert.",
+  "zh-Hans": "删除后，你的简历、求职信和草稿将无法恢复，除非你已保存备份文件。",
+  "_comment": "Profile. Second delete-all confirmation. Must be precise."
+ },
+ "Your title": {
+  "es": "Tu cargo",
+  "fr": "Votre fonction",
+  "de": "Ihre Position",
+  "zh-Hans": "你的职位",
+  "_comment": "Cover letter editor form"
+ },
+ "Zoom in": {
+  "es": "Ampliar",
+  "fr": "Zoom avant",
+  "de": "Vergrößern",
+  "zh-Hans": "放大",
+  "_comment": "Document preview"
+ },
+ "Zoom out": {
+  "es": "Reducir",
+  "fr": "Zoom arrière",
+  "de": "Verkleinern",
+  "zh-Hans": "缩小",
+  "_comment": "Document preview"
+ }
+}

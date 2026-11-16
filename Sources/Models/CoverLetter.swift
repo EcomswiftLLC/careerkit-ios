@@ -31,7 +31,7 @@ struct CoverLetter: Codable, Identifiable, Equatable {
     var experienceParagraph = ""
     var interestParagraph = ""
     var closing = ""
-    var signOff = "Sincerely,"
+    var signOff = String(localized: "Sincerely,", comment: "Default sign-off of a cover letter.")
 
     var style = StyleOverrides()
     var schemaVersion = 1
@@ -44,7 +44,10 @@ struct CoverLetter: Codable, Identifiable, Equatable {
 
     var effectiveGreeting: String {
         if !greeting.isEmpty { return greeting }
-        if !recipientName.isEmpty { return "Dear \(recipientName)," }
-        return "Dear Hiring Manager,"
+        if !recipientName.isEmpty {
+            let name: String = recipientName
+            return String(localized: "Dear \(name),", comment: "Cover letter greeting with the recipient's name.")
+        }
+        return String(localized: "Dear Hiring Manager,", comment: "Cover letter greeting when no name is known.")
     }
 }

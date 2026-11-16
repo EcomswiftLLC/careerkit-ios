@@ -138,11 +138,12 @@ enum SampleContent {
     }
 
     /// Finds the entry with the most bullets (later entries win ties) among kinds that hold bullets.
-    private static func entryWithMostBullets(in sections: [ResumeSection], above minimum: Int) -> (section: Int, entry: Int)? {
+    /// Only sections in `only` (the crowded column) are considered, so an overfull sidebar never thins the main story.
+    private static func entryWithMostBullets(in sections: [ResumeSection], above minimum: Int, only: Set<SectionKind>) -> (section: Int, entry: Int)? {
         let bulletKinds: [SectionKind] = [.experience, .internships, .projects, .volunteer]
         var found: (section: Int, entry: Int)? = nil
         var bestCount = minimum
-        for sectionIndex in sections.indices where bulletKinds.contains(sections[sectionIndex].kind) {
+        for sectionIndex in sections.indices where bulletKinds.contains(sections[sectionIndex].kind) && only.contains(sections[sectionIndex].kind) {
             let items = sections[sectionIndex].entries
             for entryIndex in items.indices {
                 let count = items[entryIndex].bullets.count
@@ -163,13 +164,14 @@ enum SampleContent {
                                  overflow: Double,
                                  height: (ResumeSection) -> Double) -> Bool {
         // 1. Long bullet lists lose their last bullet first, down to two.
-        if let target = entryWithMostBullets(in: sections, above: 2) {
+        if let target = entryWithMostBullets(in: sections, above: 2, only: droppable) {
             sections[target.section].entries[target.entry].bullets.removeLast()
             return true
         }
         // 2. Extra sections keep two entries (three for publications).
         let extraKinds: [SectionKind] = [.awards, .memberships, .courses, .volunteer, .certifications, .projects, .publications, .references]
         for index in sections.indices.reversed() {
+            if !droppable.contains(sections[index].kind) { continue }
             let kind = sections[index].kind
             if !extraKinds.contains(kind) { continue }
             let limit = kind == .publications ? 3 : 2
@@ -180,6 +182,7 @@ enum SampleContent {
         }
         // 3. Older jobs beyond the third go next.
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             let kind = sections[index].kind
             if (kind == .experience || kind == .internships) && sections[index].entries.count > 3 {
                 sections[index].entries.removeLast()
@@ -188,6 +191,7 @@ enum SampleContent {
         }
         // 4. At most four skill groups and two education entries.
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             if sections[index].kind == .skills && sections[index].skillGroups.count > 4 {
                 sections[index].skillGroups.removeLast()
                 return true
@@ -201,6 +205,7 @@ enum SampleContent {
         var smallest: Int? = nil
         var smallestHeight: Double = Double.greatestFiniteMagnitude
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             let kind = sections[index].kind
             guard optionalKinds.contains(kind), droppable.contains(kind) else { continue }
             let h: Double = height(sections[index])
@@ -214,12 +219,13 @@ enum SampleContent {
             return true
         }
         // 6. Bullet lists shorten to one bullet per entry.
-        if let target = entryWithMostBullets(in: sections, above: 1) {
+        if let target = entryWithMostBullets(in: sections, above: 1, only: droppable) {
             sections[target.section].entries[target.entry].bullets.removeLast()
             return true
         }
         // 7. Extra sections keep one entry (two for publications).
         for index in sections.indices.reversed() {
+            if !droppable.contains(sections[index].kind) { continue }
             let kind = sections[index].kind
             if !extraKinds.contains(kind) { continue }
             let limit = kind == .publications ? 2 : 1
@@ -230,6 +236,7 @@ enum SampleContent {
         }
         // 8. Context lines go from all but the first entry of each section.
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             let count = sections[index].entries.count
             guard count > 1 else { continue }
             for entryIndex in 1..<count where !sections[index].entries[entryIndex].detail.isEmpty {
@@ -239,6 +246,7 @@ enum SampleContent {
         }
         // 9. Two jobs, three skill groups, one education entry.
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             let kind = sections[index].kind
             if (kind == .experience || kind == .internships) && sections[index].entries.count > 2 {
                 sections[index].entries.removeLast()
@@ -246,6 +254,7 @@ enum SampleContent {
             }
         }
         for index in sections.indices {
+            if !droppable.contains(sections[index].kind) { continue }
             if sections[index].kind == .skills && sections[index].skillGroups.count > 3 {
                 sections[index].skillGroups.removeLast()
                 return true

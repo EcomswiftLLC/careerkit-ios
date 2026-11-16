@@ -24,7 +24,7 @@ enum DocumentExportFormat: String, CaseIterable, Identifiable, Codable {
     /// Name shown in the format picker.
     var displayName: String {
         switch self {
-        case .pdf: return String(localized: "PDF")
+        case .pdf: return "PDF"  // format name, not translated
         case .docx: return String(localized: "Word (.docx)")
         case .rtf: return String(localized: "Rich Text (opens in Word)")
         case .txt: return String(localized: "Plain text")
@@ -51,7 +51,7 @@ enum DocumentExportFormat: String, CaseIterable, Identifiable, Codable {
     /// Used inside sentences: "Preparing your Word document".
     var noun: String {
         switch self {
-        case .pdf: return String(localized: "PDF")
+        case .pdf: return "PDF"  // format name, not translated
         case .docx: return String(localized: "Word document")
         case .rtf: return String(localized: "Rich Text file")
         case .txt: return String(localized: "text file")

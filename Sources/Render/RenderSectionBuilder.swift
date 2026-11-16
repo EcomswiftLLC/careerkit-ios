@@ -32,6 +32,11 @@ final class RenderSectionBuilder {
     var bulletGap: CGFloat { return max(1.5, style.bodySize * 0.22) }
     var bulletIndent: CGFloat { return max(11, style.bodySize * 1.5) }
 
+    /// Width of the date gutter (dates, dot and spine) of the timeline entry layout.
+    static func timelineGutter(width: CGFloat) -> CGFloat {
+        return min(max(width * 0.21, 84), 108)
+    }
+
     // MARK: Section assembly
 
     func sectionItems(_ section: ResumeSection) -> [RenderFlowItem] {
@@ -80,16 +85,16 @@ final class RenderSectionBuilder {
 
     private func headingAttributed(_ label: String, kind: SectionHeadingStyle, sizeScale: CGFloat = 1) -> NSAttributedString {
         // An explicit user choice wins over the capitals a heading style normally uses.
-        let upper: Bool = style.headingCaseOverride ?? (kind == .uppercaseRule || kind == .boxedLabel || style.uppercaseHeadings)
+        let upper: Bool = style.headingCaseOverride ?? (kind == .uppercaseRule || kind == .boxedLabel || kind == .fullBar || style.uppercaseHeadings)
         let font: UIFont = style.headingFont(size: style.headingSize * sizeScale, bold: true)
         let kern: CGFloat = (upper || kind == .smallCapsAccent) ? style.headingKern * sizeScale : 0
         let color: UIColor
         switch kind {
         case .uppercaseRule, .smallCapsAccent, .dottedRule, .sideLabel, .centeredRule:
             color = theme.accent
-        case .accentBar, .plainBold, .underlineAccent, .leftBorder:
+        case .accentBar, .plainBold, .underlineAccent, .leftBorder, .ruleAbove:
             color = theme.ink
-        case .boxedLabel:
+        case .boxedLabel, .fullBar:
             color = theme.chipText
         case .tintedBand:
             color = bandTextColor
@@ -202,6 +207,26 @@ final class RenderSectionBuilder {
                 RenderDraw.fill(CGRect(x: origin.x, y: origin.y, width: w, height: bandHeight), fill)
                 layout.draw(at: CGPoint(x: origin.x + pad, y: origin.y + 3.5))
             })
+
+        case .fullBar:
+            let pad: CGFloat = 8
+            let layout = ctx.layout(attr, width: max(20, w - 2 * pad), links: [])
+            let barHeight: CGFloat = layout.height + 9
+            let fill: UIColor = accent
+            return RenderFlowItem(height: ceil(barHeight + 8), spaceBefore: spaceBefore, keepWithNext: true, draw: { origin, _ in
+                RenderDraw.fill(CGRect(x: origin.x, y: origin.y, width: w, height: barHeight), fill)
+                layout.draw(at: CGPoint(x: origin.x + pad, y: origin.y + 4.5))
+            })
+
+        case .ruleAbove:
+            let layout = ctx.layout(attr, width: w, links: [])
+            let ruleHeight: CGFloat = 1.8
+            let labelY: CGFloat = ruleHeight + 5
+            let ink: UIColor = theme.ink
+            return RenderFlowItem(height: ceil(labelY + layout.height + 5), spaceBefore: spaceBefore, keepWithNext: true, draw: { origin, _ in
+                RenderDraw.fill(CGRect(x: origin.x, y: origin.y, width: w, height: ruleHeight), ink)
+                layout.draw(at: CGPoint(x: origin.x, y: origin.y + labelY))
+            })
         }
     }
 
@@ -209,12 +234,17 @@ final class RenderSectionBuilder {
 
     /// The paper the column sits on: the sidebar fill in a sidebar, white elsewhere.
     private var columnPaper: UIColor {
-        return theme.isSidebar ? style.sidebarFill : UIColor.white
+        return theme.isSidebar ? style.sidebarFill : style.paper
     }
 
     /// A pale wash of the accent over the column paper.
     var bandFill: UIColor {
         return RenderColors.mix(columnPaper, theme.accent, theme.isSidebar ? 0.14 : 0.09)
+    }
+
+    /// Soft fill behind a skill pill.
+    var pillFill: UIColor {
+        return RenderColors.mix(columnPaper, theme.accent, theme.isSidebar ? 0.16 : 0.10)
     }
 
     /// Accent text when it keeps 4.5:1 on the band, otherwise the column ink.

@@ -39,7 +39,7 @@ struct EdPageSkeleton: View {
 /// Live preview surface used by every editor: PDF, page controls, subtle "updating" indicator.
 struct PreviewPane: View {
     @ObservedObject var renderer: LivePreviewRenderer
-    var accessibilityName: String = "Document preview"
+    var accessibilityName: String = String(localized: "Document preview")
     var showsPageControls = true
     var showsZoomControls = true
 
@@ -84,18 +84,18 @@ struct PreviewPane: View {
 
     private var controls: some View {
         HStack(spacing: 0) {
-            controlButton("chevron.left", label: "Previous page", enabled: controller.canGoPrevious) { controller.goToPrevious() }
-            Text("Page \(controller.currentPage) of \(max(controller.pageCount, 1))")
+            pagerControl("chevron.left", label: String(localized: "Previous page"), enabled: controller.canGoPrevious) { controller.goToPrevious() }
+            Text(pageLabel)
                 .font(CK.Font.caption.monospacedDigit())
                 .foregroundStyle(CK.Palette.ink)
                 .padding(.horizontal, 6)
-                .accessibilityLabel("Page \(controller.currentPage) of \(max(controller.pageCount, 1))")
-            controlButton("chevron.right", label: "Next page", enabled: controller.canGoNext) { controller.goToNext() }
+                .accessibilityLabel(Text(pageLabel))
+            pagerControl("chevron.right", label: String(localized: "Next page"), enabled: controller.canGoNext) { controller.goToNext() }
             if showsZoomControls {
                 Rectangle().fill(CK.Palette.hairline).frame(width: 1, height: 22).padding(.horizontal, 2)
-                controlButton("minus.magnifyingglass", label: "Zoom out", enabled: true) { controller.zoom(by: 0.8) }
-                controlButton("plus.magnifyingglass", label: "Zoom in", enabled: true) { controller.zoom(by: 1.25) }
-                controlButton("arrow.left.and.right", label: "Fit to width", enabled: !controller.isFitted) { controller.fitToWidth() }
+                pagerControl("minus.magnifyingglass", label: String(localized: "Zoom out"), enabled: true) { controller.zoom(by: 0.8) }
+                pagerControl("plus.magnifyingglass", label: String(localized: "Zoom in"), enabled: true) { controller.zoom(by: 1.25) }
+                pagerControl("arrow.left.and.right", label: String(localized: "Fit to width"), enabled: !controller.isFitted) { controller.fitToWidth() }
             }
         }
         .padding(.horizontal, 4)
@@ -104,7 +104,13 @@ struct PreviewPane: View {
         .padding(.bottom, 12)
     }
 
-    private func controlButton(_ symbol: String, label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+    private var pageLabel: String {
+        let number: Int = controller.currentPage
+        let total: Int = max(controller.pageCount, 1)
+        return String(localized: "Page \(number) of \(total)")
+    }
+
+    private func pagerControl(_ symbol: String, label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 15, weight: .medium))
@@ -114,6 +120,6 @@ struct PreviewPane: View {
         .buttonStyle(.plain)
         .foregroundStyle(enabled ? CK.Palette.ink : CK.Palette.graphite.opacity(0.45))
         .disabled(!enabled)
-        .accessibilityLabel(label)
+        .accessibilityLabel(Text(label))
     }
 }

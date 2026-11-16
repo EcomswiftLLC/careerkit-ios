@@ -91,7 +91,7 @@ struct OnboardingView: View {
             }
             .animation(reduceMotion ? nil : Animation.easeInOut(duration: 0.25), value: page)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("Page \(page + 1) of \(pages.count)"))
+            .accessibilityLabel(Text(pageLabel))
 
             Button {
                 if isLast {
@@ -102,7 +102,11 @@ struct OnboardingView: View {
                     }
                 }
             } label: {
-                Text(isLast ? "Get started" : "Continue")
+                if isLast {
+                    Text("Get started")
+                } else {
+                    Text("Continue")
+                }
             }
             .buttonStyle(.ckPrimary)
         }
@@ -111,6 +115,12 @@ struct OnboardingView: View {
         .padding(.top, CK.Space.s)
         .frame(maxWidth: 520)
         .frame(maxWidth: .infinity)
+    }
+
+    private var pageLabel: String {
+        let number: Int = page + 1
+        let total: Int = pages.count
+        return String(localized: "Page \(number) of \(total)")
     }
 
     private func finish() {

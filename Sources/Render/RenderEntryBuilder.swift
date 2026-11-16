@@ -4,7 +4,7 @@ extension RenderSectionBuilder {
     /// Effective entry layout. Narrow columns cannot hold a date column beside the heading.
     var effectiveEntryLayout: EntryLayout {
         let kind: EntryLayout = template.entryLayout
-        if (kind == .dateRight && width < 250) || (kind == .dateGutter && width < 320) {
+        if (kind == .dateRight && width < 250) || (kind == .dateGutter && width < 320) || (kind == .timeline && width < 300) {
             return .dateBelow
         }
         return kind
@@ -28,6 +28,8 @@ extension RenderSectionBuilder {
         let meta: RenderTextStyle = metaStyle()
 
         var bodyX: CGFloat = 0
+        var spineX: CGFloat = 0
+        var dotY: CGFloat = 0
         let composite = RenderComposite()
 
         switch kind {
@@ -84,6 +86,36 @@ extension RenderSectionBuilder {
             if !runs.isEmpty {
                 composite.addLine(ctx.layout(RenderText.runs(runs), width: textWidth), x: gutter, gapBefore: 1.5)
             }
+
+        case .timeline:
+            let gutter: CGFloat = RenderSectionBuilder.timelineGutter(width: width)
+            spineX = gutter - 9
+            bodyX = gutter + 4
+            let textWidth: CGFloat = width - bodyX
+            var dateStyle = meta
+            dateStyle.alignment = .natural
+            var cells: [(RenderTextLayout, CGFloat)] = []
+            var anchor: RenderTextLayout? = nil
+            if !dates.isEmpty {
+                cells.append((ctx.layout(RenderText.attributed(dates, dateStyle), width: gutter - 22, links: []), 0))
+            }
+            if !primary.isEmpty {
+                let headLayout = ctx.layout(RenderText.attributed(primary, headStyle), width: textWidth)
+                cells.append((headLayout, bodyX))
+                anchor = headLayout
+            }
+            composite.addRow(cells)
+            if let anchor = anchor {
+                dotY = anchor.baseline(ofLine: 0) - headStyle.font.capHeight / 2
+            } else {
+                dotY = style.bodySize * 0.6
+            }
+            var runs: [(String, RenderTextStyle)] = []
+            appendRun(&runs, secondary, subStyle)
+            appendRun(&runs, location, meta)
+            if !runs.isEmpty {
+                composite.addLine(ctx.layout(RenderText.runs(runs), width: textWidth), x: bodyX, gapBefore: 1.5)
+            }
         }
 
         if !extra.isEmpty {
@@ -130,7 +162,32 @@ extension RenderSectionBuilder {
             bulletItems[bulletItems.count - 2].keepWithNext = true
         }
         items.append(contentsOf: bulletItems)
+        if kind == .timeline {
+            return withSpine(items, spineX: spineX, dotY: dotY)
+        }
         return items
+    }
+
+    /// Adds the timeline marks: an accent dot beside the entry heading and a thin spine down the whole entry.
+    private func withSpine(_ items: [RenderFlowItem], spineX: CGFloat, dotY: CGFloat) -> [RenderFlowItem] {
+        let line: UIColor = theme.rule
+        let dot: UIColor = theme.accent
+        var out: [RenderFlowItem] = []
+        for (i, item) in items.enumerated() {
+            let first: Bool = i == 0
+            let above: CGFloat = first ? 0 : item.spaceBefore
+            let height: CGFloat = item.height
+            let marked: RenderFlowItem = item.withOverlay { origin, columnLeft in
+                let x: CGFloat = columnLeft + spineX
+                let top: CGFloat = first ? origin.y + dotY : origin.y - above
+                RenderDraw.fill(CGRect(x: x - 0.4, y: top, width: 0.8, height: max(0, origin.y + height - top)), line)
+                if first {
+                    RenderDraw.fillCircle(center: CGPoint(x: x, y: origin.y + dotY), radius: 3, dot)
+                }
+            }
+            out.append(marked)
+        }
+        return out
     }
 
     // MARK: Pieces

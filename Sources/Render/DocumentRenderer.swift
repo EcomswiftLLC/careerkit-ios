@@ -9,6 +9,17 @@ enum DocumentRenderer {
         let composer = RenderResumeComposer(resume: resume, template: effective)
         return composer.render()
     }
+
+    /// Same as `render`, and also reports where the photo and the header text were drawn on page one
+    /// (page coordinates, points). Used by layout tests.
+    static func renderInspecting(_ resume: Resume, template: TemplateSpec) -> (document: RenderedDocument, geometry: RenderGeometry) {
+        let effective: TemplateSpec = template.applying(resume.style)
+        let composer = RenderResumeComposer(resume: resume, template: effective)
+        let geometry = RenderGeometry()
+        composer.recordGeometry(into: geometry)
+        let document: RenderedDocument = composer.render()
+        return (document, geometry)
+    }
 }
 
 /// Lays out one resume: picks the geometry for the page layout, builds flow items per column,
@@ -24,6 +35,10 @@ final class RenderResumeComposer {
         self.resume = resume
         self.template = template
         self.style = RenderStyle.make(template: template, overrides: resume.style, pageSize: resume.pageSize.size)
+    }
+
+    func recordGeometry(into geometry: RenderGeometry) {
+        canvas.geometry = geometry
     }
 
     private func context(theme: RenderTheme, width: CGFloat) -> RenderContext {
@@ -62,6 +77,7 @@ final class RenderResumeComposer {
         var dividerX: CGFloat? = nil
         var bleedLeft: CGFloat = 0
         var bleedRight: CGFloat = page.width
+        var railPanel: CGRect? = nil
         let fraction: CGFloat = CGFloat(min(max(template.sidebarFraction, 0.2), 0.4))
 
         switch kind {
@@ -90,8 +106,19 @@ final class RenderResumeComposer {
         case .headerThenTwoColumn:
             sideWidth = min(max(contentWidth * fraction, 110), 230)
             mainWidth = contentWidth - sideWidth - gap
-            sideLeft = style.marginSide + mainWidth + gap
-            dividerX = style.marginSide + mainWidth + gap / 2
+            if template.railSide == .left {
+                sideLeft = style.marginSide
+                mainLeft = style.marginSide + sideWidth + gap
+                dividerX = style.marginSide + sideWidth + gap / 2
+            } else {
+                sideLeft = style.marginSide + mainWidth + gap
+                dividerX = style.marginSide + mainWidth + gap / 2
+            }
+            // A rail with a fill is drawn as a soft panel instead of a divider line.
+            if template.sidebarFillHex != nil {
+                railPanel = CGRect(x: sideLeft - 12, y: 0, width: sideWidth + 24, height: 0)
+                dividerX = nil
+            }
         }
         mainWidth = max(120, mainWidth)
 
@@ -106,6 +133,9 @@ final class RenderResumeComposer {
         let photo: UIImage? = RenderPhoto.image(for: resume, template: template)
         let mainTheme: RenderTheme = style.mainTheme
         let sideTheme: RenderTheme = (kind == .headerThenTwoColumn) ? mainTheme : style.sidebarTheme
+        // A sidebar photo with the card replaced (or a single column fallback) goes to the header.
+        var headerPlacement: PhotoPlacement = template.photo
+        if headerPlacement.isSidebar { headerPlacement = .headerRight }
 
         var headerItem: RenderFlowItem? = nil
         if !cardInSidebar {
@@ -113,7 +143,8 @@ final class RenderResumeComposer {
                                               personal: resume.personal,
                                               photo: photo,
                                               bleedLeft: fullWidthHeader ? 0 : bleedLeft,
-                                              bleedRight: fullWidthHeader ? page.width : bleedRight)
+                                              bleedRight: fullWidthHeader ? page.width : bleedRight,
+                                              placement: headerPlacement)
             headerItem = builder.build(headerKind)
         }
 
@@ -135,7 +166,10 @@ final class RenderResumeComposer {
                                                       bleedLeft: 0,
                                                       bleedRight: 0)
                 let contactHeading: RenderFlowItem = sideBuilder.headingItem(label: String(localized: "Contact"), spaceBefore: 0)
-                sideItems.append(contentsOf: cardBuilder.buildSidebarCard(contactHeading: contactHeading))
+                sideItems.append(contentsOf: cardBuilder.buildSidebarCard(contactHeading: contactHeading,
+                                                                          band: bandRect,
+                                                                          columnTop: style.marginTop,
+                                                                          bleed: template.photo == .sidebarBleed))
             }
             for section in sideSections {
                 sideItems.append(contentsOf: sideBuilder.sectionItems(section))
@@ -173,11 +207,25 @@ final class RenderResumeComposer {
         let footerColor: UIColor = mainTheme.muted
         let footerLeft: CGFloat = fullWidthHeader ? style.marginSide : mainLeft
         let footerWidth: CGFloat = fullWidthHeader ? contentWidth : mainWidth
+        let paper: UIColor = style.paper
+        let accentKind: PageAccent = template.pageAccent
+        let accentColor: UIColor = style.accent
+        let railFill: UIColor = style.sidebarFill
 
         let data: Data = RenderPDFWriter.makePDF(pageSize: page, pageCount: pageCount, title: title, author: author, canvas: canvas) { index in
-            RenderDraw.fill(CGRect(origin: CGPoint.zero, size: page), UIColor.white)
+            RenderDraw.fill(CGRect(origin: CGPoint.zero, size: page), paper)
             if let band = bandRect {
                 RenderDraw.fill(band, fillColor)
+            }
+            RenderPageAccent.draw(accentKind, page: page, color: accentColor)
+            if let panel = railPanel, index < sidePages.count, let firstSide = sidePages[index].first {
+                var bottomOfRail: CGFloat = firstSide.y
+                for placement in sidePages[index] {
+                    bottomOfRail = max(bottomOfRail, placement.y + placement.item.height)
+                }
+                let top: CGFloat = firstSide.y - 12
+                let rect = CGRect(x: panel.minX, y: top, width: panel.width, height: max(0, bottomOfRail - top + 14))
+                RenderDraw.fillRounded(rect, radius: 6, railFill)
             }
             if index == 0, let header = headerItem {
                 header.drawBlock(CGPoint(x: headerLeft, y: marginTop), headerLeft)

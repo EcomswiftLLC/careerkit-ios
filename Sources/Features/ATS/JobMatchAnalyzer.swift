@@ -35,9 +35,10 @@ struct JobMatchResult: Equatable {
         guard hasTerms else {
             return String(localized: "No key terms were found. Paste the full job ad, including the requirements.")
         }
-        let covered: Int = matched.count
+        let count: Int = matched.count
         let total: Int = totalKeyTerms
-        return String(localized: "You cover \(covered) of \(total) key terms from this job ad.")
+        return String(localized: "You cover \(count) of \(total) key terms from this job ad.",
+                      comment: "Job ad comparison result. First number: terms found in the resume. Second: terms compared.")
     }
 }
 
@@ -60,8 +61,11 @@ enum JobMatchAnalyzer {
     static func analyze(jobDescription: String, resumeText: String) -> JobMatchResult {
         let truncated: Bool = jobDescription.count > maxInputLength
         let job: String = truncated ? String(jobDescription.prefix(maxInputLength)) : jobDescription
-        let terms: [JobMatchKeyword] = keyTerms(in: job)
-        let index = JobMatchResumeIndex(text: String(resumeText.prefix(200_000)))
+        let resume: String = String(resumeText.prefix(200_000))
+        // The ad decides the language, so the ad and the resume are cut into words the same way.
+        let language: TextLanguage = detectLanguage(job: job, resume: resume)
+        let terms: [JobMatchKeyword] = keyTerms(in: job, language: language)
+        let index = JobMatchResumeIndex(text: resume, language: language)
 
         var matched: [JobMatchKeyword] = []
         var missing: [JobMatchKeyword] = []
@@ -76,6 +80,15 @@ enum JobMatchAnalyzer {
                               missing: Array(missing.prefix(missingLimit)),
                               totalKeyTerms: terms.count,
                               wasTruncated: truncated)
+    }
+
+    /// Language of the ad; a very short ad falls back to the language of the resume.
+    static func detectLanguage(job: String, resume: String) -> TextLanguage {
+        let letters: Int = job.prefix(4000).filter { $0.isLetter }.count
+        if letters < 12 && !CJKText.containsCJK(job) {
+            return TextLanguage.detect(resume)
+        }
+        return TextLanguage.detect(job)
     }
 
     /// All the text of a resume that a reader would see: title, every visible section, skills included.
@@ -114,6 +127,11 @@ enum JobMatchAnalyzer {
 
     /// Key terms of a job ad, most important first, at most `keyTermLimit`.
     static func keyTerms(in text: String) -> [JobMatchKeyword] {
+        return keyTerms(in: text, language: TextLanguage.detect(text))
+    }
+
+    /// Key terms of a job ad written in `language`.
+    static func keyTerms(in text: String, language: TextLanguage) -> [JobMatchKeyword] {
         var unigrams: [String: Candidate] = [:]
         var bigrams: [String: Candidate] = [:]
         var order: Int = 0
@@ -125,13 +143,14 @@ enum JobMatchAnalyzer {
                 var previousDisplay: String? = nil
                 for raw in clause {
                     let folded: String = fold(raw)
-                    guard isMeaningful(folded), !stopWords.contains(folded), !genericWords.contains(folded) else {
+                    guard isMeaningful(folded), !isStopWord(folded, language: language),
+                          !isGenericWord(folded, language: language) else {
                         previousKey = nil
                         previousDisplay = nil
                         continue
                     }
-                    let key: String = stemKey(folded)
-                    guard !key.isEmpty, !genericWords.contains(key) else {
+                    let key: String = stemKey(folded, language: language)
+                    guard !key.isEmpty, !isGenericWord(key, language: language) else {
                         previousKey = nil
                         previousDisplay = nil
                         continue
@@ -247,7 +266,9 @@ enum JobMatchAnalyzer {
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
         for rawLine in normalised.components(separatedBy: "\n") {
-            var line: String = rawLine.trimmingCharacters(in: .whitespaces)
+            // Chinese and Japanese ads use a full-width colon after labels such as "任职要求".
+            var line: String = rawLine.replacingOccurrences(of: "\u{FF1A}", with: ":")
+                .trimmingCharacters(in: .whitespaces)
             if line.isEmpty { continue }
             // "Requirements: Kubernetes, Terraform" on one line: the label sets the mode and the rest is content.
             if let colon = line.firstIndex(of: ":") {
@@ -261,7 +282,8 @@ enum JobMatchAnalyzer {
                 }
             }
             let lower: String = fold(line)
-            let wordCount: Int = lower.split(whereSeparator: { $0.isWhitespace }).count
+            // Text without spaces counts as one word per two characters, so a Chinese sentence is not read as a header.
+            let wordCount: Int = CJKText.wordCount(lower)
 
             let bulleted: Bool = line.first.map { bulletCharacters.contains($0) } ?? false
 
@@ -311,6 +333,9 @@ enum JobMatchAnalyzer {
             var breakHere: Bool = false
             if ch == "!" || ch == "?" || ch == ";" || ch == "\u{2022}" || ch == "\u{25AA}" || ch == "\u{25CF}" || ch == "\u{00B7}" {
                 breakHere = true
+            } else if ch == "\u{3002}" || ch == "\u{FF01}" || ch == "\u{FF1F}" || ch == "\u{FF1B}" || ch == "\u{FF0E}" {
+                // Chinese and Japanese sentence ends: 。！？；．
+                breakHere = true
             } else if ch == "." {
                 if i + 1 >= chars.count || chars[i + 1].isWhitespace { breakHere = true }
             }
@@ -328,14 +353,30 @@ enum JobMatchAnalyzer {
         return out
     }
 
-    private static let clauseBreaks: Set<Character> = [",", ":", "(", ")", "[", "]", "{", "}", "\"", "\u{201C}", "\u{201D}", "\u{2018}", "\u{2019}", "'", "|", "\u{2013}", "\u{2014}", "!", "?", ";", "\u{2022}", "\u{00B7}", "<", ">", "=", "*", "~", "^", "%", "$", "\u{20AC}", "\u{00A3}", "@"]
+    private static let clauseBreaks: Set<Character> = [",", ":", "(", ")", "[", "]", "{", "}", "\"", "\u{201C}", "\u{201D}", "\u{2018}", "\u{2019}", "'", "|", "\u{2013}", "\u{2014}", "!", "?", ";", "\u{2022}", "\u{00B7}", "<", ">", "=", "*", "~", "^", "%", "$", "\u{20AC}", "\u{00A3}", "@",
+        // Chinese and Japanese punctuation: ，、：；（）《》【】「」『』。！？～
+        "\u{FF0C}", "\u{3001}", "\u{FF1A}", "\u{FF1B}", "\u{FF08}", "\u{FF09}", "\u{300A}", "\u{300B}", "\u{3010}", "\u{3011}",
+        "\u{300C}", "\u{300D}", "\u{300E}", "\u{300F}", "\u{3002}", "\u{FF01}", "\u{FF1F}", "\u{FF5E}", "\u{00AB}", "\u{00BB}"]
 
     /// Words of a sentence, grouped into clauses. Phrases are only built inside one clause.
     /// Letters, digits, "+" and "#" make words; ".", "-", "/" and "&" are kept inside a word ("Node.js", "CI/CD").
+    /// Chinese and Japanese runs have no spaces, so they are split into words with NLTokenizer.
     static func clauses(in sentence: String) -> [[String]] {
         var out: [[String]] = []
         var clause: [String] = []
         var word: String = ""
+        var segmenter: CJKSegmenter? = nil
+
+        func appendCJK(_ w: String) {
+            if segmenter == nil { segmenter = CJKSegmenter() }
+            guard let splitter = segmenter else { return }
+            for token in splitter.split(w) {
+                let trimmed: String = token.trimmingCharacters(in: CharacterSet.whitespaces)
+                if trimmed.contains(where: { $0.isLetter || $0.isNumber }) {
+                    clause.append(trimmed)
+                }
+            }
+        }
 
         func flushWord() {
             var w: String = word
@@ -347,6 +388,10 @@ enum JobMatchAnalyzer {
                 w.removeFirst()
             }
             guard !w.isEmpty, w.contains(where: { $0.isLetter || $0.isNumber }) else { return }
+            if CJKText.containsCJK(w) {
+                appendCJK(w)
+                return
+            }
             // "client/server" reads as two words; "CI/CD" and "TCP/IP" stay as one.
             if w.contains("/") {
                 let parts: [String] = w.split(separator: "/").map(String.init)
@@ -395,6 +440,8 @@ enum JobMatchAnalyzer {
         guard folded.contains(where: { $0.isLetter }) else { return false }
         if folded.hasPrefix("www.") || folded.hasPrefix("http") { return false }
         if folded.count < 2 { return false }
+        // Chinese and Japanese words are often two characters long; single characters are mostly particles.
+        if CJKText.containsCJK(folded) { return folded.count <= 16 }
         if folded.count == 2 && !folded.contains(where: { $0 == "+" || $0 == "#" }) {
             // Two letter words are mostly noise, apart from upper case acronyms handled by the caller's spelling.
             return twoLetterTerms.contains(folded)
@@ -430,6 +477,77 @@ enum JobMatchAnalyzer {
         }
         if w.hasSuffix("e") && w.count > 3 {
             dropSuffix(1)
+        }
+        return w
+    }
+
+    /// Light stemming for the language of the ad. English and languages without their own rules use `stemKey(_:)`.
+    /// Spanish, French and German fold plurals and common feminine forms; Chinese and Japanese words are kept whole.
+    static func stemKey(_ folded: String, language: TextLanguage) -> String {
+        if CJKText.containsCJK(folded) { return folded }
+        switch language {
+        case .english, .chinese, .japanese:
+            return stemKey(folded)
+        case .spanish:
+            return stemSpanish(folded)
+        case .french:
+            return stemFrench(folded)
+        case .german:
+            return stemGerman(folded)
+        }
+    }
+
+    /// "desarrolladores", "desarrolladora" and "desarrollador" compare as one word; so do "proyectos" and "proyecto".
+    static func stemSpanish(_ folded: String) -> String {
+        var w: String = folded.replacingOccurrences(of: "-", with: "")
+        guard w.allSatisfy({ $0.isLetter }), w.count > 3 else { return w }
+        if w.hasSuffix("ces") && w.count > 4 {
+            w = String(w.dropLast(3)) + "z"
+        } else if w.hasSuffix("es") && w.count > 4, let before = w.dropLast(2).last, "lrndzj".contains(before) {
+            w = String(w.dropLast(2))
+        } else if w.hasSuffix("s") && !w.hasSuffix("ss") && !w.hasSuffix("is") && !w.hasSuffix("us") {
+            w = String(w.dropLast())
+        }
+        if (w.hasSuffix("a") || w.hasSuffix("o")) && w.count > 4 {
+            w = String(w.dropLast())
+        }
+        return w
+    }
+
+    /// "développeurs", "développeuse" and "développeur" compare as one word; so do "compétences" and "compétence".
+    static func stemFrench(_ folded: String) -> String {
+        var w: String = folded.replacingOccurrences(of: "-", with: "")
+        guard w.allSatisfy({ $0.isLetter }), w.count > 3 else { return w }
+        if w.hasSuffix("aux") && w.count > 4 {
+            w = String(w.dropLast(3)) + "al"
+        } else if (w.hasSuffix("s") || w.hasSuffix("x")) && !w.hasSuffix("ss") && !w.hasSuffix("is") && !w.hasSuffix("us") {
+            w = String(w.dropLast())
+        }
+        if w.hasSuffix("euse") && w.count > 5 {
+            w = String(w.dropLast(4)) + "eur"
+        } else if w.hasSuffix("trice") && w.count > 6 {
+            w = String(w.dropLast(5)) + "teur"
+        }
+        if w.hasSuffix("e") && w.count > 4 {
+            w = String(w.dropLast())
+        }
+        return w
+    }
+
+    /// "Lösungen" and "Lösung", "Kunden" and "Kunde", "Kenntnisse" and "Kenntnis" compare as one word.
+    static func stemGerman(_ folded: String) -> String {
+        var w: String = folded.replacingOccurrences(of: "-", with: "")
+        guard w.allSatisfy({ $0.isLetter }), w.count > 3 else { return w }
+        if w.hasSuffix("innen") && w.count > 6 {
+            w = String(w.dropLast(3))
+        } else if w.hasSuffix("nisse") {
+            w = String(w.dropLast(2))
+        } else if w.hasSuffix("en") && w.count > 5 {
+            w = String(w.dropLast(2))
+        } else if w.hasSuffix("e") && w.count > 4 {
+            w = String(w.dropLast())
+        } else if w.hasSuffix("s") && w.count > 4 && !w.hasSuffix("ss") && !w.hasSuffix("nis") {
+            w = String(w.dropLast())
         }
         return w
     }
@@ -480,8 +598,54 @@ enum JobMatchAnalyzer {
         "sowie", "uber", "unter", "nach", "wie",
         // French
         "le", "les", "une", "des", "et", "ou", "du", "au", "aux", "en", "dans", "avec", "pour", "par", "sur", "que", "qui",
-        "est", "sont", "vous", "nous", "votre", "vos", "notre", "nos", "ce", "cette", "ces", "son", "sa", "ses", "pas", "plus"
+        "est", "sont", "vous", "nous", "votre", "vos", "notre", "nos", "ce", "cette", "ces", "son", "sa", "ses", "pas", "plus",
+        // Chinese and Japanese function words. They cannot collide with Latin words, so they apply in every language.
+        "的", "了", "和", "与", "及", "或", "在", "是", "有", "为", "对", "等", "我们", "你", "您", "他们", "以及", "并",
+        "并且", "或者", "能够", "可以", "具有", "进行", "通过", "根据", "以上", "以下", "及其", "一个", "一定", "各种",
+        "如果", "我们的", "欢迎", "加入", "其他", "方面", "以及其他", "之一", "这些", "那些", "如何", "什么", "需要",
+        "の", "に", "は", "を", "が", "で", "と", "も", "や", "から", "まで", "など", "こと", "もの", "ため", "および",
+        "または", "できる", "ある", "いる", "する", "します", "ください"
     ])
+
+    /// Extra function words for one language. Kept apart from `stopWords` so that, for example, a German
+    /// article never hides an English term in an English ad.
+    private static let languageStopWords: [TextLanguage: Set<String>] = [
+        .spanish: foldedSet([
+            "a", "ante", "bajo", "contra", "desde", "durante", "hacia", "hasta", "mediante", "segun", "tras",
+            "nuestro", "nuestra", "nuestros", "nuestras", "usted", "ustedes", "ellos", "ellas", "yo", "mi", "mis",
+            "te", "ti", "nosotros", "ese", "esa", "esos", "esas", "aquel", "esto", "eso", "cual", "cuales", "quien",
+            "quienes", "donde", "cuando", "tambien", "ya", "si", "asi", "aunque", "porque", "pues", "hay", "ha",
+            "han", "has", "he", "hemos", "fue", "fueron", "sera", "seran", "sea", "sean", "tiene", "tienen", "tener",
+            "puede", "pueden", "poder", "debe", "deben", "menos", "otro", "otra", "otros", "otras", "todo", "toda",
+            "todos", "todas", "cada", "algun", "alguna", "algunos", "algunas", "ningun", "ninguna", "mismo",
+            "misma", "tan", "tanto", "bien", "solo", "sino", "ni", "buscamos", "busca", "ofrecemos", "valoramos",
+            "incorporar", "forma", "parte", "etc", "seras", "tendras", "haras", "unete", "contar"
+        ]),
+        .french: foldedSet([
+            "a", "ce", "cet", "elle", "elles", "eux", "il", "ils", "je", "la", "leur", "leurs", "lui", "ma", "mais",
+            "me", "meme", "mes", "moi", "mon", "ne", "ni", "on", "qu", "se", "ta", "te", "tes", "toi", "ton", "tu",
+            "un", "y", "aussi", "sans", "sous", "chez", "entre", "vers", "depuis", "pendant", "comme", "dont",
+            "tres", "moins", "bien", "tout", "toute", "tous", "toutes", "chaque", "autre", "autres", "etre", "avoir",
+            "sera", "seront", "etait", "ete", "fait", "faire", "peut", "peuvent", "doit", "doivent", "recherchons",
+            "recherche", "rejoindre", "rejoignez", "sein", "afin", "ainsi", "cadre", "notamment", "egalement", "etc",
+            "serez", "aurez", "avez", "etes", "votre", "nos", "selon", "lors", "dès", "des"
+        ]),
+        .german: foldedSet([
+            "aber", "alle", "allem", "allen", "aller", "alles", "also", "am", "an", "andere", "anderen", "bin", "bis",
+            "bist", "da", "damit", "dann", "dass", "dein", "deine", "dessen", "dies", "diese", "diesem", "diesen",
+            "dieser", "dieses", "doch", "dort", "du", "durch", "eines", "er", "es", "euch", "euer", "gegen", "hat",
+            "haben", "hatte", "hier", "ihm", "ihn", "ihnen", "ihrem", "ihren", "ihrer", "in", "ja", "jede", "jedem",
+            "jeden", "jeder", "jedes", "kann", "konnen", "mochten", "muss", "mussen", "noch", "nur", "ob", "ohne",
+            "sehr", "sein", "seine", "sich", "so", "sollte", "sollten", "um", "uns", "unser", "unsere", "unseren",
+            "unserem", "vom", "vor", "wann", "was", "weil", "wenn", "wer", "werden", "wird", "wo", "zwischen",
+            "suchen", "bieten", "freuen", "gerne", "bzw", "ca", "sowohl", "bereits", "ab", "sofort", "einen", "deren"
+        ])
+    ]
+
+    static func isStopWord(_ folded: String, language: TextLanguage) -> Bool {
+        if stopWords.contains(folded) { return true }
+        return languageStopWords[language]?.contains(folded) ?? false
+    }
 
     /// Words that appear in almost every ad and say nothing about the role.
     static let genericWords: Set<String> = foldedSet([
@@ -501,28 +665,100 @@ enum JobMatchAnalyzer {
         // es / pt / de / fr generic
         "experiencia", "experiencia", "anos", "empresa", "trabajo", "equipo", "trabalho", "equipe", "conhecimento",
         "conocimiento", "erfahrung", "jahre", "team", "unternehmen", "kenntnisse", "experience", "ans", "entreprise",
-        "equipe", "poste", "connaissance", "connaissances"
+        "equipe", "poste", "connaissance", "connaissances",
+        // Chinese generic words (they cannot collide with Latin words, so they apply in every language).
+        "经验", "工作", "团队", "能力", "岗位", "职位", "职责", "要求", "任职", "任职要求", "岗位职责", "工作职责",
+        "岗位要求", "职位要求", "职位描述", "任职资格", "公司", "以上", "优秀", "良好", "较强", "熟悉", "精通", "掌握",
+        "了解", "具备", "优先", "候选人", "简历", "薪资", "福利", "专业", "相关", "负责", "参与", "完成", "人员",
+        "员工", "年以上", "一年", "两年", "三年", "五年", "工作经验", "相关经验", "以上学历", "有限公司", "内容",
+        "経験", "業務", "仕事", "必須", "歓迎", "スキル", "チーム", "会社", "募集", "応募"
     ])
+
+    /// Generic words of one language, folded and stemmed with that language's rules.
+    private static let languageGenericWords: [TextLanguage: Set<String>] = {
+        let lists: [TextLanguage: [String]] = [
+            .spanish: [
+                "experiencia", "experiencias", "ano", "anos", "empresa", "empresas", "trabajo", "trabajar", "equipo",
+                "equipos", "conocimiento", "conocimientos", "puesto", "puestos", "candidato", "candidata",
+                "candidatos", "persona", "personas", "perfil", "requisito", "requisitos", "funcion", "funciones",
+                "responsabilidad", "responsabilidades", "nivel", "minimo", "valorable", "imprescindible", "deseable",
+                "buen", "buena", "buenos", "buenas", "excelente", "excelentes", "fuerte", "capacidad", "capacidades",
+                "habilidad", "habilidades", "oportunidad", "area", "sector", "entorno", "tarea", "tareas", "dia",
+                "dias", "jornada", "incorporacion", "contrato", "nuevo", "nueva", "nuevos", "manejo", "dominio",
+                "solida", "solido", "demostrable", "relacionado", "relacionada", "similar", "puestos", "vacante"
+            ],
+            .french: [
+                "experience", "experiences", "an", "ans", "annee", "annees", "entreprise", "entreprises", "equipe",
+                "equipes", "poste", "postes", "connaissance", "connaissances", "candidat", "candidate", "candidats",
+                "profil", "mission", "missions", "competence", "competences", "capacite", "capacites", "niveau",
+                "minimum", "bon", "bonne", "bons", "bonnes", "excellent", "excellente", "fort", "forte", "solide",
+                "solides", "souhaite", "souhaitee", "apprecie", "appreciee", "requis", "requise", "indispensable",
+                "opportunite", "environnement", "secteur", "domaine", "tache", "taches", "jour", "jours", "nouveau",
+                "nouvelle", "contrat", "maitrise", "maitriser", "travail", "travailler", "role", "similaire",
+                "exige", "exigee", "idealement", "premiere", "confirme", "confirmee"
+            ],
+            .german: [
+                "erfahrung", "erfahrungen", "jahr", "jahre", "jahren", "unternehmen", "team", "teams", "kenntnis",
+                "kenntnisse", "stelle", "position", "aufgabe", "aufgaben", "profil", "anforderung", "anforderungen",
+                "bewerber", "bewerberin", "bewerbung", "kandidat", "fahigkeit", "fahigkeiten", "kompetenz",
+                "kompetenzen", "gute", "guten", "gutes", "sicher", "sichere", "sicheren", "fundierte", "fundierten",
+                "ausgepragte", "ausgepragten", "mehrjahrige", "mehrjahriger", "idealerweise", "wunschenswert",
+                "vorteil", "bereich", "umfeld", "tag", "tagen", "neue", "neuen", "vollzeit", "teilzeit",
+                "abgeschlossene", "abgeschlossenes", "abgeschlossenen", "arbeit", "arbeiten", "sehr", "starke",
+                "idealer", "einschlagige", "einschlagigen", "vergleichbare", "vergleichbaren"
+            ]
+        ]
+        var out: [TextLanguage: Set<String>] = [:]
+        for (language, words) in lists {
+            var set: Set<String> = []
+            for word in words {
+                let folded: String = fold(word)
+                set.insert(folded)
+                set.insert(stemKey(folded, language: language))
+            }
+            out[language] = set
+        }
+        return out
+    }()
+
+    static func isGenericWord(_ value: String, language: TextLanguage) -> Bool {
+        if genericWords.contains(value) { return true }
+        return languageGenericWords[language]?.contains(value) ?? false
+    }
 
     private static let requirementCues: [String] = [
         "required", "requirement", "must ", "must-have", "should have", "you have", "you bring", "you will", "you'll",
         "experience with", "experience in", "proficien", "knowledge of", "familiar", "ability to", "able to",
         "degree", "years of", "qualification", "skills in", "expert", "hands-on", "strong ", "responsib",
         "requisito", "experiencia en", "conhecimento", "experiencia com", "kenntnisse", "erfahrung", "exige",
-        "maitrise", "competence", "experience en"
+        "maitrise", "competence", "experience en",
+        // Spanish, French, German and Chinese
+        "se requiere", "imprescindible", "valorable", "conocimientos de", "dominio de", "manejo de", "titulacion",
+        "vous avez", "vous maitrisez", "connaissance de", "connaissances en", "experience de", "diplome",
+        "est requis", "indispensable", "sie haben", "sie bringen", "kenntnisse in", "erfahrung in", "erfahrung mit",
+        "abgeschlossen", "vorausgesetzt", "wunschenswert", "熟悉", "精通", "掌握", "具备", "要求", "经验", "学历",
+        "优先", "必須", "経験"
     ]
 
     private static let requirementHeaders: [String] = [
         "requirement", "qualification", "what you", "you have", "you bring", "you will", "skills", "responsibilit",
         "about the role", "the role", "must have", "nice to have", "looking for", "your profile", "what we need",
         "key duties", "duties", "requisitos", "perfil", "anforderungen", "ihr profil", "aufgaben", "profil recherche",
-        "exigences", "competences", "missions", "responsabilidades"
+        "exigences", "competences", "missions", "responsabilidades",
+        "lo que buscamos", "que buscamos", "tu perfil", "funciones", "que haras", "votre profil", "vos missions",
+        "ce que nous recherchons", "qualifications", "ihre aufgaben", "das bringen sie mit",
+        "was sie mitbringen", "qualifikation", "deine aufgaben", "dein profil",
+        "任职要求", "岗位要求", "职位要求", "任职资格", "岗位职责", "工作职责", "职位描述", "工作内容", "岗位描述",
+        "应聘条件", "必須スキル", "応募資格", "歓迎スキル", "業務内容"
     ]
 
     private static let boilerplateHeaders: [String] = [
         "benefit", "perks", "what we offer", "we offer", "about us", "about the company", "who we are", "our company",
         "equal opportunit", "compensation", "salary", "why join", "why you'll love", "how to apply", "our values",
-        "beneficios", "ofrecemos", "oferecemos", "wir bieten", "uber uns", "avantages", "nous offrons", "a propos"
+        "beneficios", "ofrecemos", "oferecemos", "wir bieten", "uber uns", "avantages", "nous offrons", "a propos",
+        "que ofrecemos", "sobre nosotros", "quienes somos", "ce que nous offrons", "qui sommes-nous", "nos avantages",
+        "was wir bieten", "unser angebot", "das bieten wir", "福利待遇", "福利", "公司介绍", "公司简介", "关于我们",
+        "我们提供", "薪资待遇", "薪酬福利", "待遇", "会社概要", "待遇・福利厚生", "福利厚生", "給与"
     ]
 
     private static let boilerplatePhrases: [String] = [
@@ -531,7 +767,10 @@ enum JobMatchAnalyzer {
         "background check", "drug test", "health insurance", "dental", "vision insurance", "401k", "401(k)", "paid time off",
         "pto", "parental leave", "stock options", "salary range", "competitive salary", "compensation", "apply now",
         "click apply", "submit your", "cover letter", "privacy notice", "recruitment agenc", "visa sponsorship",
-        "igualdad de oportunidades", "igualdade de oportunidades", "chancengleichheit", "egalite des chances"
+        "igualdad de oportunidades", "igualdade de oportunidades", "chancengleichheit", "egalite des chances",
+        "salario competitivo", "seguro medico", "salaire attractif", "mutuelle", "tickets restaurant",
+        "betriebliche altersvorsorge", "urlaubstage", "attraktives gehalt", "五险一金", "带薪年假", "年终奖",
+        "社会保険完備", "交通費支給"
     ]
 
     private static let commonPhrases: [String] = [
@@ -557,12 +796,18 @@ enum JobMatchAnalyzer {
         return out
     }()
 
-    private static let certificationHints: [String] = ["certif", "license", "licence", "pmp", "cpa", "cfa", "cissp", "scrum master", "prince2", "itil", "acca"]
-    private static let degreeHints: [String] = ["degree", "bachelor", "master's", "masters", "mba", "phd", "doctorate", "diploma", "bsc", "msc", "licenciatura", "graduacao", "studium"]
+    private static let certificationHints: [String] = ["certif", "license", "licence", "pmp", "cpa", "cfa", "cissp", "scrum master", "prince2", "itil", "acca",
+                                                       "zertifi", "证书", "认证", "资格证", "資格"]
+    private static let degreeHints: [String] = ["degree", "bachelor", "master's", "masters", "mba", "phd", "doctorate", "diploma", "bsc", "msc", "licenciatura", "graduacao", "studium",
+                                                "titulo universitario", "grado en", "maestria", "diplome", "abschluss", "hochschul",
+                                                "学历", "本科", "硕士", "博士", "学位", "大学", "学士", "修士"]
     private static let softSkillPrefixes: [String] = [
         "communicat", "leader", "collaborat", "teamwork", "interpersonal", "adaptab", "flexib", "creativ", "problem solv",
         "organiz", "organis", "attention to detail", "detail", "motivat", "proactive", "self-start", "empath", "initiative",
-        "critical thinking", "time management", "customer focus", "ownership", "curious", "curiosity", "resilien"
+        "critical thinking", "time management", "customer focus", "ownership", "curious", "curiosity", "resilien",
+        "comunicacion", "liderazgo", "trabajo en equipo", "proactiv", "organizacion", "esprit d'equipe", "rigueur",
+        "autonomie", "kommunikation", "teamfahig", "belastbar", "zuverlassig", "selbststandig", "eigeninitiative",
+        "沟通", "团队合作", "领导", "责任心", "学习能力", "抗压", "コミュニケーション"
     ]
 }
 
@@ -571,11 +816,20 @@ struct JobMatchResumeIndex {
     private(set) var stems: Set<String> = []
     private(set) var pairs: Set<String> = []
     private(set) var joinedPairs: Set<String> = []
+    /// Folded resume text without spaces, kept only when the resume has Chinese or Japanese text.
+    /// Words of those languages are also matched as plain substrings, because a word can be segmented
+    /// differently in the ad and in the resume.
+    private(set) var cjkText: String = ""
+    let language: TextLanguage
 
-    init(text: String) {
+    init(text: String, language: TextLanguage = .english) {
+        self.language = language
         let normalised: String = text
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
+        if CJKText.containsCJK(normalised) {
+            cjkText = JobMatchAnalyzer.fold(normalised).filter { !$0.isWhitespace }
+        }
         for line in normalised.components(separatedBy: "\n") {
             for clause in JobMatchAnalyzer.clauses(in: line) {
                 var previous: String? = nil
@@ -585,9 +839,9 @@ struct JobMatchResumeIndex {
                         previous = nil
                         continue
                     }
-                    let key: String = JobMatchAnalyzer.stemKey(folded)
+                    let key: String = JobMatchAnalyzer.stemKey(folded, language: language)
                     stems.insert(key)
-                    if JobMatchAnalyzer.stopWords.contains(folded) {
+                    if JobMatchAnalyzer.isStopWord(folded, language: language) {
                         previous = nil
                         continue
                     }
@@ -602,6 +856,10 @@ struct JobMatchResumeIndex {
     }
 
     func contains(_ keyword: JobMatchKeyword) -> Bool {
+        if !cjkText.isEmpty && CJKText.containsCJK(keyword.key) {
+            let flat: String = keyword.key.filter { !$0.isWhitespace }
+            if !flat.isEmpty && cjkText.contains(flat) { return true }
+        }
         if keyword.isPhrase {
             if pairs.contains(keyword.key) { return true }
             // "cross functional" in the ad, "cross-functional" in the resume.

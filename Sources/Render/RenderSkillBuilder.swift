@@ -33,6 +33,8 @@ extension RenderSectionBuilder {
                 }
             case .bulletColumns:
                 items.append(contentsOf: columnGroup(group, spaceBefore: before, isFirstGroup: i == 0))
+            case .pills:
+                items.append(contentsOf: pillGroup(group, spaceBefore: before))
             }
         }
         return items
@@ -113,6 +115,69 @@ extension RenderSectionBuilder {
             }
             firstRow = false
             index += columns
+        }
+        return out
+    }
+
+    /// Skills as soft rounded pills that wrap across the column. Each row is one block, so pages break between rows.
+    private func pillGroup(_ group: SkillGroup, spaceBefore: CGFloat) -> [RenderFlowItem] {
+        var out: [RenderFlowItem] = []
+        var nextGap: CGFloat = spaceBefore
+        if !group.name.isEmpty {
+            let nameLayout = ctx.layout(RenderText.attributed(group.name, bodyStyle(bold: true)), width: width, links: [])
+            out.append(RenderFlowFactory.text(layout: nameLayout, spaceBefore: spaceBefore, keep: true))
+            nextGap = 3
+        }
+        let padX: CGFloat = 7
+        let padY: CGFloat = 2.5
+        let gapX: CGFloat = 5
+        let gapY: CGFloat = 5
+        let textStyle: RenderTextStyle = bodyStyle(size: style.smallSize)
+        let fill: UIColor = pillFill
+
+        struct Pill {
+            let layout: RenderTextLayout
+            let width: CGFloat
+            let height: CGFloat
+        }
+        var pills: [Pill] = []
+        for item in group.items {
+            let natural: CGFloat = RenderText.naturalWidth(item, textStyle)
+            let textWidth: CGFloat = min(natural + 1, max(20, width - 2 * padX))
+            let layout = ctx.layout(RenderText.attributed(item, textStyle), width: textWidth)
+            pills.append(Pill(layout: layout, width: textWidth + 2 * padX, height: layout.height + 2 * padY))
+        }
+
+        var rows: [[Pill]] = []
+        var current: [Pill] = []
+        var used: CGFloat = 0
+        for pill in pills {
+            let needed: CGFloat = current.isEmpty ? pill.width : used + gapX + pill.width
+            if !current.isEmpty && needed > width {
+                rows.append(current)
+                current = [pill]
+                used = pill.width
+            } else {
+                current.append(pill)
+                used = needed
+            }
+        }
+        if !current.isEmpty { rows.append(current) }
+
+        for (r, row) in rows.enumerated() {
+            var rowHeight: CGFloat = 0
+            for pill in row { rowHeight = max(rowHeight, pill.height) }
+            let snapshot: [Pill] = row
+            let item = RenderFlowItem(height: ceil(rowHeight), spaceBefore: r == 0 ? nextGap : gapY, draw: { origin, _ in
+                var x: CGFloat = origin.x
+                for pill in snapshot {
+                    let rect = CGRect(x: x, y: origin.y, width: pill.width, height: pill.height)
+                    RenderDraw.fillRounded(rect, radius: min(pill.height / 2, 9), fill)
+                    pill.layout.draw(at: CGPoint(x: x + padX, y: origin.y + padY))
+                    x += pill.width + gapX
+                }
+            })
+            out.append(item)
         }
         return out
     }

@@ -30,8 +30,8 @@ struct ATSCheckView: View {
     var body: some View {
         Group {
             if store.resume(id: resumeID) == nil {
-                EdUnavailableView(title: "This resume is no longer available",
-                                  message: "It may have been deleted.")
+                EdUnavailableView(title: String(localized: "This resume is no longer available"),
+                                  message: String(localized: "It may have been deleted."))
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: CK.Space.l) {
@@ -73,7 +73,7 @@ struct ATSCheckView: View {
 
     private var disclaimerText: String {
         if case .finished(let result) = phase { return result.report.disclaimer }
-        return "These checks are general guidance. They are not a score from any employer's system, and they cannot promise that a resume will be accepted or shortlisted."
+        return String(localized: "These checks are general guidance. They are not a score from any employer's system, and they cannot promise that a resume will be accepted or shortlisted.")
     }
 
     private var disclaimerCard: some View {
@@ -109,9 +109,9 @@ struct ATSCheckView: View {
     private func resultsView(_ result: CheckResult) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
             summaryLine(result)
-            group(title: "Needs attention", severity: .warning, findings: result.report.findings)
-            group(title: "Worth knowing", severity: .info, findings: result.report.findings)
-            group(title: "Looks good", severity: .good, findings: result.report.findings)
+            group(title: label(for: .warning), severity: .warning, findings: result.report.findings)
+            group(title: label(for: .info), severity: .info, findings: result.report.findings)
+            group(title: label(for: .good), severity: .good, findings: result.report.findings)
             extractionSection(result)
             Button {
                 phase = .running
@@ -125,19 +125,25 @@ struct ATSCheckView: View {
     }
 
     private func summaryLine(_ result: CheckResult) -> some View {
-        let warnings = result.report.warningCount
-        let text: String
-        if warnings == 0 {
-            text = "No items need attention."
-        } else if warnings == 1 {
-            text = "1 item needs attention."
-        } else {
-            text = "\(warnings) items need attention."
-        }
-        let pages = result.pageCount == 1 ? "1 page" : "\(result.pageCount) pages"
-        return Text("\(text) The document has \(pages).")
+        let count: Int = result.report.warningCount
+        let pages: Int = result.pageCount
+        let attention: String = count == 0
+            ? String(localized: "No items need attention.")
+            : String(localized: "\(count) items need attention.",
+                     comment: "ATS check summary. Plural: 1 item needs attention, 3 items need attention.")
+        let length: String = String(localized: "The document has \(pages) pages.",
+                                    comment: "ATS check summary, second sentence. Plural by page count.")
+        return Text(verbatim: ATSCheckView.joinSentences(attention, length))
             .font(CK.Font.headline(18))
             .foregroundStyle(CK.Palette.ink)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    /// Two whole sentences side by side. Chinese and Japanese sentences are not separated by a space.
+    static func joinSentences(_ first: String, _ second: String) -> String {
+        let last: Character? = first.last
+        let fullWidthEnd: Bool = last == "\u{3002}" || last == "\u{FF01}" || last == "\u{FF1F}"
+        return fullWidthEnd ? first + second : first + " " + second
     }
 
     @ViewBuilder
@@ -184,7 +190,16 @@ struct ATSCheckView: View {
         }
         .padding(CK.Space.m)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label(for: severity)): \(finding.title). \(finding.detail)")
+        .accessibilityLabel(Text(verbatim: rowAccessibilityLabel(finding, severity: severity)))
+    }
+
+    /// "Needs attention: Add your name. Your full name is ..." built from already localized parts.
+    private func rowAccessibilityLabel(_ finding: ATSFinding, severity: ATSFinding.Severity) -> String {
+        let state: String = label(for: severity)
+        let title: String = finding.title
+        let detail: String = finding.detail
+        return String(localized: "\(state): \(title). \(detail)",
+                      comment: "VoiceOver label of one ATS finding: importance, title, then explanation.")
     }
 
     private func symbol(for severity: ATSFinding.Severity) -> String {
@@ -205,9 +220,9 @@ struct ATSCheckView: View {
 
     private func label(for severity: ATSFinding.Severity) -> String {
         switch severity {
-        case .good: return "Looks good"
-        case .info: return "Worth knowing"
-        case .warning: return "Needs attention"
+        case .good: return String(localized: "Looks good")
+        case .info: return String(localized: "Worth knowing")
+        case .warning: return String(localized: "Needs attention")
         }
     }
 
@@ -223,17 +238,21 @@ struct ATSCheckView: View {
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
             HStack {
-                EdTextButton(title: showText ? "Hide text" : "Show text", systemImage: showText ? "chevron.up" : "chevron.down") {
+                EdTextButton(title: showText ? String(localized: "Hide text") : String(localized: "Show text"),
+                             systemImage: showText ? "chevron.up" : "chevron.down") {
                     showText.toggle()
                 }
-                Spacer()
-                EdTextButton(title: copied ? "Copied" : "Copy text", systemImage: copied ? "checkmark" : "doc.on.doc") {
+                Spacer(minLength: CK.Space.s)
+                EdTextButton(title: copied ? String(localized: "Copied") : String(localized: "Copy text"),
+                             systemImage: copied ? "checkmark" : "doc.on.doc") {
                     UIPasteboard.general.string = result.extractedText
                     copied = true
                 }
             }
             if showText {
-                Text(result.extractedText.isEmpty ? "No text could be read from this document." : result.extractedText)
+                Text(verbatim: result.extractedText.isEmpty
+                     ? String(localized: "No text could be read from this document.")
+                     : result.extractedText)
                     .font(.system(.footnote, design: .monospaced))
                     .foregroundStyle(CK.Palette.ink)
                     .textSelection(.enabled)

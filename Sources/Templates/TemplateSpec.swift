@@ -140,6 +140,11 @@ enum HeaderStyle: String, Codable {
     case accentRuleLeft   // thick vertical accent bar to the left of the name block
     case centeredAccent   // centered regular-weight name in the accent colour over a short rule, small caps title
     case doubleRule       // regular-weight name between a hairline above and a thick-and-thin rule below
+    case rightAligned     // name, title and contact set flush right, a short accent rule under the name
+    case tintedCard       // name left and contact stacked right inside a pale accent panel. Decorative, not ATS.
+    case bannerCentered   // full-bleed filled band with everything centered (photo centered above the name)
+    case initialLetter    // very large pale initials beside the name (the photo takes their place). Decorative, not ATS.
+    case smallCapsCentered // small, widely tracked capital name centered between two full-width hairlines
 }
 
 enum SectionHeadingStyle: String, Codable {
@@ -154,6 +159,8 @@ enum SectionHeadingStyle: String, Codable {
     case centeredRule      // label centered between two hairlines
     case leftBorder        // thick accent bar to the left of the label
     case tintedBand        // label on a full-width pale tint of the accent
+    case fullBar           // label reversed out of a full-width solid accent bar. Decorative, not ATS.
+    case ruleAbove         // a heavy full-width rule above the label
 }
 
 enum EntryLayout: String, Codable {
@@ -161,6 +168,7 @@ enum EntryLayout: String, Codable {
     case dateBelow         // heading, then subheading · dates
     case dateGutter        // dates in a left gutter column (timeline feel)
     case stacked           // heading / subheading / dates, each on its own line
+    case timeline          // dates in a left gutter, an accent dot and a vertical spine beside each entry
 }
 
 enum BulletStyle: String, Codable {
@@ -183,10 +191,35 @@ enum SkillStyle: String, Codable {
     case pipeList          // "Swift | SwiftUI | Core Data"
     case groupedLines      // "Languages: Swift, Kotlin" per group line
     case bulletColumns     // two-column bullet list
+    case pills             // each skill in a soft rounded pill. Decorative, not ATS.
 }
 
+/// Where a template shows the photo. Raw values of the first three cases are stored in old builds' data
+/// and must never change.
 enum PhotoPlacement: String, Codable {
     case none, headerRight, sidebarTop
+    /// Photo at the left of the header row, text beside it.
+    case headerLeft
+    /// Photo centered above the name (centered headers and the centered band).
+    case headerCenter
+    /// Photo across the full width of the sidebar band, bleeding to the page top.
+    case sidebarBleed
+
+    var isHeaderSide: Bool { return self == .headerLeft || self == .headerRight }
+    var isSidebar: Bool { return self == .sidebarTop || self == .sidebarBleed }
+}
+
+/// Page-level decoration drawn behind the content on every page. Vector only, so text extraction is unaffected.
+enum PageAccent: String, Codable {
+    case none
+    /// Solid accent bar across the top edge of each page.
+    case topBar
+    /// Solid accent strip down the left edge of each page.
+    case leftEdge
+    /// Hairline accent frame inset from the page edge.
+    case frame
+    /// Solid accent bar across the bottom edge of each page.
+    case bottomBar
 }
 
 // MARK: - Template spec
@@ -247,6 +280,14 @@ struct TemplateSpec: Identifiable, Hashable {
     let mainSections: [SectionKind]
     /// Sections that live in the sidebar when `layout` has one.
     let sidebarSections: [SectionKind]
+
+    // Added in the distinctness pass. Defaults keep older construction sites unchanged.
+    /// Page decoration behind the content.
+    var pageAccent: PageAccent = .none
+    /// Page background "#RRGGBB". nil is white.
+    var paperHex: String? = nil
+    /// Side of the rail in `headerThenTwoColumn`. Other layouts ignore it.
+    var railSide: SidebarPosition = .right
 }
 
 // MARK: - Cover letter template spec

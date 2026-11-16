@@ -17,9 +17,9 @@ enum HTMLExporter {
         let pageWidth: Int = Int(Double(document.pageSize.size.width).rounded())
         let rtl: Bool = document.isMostlyRightToLeft
         // The language of right to left text is not known (Arabic, Hebrew, Persian...), so no lang is claimed.
-        let langAttribute: String = rtl ? "" : " lang=\"en\""
+        let langAttribute: String = rtl ? "" : " lang=\"" + ExportStrings.htmlLanguageTag(document.language) + "\""
         let dir: String = rtl ? "rtl" : "ltr"
-        let title: String = document.title.isEmpty ? String(localized: "Document") : document.title
+        let title: String = document.title.isEmpty ? ExportStrings.untitledDocument(document.language) : document.title
 
         var out: String = ""
         out += "<!DOCTYPE html>\n"

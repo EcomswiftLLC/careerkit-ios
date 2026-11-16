@@ -92,6 +92,9 @@ struct CKTemplatePreviewSheet: View {
                 .font(CK.Font.body)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
+            if template.supportsPhoto {
+                CKPhotoBadge()
+            }
             if template.isATSFriendly {
                 CKATSBadge()
                 Text("A single reading order with no sidebar or photo, which applicant tracking software tends to read more reliably. No layout can promise how a particular employer's system will read it.")
@@ -115,6 +118,7 @@ struct CKTemplatePreviewSheet: View {
             detailRow(String(localized: "Career level"), template.levels.map { $0.rawValue }.joined(separator: ", "))
             detailRow(String(localized: "Style"), template.designStyle.rawValue)
             detailRow(String(localized: "Layout"), layoutDescription)
+            detailRow(String(localized: "Photo"), photoDescription)
             detailRow(String(localized: "Fonts"), fontDescription)
             detailRow(String(localized: "Typical length"), template.typicalPages <= 1 ? String(localized: "1 page") : String(localized: "\(template.typicalPages) pages"))
         }
@@ -166,11 +170,20 @@ struct CKTemplatePreviewSheet: View {
         case .sidebarRight: base = String(localized: "Sidebar on the right")
         case .headerThenTwoColumn: base = String(localized: "Two columns under a full-width header")
         }
-        switch template.photo {
-        case .none: base += String(localized: ", no photo")
-        case .headerRight, .sidebarTop: base += String(localized: ", optional photo")
-        }
+        base += template.supportsPhoto ? String(localized: ", optional photo") : String(localized: ", no photo")
         return base
+    }
+
+    private var photoDescription: String {
+        guard template.supportsPhoto else {
+            return String(localized: "No photo area. Suits countries and employers that expect a resume without a photo.")
+        }
+        switch template.photo {
+        case .headerLeft: return String(localized: "Optional, beside your name on the left. The grey figure is a sample.")
+        case .headerCenter: return String(localized: "Optional, centered above your name. The grey figure is a sample.")
+        case .sidebarTop, .sidebarBleed: return String(localized: "Optional, at the top of the sidebar. The grey figure is a sample.")
+        case .headerRight, .none: return String(localized: "Optional, beside your name on the right. The grey figure is a sample.")
+        }
     }
 
     private var fontDescription: String {
@@ -184,7 +197,7 @@ struct CKTemplatePreviewSheet: View {
 
     private func loadPages() async {
         let spec = template
-        let sample = SampleContent.resume(for: spec)
+        let sample = PortraitSilhouette.previewResume(for: spec)
         let scale = min(displayScale, 2)
         let images: [UIImage] = await Task.detached(priority: .userInitiated) { () -> [UIImage] in
             let document = DocumentRenderer.render(sample, template: spec)

@@ -93,14 +93,16 @@ struct HomeView: View {
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        let base: String
-        switch hour {
-        case 5..<12: base = String(localized: "Good morning")
-        case 12..<18: base = String(localized: "Good afternoon")
-        default: base = String(localized: "Good evening")
-        }
         let name = appState.greetingName
-        return name.isEmpty ? base : "\(base), \(name)"
+        // Whole phrases per time of day, so each language can place the name and punctuation itself.
+        switch hour {
+        case 5..<12:
+            return name.isEmpty ? String(localized: "Good morning") : String(localized: "Good morning, \(name)")
+        case 12..<18:
+            return name.isEmpty ? String(localized: "Good afternoon") : String(localized: "Good afternoon, \(name)")
+        default:
+            return name.isEmpty ? String(localized: "Good evening") : String(localized: "Good evening, \(name)")
+        }
     }
 
     private var subtitle: String {
@@ -108,8 +110,9 @@ struct HomeView: View {
             return String(localized: "Let's build your first resume.")
         }
         let count = activeResumes.count
-        let noun = count == 1 ? String(localized: "1 resume") : String(localized: "\(count) resumes")
-        return String(localized: "You have \(noun). \"\(latest.title)\" is the one you edited last.")
+        let countSentence: String = String(localized: "You have \(count) resumes.")
+        let title: String = latest.title
+        return String(localized: "\(countSentence) \"\(title)\" is the one you edited last.")
     }
 
     private var header: some View {

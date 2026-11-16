@@ -1,0 +1,34 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Home-screen name. The brand stays the same in every language.",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit" } }
+      }
+    },
+    "NSPhotoLibraryUsageDescription" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit verwendet ein Foto nur, wenn Sie eines für Ihren Lebenslauf auswählen. Fotos bleiben auf Ihrem Gerät." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit uses a photo only if you choose one for your resume. Photos stay on your device." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit usa una foto solo si eliges una para tu currículum. Las fotos se quedan en tu dispositivo." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "CareerKit utilise une photo uniquement si vous en choisissez une pour votre CV. Les photos restent sur votre appareil." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只有在您为简历选择照片时，CareerKit 才会使用照片。照片仅保留在您的设备上。" } }
+      }
+    },
+    "NSUserTrackingUsageDescription" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ihre Daten werden verwendet, um Ihnen relevantere Werbung zu zeigen. Sie können CareerKit vollständig nutzen, ohne dies zu erlauben." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your data is used to show you more relevant ads. You can use CareerKit fully without allowing this." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tus datos se usan para mostrarte anuncios más relevantes. Puedes usar CareerKit por completo sin permitirlo." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vos données servent à afficher des publicités plus pertinentes. Vous pouvez utiliser CareerKit pleinement sans l’autoriser." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "您的数据将用于向您展示更相关的广告。即使不允许，您也可以完整使用 CareerKit。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -5,7 +5,8 @@ import PDFKit
 final class StyleOverridesTests: XCTestCase {
     private let newKeys: [String] = [
         "headingStyle", "headerStyle", "entryLayout", "bullets", "skillStyle", "uppercaseHeadings", "sidebarPosition",
-        "sectionSpacing", "entrySpacing", "nameScale", "textHex", "sidebarFillHex", "headerFillHex", "photoShape", "dateFormat"
+        "sectionSpacing", "entrySpacing", "nameScale", "textHex", "sidebarFillHex", "headerFillHex", "photoShape", "dateFormat",
+        "photoSize", "photoBorder", "photoSide"
     ]
 
     private func spec(_ id: String) -> TemplateSpec {
@@ -40,6 +41,9 @@ final class StyleOverridesTests: XCTestCase {
         o.headerFillHex = "#1B2F4E"
         o.photoShape = .square
         o.dateFormat = .numeric
+        o.photoSize = .large
+        o.photoBorder = .ring
+        o.photoSide = .left
         return o
     }
 
@@ -98,6 +102,50 @@ final class StyleOverridesTests: XCTestCase {
         XCTAssertNil(decoded.headerStyle)
         XCTAssertNil(decoded.bullets)
         XCTAssertNil(decoded.dateFormat)
+    }
+
+    func testPhotoFieldsDecodeTolerantly() throws {
+        let good: String = #"{"photoSize":"small","photoBorder":"ring","photoSide":"right","showPhoto":true}"#
+        let decoded: StyleOverrides = try JSONDecoder().decode(StyleOverrides.self, from: Data(good.utf8))
+        XCTAssertEqual(decoded.photoSize, .small)
+        XCTAssertEqual(decoded.photoBorder, .ring)
+        XCTAssertEqual(decoded.photoSide, .right)
+
+        // Unknown values, wrong types and nulls fall back to the template without losing anything else.
+        let odd: String = ##"{"photoSize":"huge","photoBorder":7,"photoSide":null,"accentHex":"#123456","futureKey":{"a":1}}"##
+        let tolerant: StyleOverrides = try JSONDecoder().decode(StyleOverrides.self, from: Data(odd.utf8))
+        XCTAssertNil(tolerant.photoSize)
+        XCTAssertNil(tolerant.photoBorder)
+        XCTAssertNil(tolerant.photoSide)
+        XCTAssertEqual(tolerant.accentHex, "#123456")
+
+        // A default value encodes without the new keys, so older builds read it unchanged.
+        let encoded: Data = try JSONEncoder().encode(StyleOverrides())
+        let object = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        XCTAssertNil(object?["photoSize"])
+        XCTAssertNil(object?["photoBorder"])
+        XCTAssertNil(object?["photoSide"])
+    }
+
+    func testPhotoSideFlipsOnlyWhereTheHeaderHasBothSlots() {
+        let left: TemplateSpec = spec("t.single.right")
+        XCTAssertEqual(left.photo, .headerLeft)
+        var o = StyleOverrides()
+        o.photoSide = .right
+        XCTAssertEqual(left.applying(o).photo, .headerRight)
+        o.photoSide = .left
+        XCTAssertEqual(left.applying(o).photo, .headerLeft)
+
+        // The sidebar card keeps its photo in the sidebar, the centered band keeps it centered.
+        let bleed: TemplateSpec = spec("t.sidebarleft.bleed")
+        XCTAssertEqual(bleed.applying(o).photo, .sidebarBleed)
+        let band: TemplateSpec = spec("t.single.centerband")
+        XCTAssertEqual(band.applying(o).photo, .headerCenter)
+
+        // A centered photo moves to the side when the header is no longer centered.
+        var header = StyleOverrides()
+        header.headerStyle = .splitContact
+        XCTAssertEqual(band.applying(header).photo, .headerRight)
     }
 
     func testRoundTripKeepsEveryField() throws {
@@ -285,6 +333,8 @@ final class StyleOverridesTests: XCTestCase {
         let skills: [SkillStyle] = TemplateSpec.offeredSkillStyles
         let shapes: [PhotoShape?] = [nil, .circle, .rounded, .square]
         let dates: [ResumeDateFormat?] = [nil, .monthName, .numeric, .yearOnly]
+        let sizes: [PhotoSizeOption?] = [nil, .small, .medium, .large]
+        let sides: [SidebarPosition?] = [nil, .left, .right]
 
         for template in templates {
             // Every value of every option appears at least once per template.
@@ -306,6 +356,9 @@ final class StyleOverridesTests: XCTestCase {
                 styled.style.headerFillHex = i % 2 == 0 ? nil : "#4A2340"
                 styled.style.photoShape = shapes[i % shapes.count]
                 styled.style.dateFormat = dates[i % dates.count]
+                styled.style.photoSize = sizes[i % sizes.count]
+                styled.style.photoBorder = i % 2 == 0 ? .ring : nil
+                styled.style.photoSide = sides[i % sides.count]
                 assertRenders(styled, template, "\(template.id) round \(i)")
             }
         }

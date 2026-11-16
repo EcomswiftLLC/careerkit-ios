@@ -75,11 +75,12 @@ enum ATSAnalyzer {
                                   title: String(localized: "Consider adding a phone number"),
                                   detail: String(localized: "Some employers prefer to call. Leave it out if you would rather be contacted by email.")))
         } else {
-            let digits: Int = phone.filter { $0.isNumber }.count
-            if digits < 7 || digits > 15 {
+            let count: Int = phone.filter { $0.isNumber }.count
+            if count < 7 || count > 15 {
                 out.append(ATSFinding(severity: .warning,
                                       title: String(localized: "Check your phone number"),
-                                      detail: String(localized: "The number has \(digits) digits. Include the country code if you apply abroad.")))
+                                      detail: String(localized: "The number has \(count) digits. Include the country code if you apply abroad.",
+                                                     comment: "ATS check. Plural by digit count.")))
             }
         }
         if !name.isEmpty && looksLikeEmail(email) && (phone.isEmpty || (7...15).contains(phone.filter { $0.isNumber }.count)) {
@@ -112,14 +113,44 @@ enum ATSAnalyzer {
         "professional memberships", "references", "courses", "training", "interests", "additional information"
     ]
 
+    /// English default section titles. Their translations in the app's own languages are looked up in the
+    /// bundle, so a resume made while the app ran in Spanish, French, German or Chinese keeps standard headings
+    /// even after the app language changes.
+    private static let englishDefaultTitles: [String] = [
+        "Professional Summary", "Work Experience", "Education", "Skills", "Certifications", "Projects", "Awards",
+        "Languages", "Publications", "Volunteer Experience", "Internships", "Professional Memberships",
+        "References", "Courses", "Interests"
+    ]
+
+    private static let localizedDefaultTitleKeys: Set<String> = {
+        var out: Set<String> = []
+        for language in ["es", "fr", "de", "zh-Hans"] {
+            guard let path = Bundle.main.path(forResource: language, ofType: "lproj"),
+                  let bundle = Bundle(path: path) else { continue }
+            for title in englishDefaultTitles {
+                let translated: String = bundle.localizedString(forKey: title, value: title, table: nil)
+                out.insert(ResumeImporter.headingKey(translated))
+            }
+        }
+        return out
+    }()
+
+    /// True for headings a parser is likely to know, in English, Spanish, French, German or Chinese.
+    static func isStandardHeading(_ label: String, kind: SectionKind) -> Bool {
+        let lower: String = label.lowercased()
+        if standardHeadings.contains(lower) { return true }
+        if lower == kind.defaultTitle.lowercased() { return true }
+        if ResumeImporter.sectionKind(forHeading: label) != nil { return true }
+        let key: String = ResumeImporter.headingKey(label)
+        return !key.isEmpty && localizedDefaultTitleKeys.contains(key)
+    }
+
     private static func headingFindings(_ resume: Resume) -> [ATSFinding] {
         let sections: [ResumeSection] = RenderContent.visibleSections(resume)
         var unusual: [String] = []
         for section in sections {
             let label: String = RenderContent.label(for: section)
-            let lower: String = label.lowercased()
-            if standardHeadings.contains(lower) { continue }
-            if lower == section.kind.defaultTitle.lowercased() { continue }
+            if isStandardHeading(label, kind: section.kind) { continue }
             unusual.append(label)
         }
         var out: [ATSFinding] = []
@@ -166,7 +197,8 @@ enum ATSAnalyzer {
             for entry in RenderContent.renderableEntries(section) {
                 total += 1
                 if entry.start == nil && entry.end == nil && !entry.isCurrent {
-                    undated += 1
+                    // Dates typed into the text ("enero 2020 - actual", "2020年1月 - 至今") still give a timeline.
+                    if !hasWrittenDate(entry) { undated += 1 }
                 } else if entry.start != nil && entry.end == nil && !entry.isCurrent {
                     openEnded += 1
                 }
@@ -175,14 +207,18 @@ enum ATSAnalyzer {
         guard total > 0 else { return [] }
         var out: [ATSFinding] = []
         if undated > 0 {
+            let count: Int = undated
             out.append(ATSFinding(severity: .warning,
                                   title: String(localized: "Some roles have no dates"),
-                                  detail: String(localized: "\(undated) of \(total) roles have no start or end date. Dates help readers see your timeline.")))
+                                  detail: String(localized: "Roles with no start or end date: \(count) of \(total). Dates help readers see your timeline.",
+                                                 comment: "ATS check. First number: roles without dates. Second: all roles.")))
         }
         if openEnded > 0 {
+            let count: Int = openEnded
             out.append(ATSFinding(severity: .info,
                                   title: String(localized: "Some roles have no end date"),
-                                  detail: String(localized: "\(openEnded) roles show a start date only. Mark a role as current if you still hold it.")))
+                                  detail: String(localized: "\(count) roles show a start date only. Mark a role as current if you still hold it.",
+                                                 comment: "ATS check. Plural by number of roles.")))
         }
         if undated == 0 && openEnded == 0 {
             out.append(ATSFinding(severity: .good,
@@ -190,6 +226,17 @@ enum ATSAnalyzer {
                                   detail: String(localized: "Every role shows when you held it.")))
         }
         return out
+    }
+
+    /// True when the entry's own text holds a date in any of the formats the importer reads, with English,
+    /// Spanish, French, German or Portuguese month names, or Chinese and Japanese styles such as "2020年1月".
+    static func hasWrittenDate(_ entry: ResumeEntry) -> Bool {
+        for text in [entry.heading, entry.subheading, entry.location, entry.extra, entry.detail] where !text.isEmpty {
+            for line in text.components(separatedBy: CharacterSet.newlines) where !line.isEmpty {
+                if ImportDateParser.find(in: line, allowSingle: true) != nil { return true }
+            }
+        }
+        return false
     }
 
     // MARK: Summary
@@ -210,7 +257,8 @@ enum ATSAnalyzer {
         if words < 20 {
             return [ATSFinding(severity: .info,
                                title: String(localized: "Summary is very short"),
-                               detail: String(localized: "Your summary has \(words) words. A couple of sentences gives a reader more to work with."))]
+                               detail: String(localized: "Your summary has \(words) words. A couple of sentences gives a reader more to work with.",
+                                              comment: "ATS check. Plural by word count."))]
         }
         return [ATSFinding(severity: .good,
                            title: String(localized: "Summary is present"),
@@ -343,7 +391,8 @@ enum ATSAnalyzer {
         if words > 0 && words < 120 {
             out.append(ATSFinding(severity: .info,
                                   title: String(localized: "Very little content so far"),
-                                  detail: String(localized: "There are about \(words) words in the document. Add roles, results and skills to give a reader more to go on.")))
+                                  detail: String(localized: "There are about \(words) words in the document. Add roles, results and skills to give a reader more to go on.",
+                                                 comment: "ATS check. Plural by word count.")))
         }
 
         var longBullets: Int = 0
@@ -355,14 +404,17 @@ enum ATSAnalyzer {
             }
         }
         if longBullets > 0 {
+            let count: Int = longBullets
             out.append(ATSFinding(severity: .info,
                                   title: String(localized: "Some bullet points are long"),
-                                  detail: String(localized: "\(longBullets) bullets have more than 45 words. One or two lines each is easier to scan.")))
+                                  detail: String(localized: "\(count) bullets have more than 45 words. One or two lines each is easier to scan.",
+                                                 comment: "ATS check. Plural by number of bullets.")))
         }
         return out
     }
 
+    /// Language neutral: Chinese and Japanese text, written without spaces, counts one word per two characters.
     private static func wordCount(_ text: String) -> Int {
-        return text.split(whereSeparator: { $0.isWhitespace }).count
+        return CJKText.wordCount(text)
     }
 }

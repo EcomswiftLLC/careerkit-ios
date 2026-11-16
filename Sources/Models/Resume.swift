@@ -19,7 +19,7 @@ enum PageSize: String, Codable, CaseIterable, Identifiable {
     var displayName: String {
         switch self {
         case .a4: return "A4"
-        case .usLetter: return "US Letter"
+        case .usLetter: return String(localized: "US Letter", comment: "Paper size name.")
         }
     }
 }
@@ -59,6 +59,14 @@ struct MonthYear: Codable, Equatable, Hashable {
     }
 }
 
+/// Words used inside date ranges on the document.
+enum CKDateWords {
+    /// End of a range for a current role, as in "Jan 2020 – Present".
+    static var present: String {
+        String(localized: "Present", comment: "End of a date range for a current role, as in 'Jan 2020 - Present'.")
+    }
+}
+
 /// How dates on resume entries are written.
 enum ResumeDateFormat: String, Codable, CaseIterable, Identifiable {
     /// "Jan 2024" (follows the device language).
@@ -72,7 +80,7 @@ enum ResumeDateFormat: String, Codable, CaseIterable, Identifiable {
 
     var example: String {
         switch self {
-        case .monthName: return "Jan 2024"
+        case .monthName: return MonthYear(year: 2024, month: 1).formatted()
         case .numeric: return "01/2024"
         case .yearOnly: return "2024"
         }
@@ -123,22 +131,22 @@ enum SectionKind: String, Codable, CaseIterable, Identifiable {
 
     var defaultTitle: String {
         switch self {
-        case .summary: return "Professional Summary"
-        case .experience: return "Work Experience"
-        case .education: return "Education"
-        case .skills: return "Skills"
-        case .certifications: return "Certifications"
-        case .projects: return "Projects"
-        case .awards: return "Awards"
-        case .languages: return "Languages"
-        case .publications: return "Publications"
-        case .volunteer: return "Volunteer Experience"
-        case .internships: return "Internships"
-        case .memberships: return "Professional Memberships"
-        case .references: return "References"
-        case .courses: return "Courses"
-        case .interests: return "Interests"
-        case .custom: return "Custom Section"
+        case .summary: return String(localized: "Professional Summary", comment: "Default section heading on the resume.")
+        case .experience: return String(localized: "Work Experience", comment: "Default section heading on the resume.")
+        case .education: return String(localized: "Education", comment: "Default section heading on the resume.")
+        case .skills: return String(localized: "Skills", comment: "Default section heading on the resume.")
+        case .certifications: return String(localized: "Certifications", comment: "Default section heading on the resume.")
+        case .projects: return String(localized: "Projects", comment: "Default section heading on the resume.")
+        case .awards: return String(localized: "Awards", comment: "Default section heading on the resume.")
+        case .languages: return String(localized: "Languages", comment: "Default section heading on the resume.")
+        case .publications: return String(localized: "Publications", comment: "Default section heading on the resume.")
+        case .volunteer: return String(localized: "Volunteer Experience", comment: "Default section heading on the resume.")
+        case .internships: return String(localized: "Internships", comment: "Default section heading on the resume.")
+        case .memberships: return String(localized: "Professional Memberships", comment: "Default section heading on the resume.")
+        case .references: return String(localized: "References", comment: "Default section heading on the resume.")
+        case .courses: return String(localized: "Courses", comment: "Default section heading on the resume.")
+        case .interests: return String(localized: "Interests", comment: "Default section heading on the resume.")
+        case .custom: return String(localized: "Custom Section", comment: "Default section heading on the resume.")
         }
     }
 
@@ -200,7 +208,7 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
     /// "Jan 2020 – Present", "2018 – 2022", or "" when no dates.
     func dateRange(locale: Locale = .current) -> String {
         let startText = start?.formatted(locale: locale) ?? ""
-        let endText = isCurrent ? "Present" : (end?.formatted(locale: locale) ?? "")
+        let endText = isCurrent ? CKDateWords.present : (end?.formatted(locale: locale) ?? "")
         switch (startText.isEmpty, endText.isEmpty) {
         case (true, true): return ""
         case (false, true): return startText
@@ -213,7 +221,7 @@ struct ResumeEntry: Codable, Identifiable, Equatable {
     func dateRange(format: ResumeDateFormat?, locale: Locale = .current) -> String {
         guard let format, format != .monthName else { return dateRange(locale: locale) }
         let startText: String = start?.formatted(format, locale: locale) ?? ""
-        let endText: String = isCurrent ? "Present" : (end?.formatted(format, locale: locale) ?? "")
+        let endText: String = isCurrent ? CKDateWords.present : (end?.formatted(format, locale: locale) ?? "")
         switch (startText.isEmpty, endText.isEmpty) {
         case (true, true): return ""
         case (false, true): return startText
@@ -300,6 +308,14 @@ struct StyleOverrides: Codable, Equatable {
     var photoShape: PhotoShape?
     var dateFormat: ResumeDateFormat?
 
+    // Photo details. nil keeps the template behaviour.
+    /// Small, medium (template size) or large.
+    var photoSize: PhotoSizeOption?
+    /// No border, or a thin ring in the accent colour.
+    var photoBorder: PhotoBorderOption?
+    /// Which side of the header holds the photo, on templates whose header photo can sit on either side.
+    var photoSide: SidebarPosition?
+
     static let spacingRange: ClosedRange<Double> = 0.7...1.6
     static let nameScaleRange: ClosedRange<Double> = 0.8...1.3
 }
@@ -314,6 +330,25 @@ enum PhotoShape: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum PhotoSizeOption: String, Codable, CaseIterable, Identifiable {
+    case small, medium, large
+    var id: String { rawValue }
+
+    /// Multiplier on the template's photo size.
+    var scale: Double {
+        switch self {
+        case .small: return 0.8
+        case .medium: return 1.0
+        case .large: return 1.22
+        }
+    }
+}
+
+enum PhotoBorderOption: String, Codable, CaseIterable, Identifiable {
+    case none, ring
+    var id: String { rawValue }
+}
+
 extension StyleOverrides {
     enum CodingKeys: String, CodingKey {
         case accentHex, bodyFont, headingFont, fontScale, lineSpacing, marginPoints, showPhoto
@@ -321,6 +356,7 @@ extension StyleOverrides {
         case sectionSpacing, entrySpacing, nameScale
         case textHex, sidebarFillHex, headerFillHex
         case photoShape, dateFormat
+        case photoSize, photoBorder, photoSide
     }
 
     /// Every key is optional so documents saved by older versions (or with values a newer
@@ -354,6 +390,10 @@ extension StyleOverrides {
 
         photoShape = (try? c.decodeIfPresent(PhotoShape.self, forKey: .photoShape))
         dateFormat = (try? c.decodeIfPresent(ResumeDateFormat.self, forKey: .dateFormat))
+
+        photoSize = (try? c.decodeIfPresent(PhotoSizeOption.self, forKey: .photoSize))
+        photoBorder = (try? c.decodeIfPresent(PhotoBorderOption.self, forKey: .photoBorder))
+        photoSide = (try? c.decodeIfPresent(SidebarPosition.self, forKey: .photoSide))
     }
 
     func encode(to encoder: Encoder) throws {
@@ -380,6 +420,9 @@ extension StyleOverrides {
         try c.encodeIfPresent(headerFillHex, forKey: .headerFillHex)
         try c.encodeIfPresent(photoShape, forKey: .photoShape)
         try c.encodeIfPresent(dateFormat, forKey: .dateFormat)
+        try c.encodeIfPresent(photoSize, forKey: .photoSize)
+        try c.encodeIfPresent(photoBorder, forKey: .photoBorder)
+        try c.encodeIfPresent(photoSide, forKey: .photoSide)
     }
 }
 

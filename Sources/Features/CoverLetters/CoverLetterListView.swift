@@ -147,7 +147,7 @@ struct CoverLetterListView: View {
         Button { openedID = letter.id } label: {
             HStack(alignment: .center, spacing: CK.Space.m) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(letter.title.isEmpty ? "Untitled letter" : letter.title)
+                    Text(letter.title.isEmpty ? String(localized: "Untitled letter") : letter.title)
                         .font(CK.Font.headline(18))
                         .foregroundStyle(CK.Palette.ink)
                         .lineLimit(1)
@@ -160,7 +160,7 @@ struct CoverLetterListView: View {
                     Text("\(EditorRender.coverTemplate(id: letter.templateID).name), edited \(letter.updatedAt.formatted(date: .abbreviated, time: .omitted))")
                         .font(CK.Font.caption)
                         .foregroundStyle(CK.Palette.graphite)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.right")
@@ -180,7 +180,13 @@ struct CoverLetterListView: View {
     }
 
     private func subtitle(_ letter: CoverLetter) -> String? {
-        let parts = [letter.jobTitle, letter.companyName].filter { !$0.isEmpty }
-        return parts.isEmpty ? nil : parts.joined(separator: " at ")
+        let job: String = letter.jobTitle
+        let company: String = letter.companyName
+        switch (job.isEmpty, company.isEmpty) {
+        case (false, false): return String(localized: "\(job) at \(company)", comment: "Job title at company, as in 'Designer at Northwind'.")
+        case (false, true): return job
+        case (true, false): return company
+        case (true, true): return nil
+        }
     }
 }

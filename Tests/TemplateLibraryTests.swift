@@ -112,11 +112,12 @@ final class TemplateLibraryTests: XCTestCase {
     func testAllLayoutsHeadersHeadingsAndEntryLayoutsAreUsed() {
         let layouts: Set<PageLayout> = [.singleColumn, .sidebarLeft, .sidebarRight, .headerThenTwoColumn]
         let headers: Set<HeaderStyle> = [.leftAligned, .centered, .banner, .splitContact, .sidebarCard, .ruledMonogram,
-                                         .monogramBadge, .accentRuleLeft, .centeredAccent, .doubleRule]
+                                         .monogramBadge, .accentRuleLeft, .centeredAccent, .doubleRule,
+                                         .rightAligned, .tintedCard, .bannerCentered, .initialLetter, .smallCapsCentered]
         let headings: Set<SectionHeadingStyle> = [.uppercaseRule, .smallCapsAccent, .accentBar, .boxedLabel, .plainBold, .sideLabel, .dottedRule,
-                                                  .underlineAccent, .centeredRule, .leftBorder, .tintedBand]
-        let entries: Set<EntryLayout> = [.dateRight, .dateBelow, .dateGutter, .stacked]
-        let skills: Set<SkillStyle> = [.commaList, .pipeList, .groupedLines, .bulletColumns]
+                                                  .underlineAccent, .centeredRule, .leftBorder, .tintedBand, .fullBar, .ruleAbove]
+        let entries: Set<EntryLayout> = [.dateRight, .dateBelow, .dateGutter, .stacked, .timeline]
+        let skills: Set<SkillStyle> = [.commaList, .pipeList, .groupedLines, .bulletColumns, .pills]
         XCTAssertEqual(Set(all.map { $0.layout }), layouts)
         XCTAssertEqual(Set(all.map { $0.header }), headers)
         XCTAssertEqual(Set(all.map { $0.headingStyle }), headings)
@@ -156,22 +157,27 @@ final class TemplateLibraryTests: XCTestCase {
 
     // MARK: ATS
 
-    func testAtLeastTwelveTemplatesAreATSFriendly() {
-        XCTAssertGreaterThanOrEqual(all.filter { $0.isATSFriendly }.count, 12)
+    func testAtLeastNineTemplatesAreATSFriendly() {
+        // Distinctness pass: 9 plain templates (4 Professional, 2 Academic, 3 Technical), 19 with a photo area.
+        XCTAssertGreaterThanOrEqual(all.filter { $0.isATSFriendly }.count, 9)
     }
 
     func testATSFlagMatchesStructure() {
+        let decorativeHeaders: Set<HeaderStyle> = [.banner, .sidebarCard, .monogramBadge, .tintedCard, .bannerCentered, .initialLetter]
+        let decorativeHeadings: Set<SectionHeadingStyle> = [.boxedLabel, .sideLabel, .fullBar]
         for t in all {
-            // The monogram badge prints initials as decoration, so it counts as non-plain like a banner.
-            let plainHeader = t.header != .banner && t.header != .sidebarCard && t.header != .monogramBadge
-            let plainHeading = t.headingStyle != .boxedLabel && t.headingStyle != .sideLabel
+            // Badges, initials, cards and bands are decoration, so they count as non-plain.
+            let plainHeader = !decorativeHeaders.contains(t.header)
+            let plainHeading = !decorativeHeadings.contains(t.headingStyle)
             let structurallyPlain = t.layout == .singleColumn
                 && t.photo == .none
                 && t.sidebarSections.isEmpty
                 && plainHeader
                 && plainHeading
                 && t.entryLayout != .dateGutter
+                && t.entryLayout != .timeline
                 && t.skillStyle != .bulletColumns
+                && t.skillStyle != .pills
             XCTAssertEqual(t.isATSFriendly, structurallyPlain, "ATS flag does not match structure for \(t.name)")
             if t.layout != .singleColumn || t.photo != .none || t.header == .banner {
                 XCTAssertFalse(t.isATSFriendly, "\(t.name) has a sidebar, photo or banner and must not be ATS friendly")
@@ -189,7 +195,7 @@ final class TemplateLibraryTests: XCTestCase {
             XCTAssertTrue((10.0...13.0).contains(t.headingSize), "\(t.name) heading size")
             XCTAssertTrue((1.0...1.3).contains(t.lineSpacing), "\(t.name) line spacing")
             XCTAssertTrue((0.0...2.0).contains(t.letterSpacingHeadings), "\(t.name) tracking")
-            XCTAssertTrue((0.28...0.36).contains(t.sidebarFraction), "\(t.name) sidebar fraction")
+            XCTAssertTrue((0.26...0.40).contains(t.sidebarFraction), "\(t.name) sidebar fraction")
             for margin in [t.marginTop, t.marginSide, t.marginBottom] {
                 XCTAssertTrue((28.0...56.0).contains(margin), "\(t.name) margin \(margin)")
             }
@@ -233,12 +239,17 @@ final class TemplateLibraryTests: XCTestCase {
         for t in all {
             let hasSidebar = t.layout == .sidebarLeft || t.layout == .sidebarRight
             XCTAssertEqual(t.header == .sidebarCard, hasSidebar, "\(t.name) sidebar card header must go with a sidebar layout")
-            XCTAssertEqual(t.header == .banner, t.headerFillHex != nil, "\(t.name) banner fill")
+            let banded: Bool = t.header == .banner || t.header == .bannerCentered
+            XCTAssertEqual(banded, t.headerFillHex != nil, "\(t.name) banner fill")
             XCTAssertEqual(t.sidebarFillHex == nil, t.sidebarTextHex == nil, "\(t.name) sidebar fill and text come as a pair")
             if hasSidebar { XCTAssertNotNil(t.sidebarFillHex, t.name) }
             if t.layout == .singleColumn { XCTAssertNil(t.sidebarFillHex, t.name) }
-            if t.photo == .sidebarTop { XCTAssertTrue(hasSidebar, "\(t.name) photo in sidebar needs a sidebar") }
-            if hasSidebar { XCTAssertNotEqual(t.photo, .headerRight, t.name) }
+            if t.photo.isSidebar { XCTAssertTrue(hasSidebar, "\(t.name) photo in sidebar needs a sidebar") }
+            if hasSidebar { XCTAssertTrue(t.photo == .none || t.photo.isSidebar, t.name) }
+            if t.photo == .headerCenter {
+                XCTAssertTrue(t.header == .centered || t.header == .centeredAccent || t.header == .bannerCentered,
+                              "\(t.name) centered photo needs a centered header")
+            }
         }
     }
 
@@ -246,7 +257,7 @@ final class TemplateLibraryTests: XCTestCase {
 
     func testHexValuesAreValid() {
         for t in all {
-            let values: [String?] = [t.accentHex, t.textHex, t.mutedHex, t.sidebarFillHex, t.sidebarTextHex, t.headerFillHex]
+            let values: [String?] = [t.accentHex, t.textHex, t.mutedHex, t.sidebarFillHex, t.sidebarTextHex, t.headerFillHex, t.paperHex]
             for value in values {
                 guard let value = value else { continue }
                 XCTAssertTrue(TemplateTestColor.isValidHex(value), "\(t.name) has a bad colour \(value)")
@@ -256,10 +267,28 @@ final class TemplateLibraryTests: XCTestCase {
 
     func testTextContrastOnPaper() {
         for t in all {
-            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.textHex, TemplateTestColor.white), 7.0, "\(t.name) text")
-            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.mutedHex, TemplateTestColor.white), 4.5, "\(t.name) muted")
-            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.accentHex, TemplateTestColor.white), 4.5, "\(t.name) accent")
+            let paper: String = t.paperHex ?? TemplateTestColor.white
+            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.textHex, paper), 7.0, "\(t.name) text")
+            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.mutedHex, paper), 4.5, "\(t.name) muted")
+            XCTAssertGreaterThanOrEqual(TemplateTestColor.contrast(t.accentHex, paper), 4.5, "\(t.name) accent")
+            // Paper tints stay very light, so the page still reads as white paper in print.
+            XCTAssertGreaterThan(TemplateTestColor.luminance(paper), 0.88, "\(t.name) paper is too dark")
         }
+    }
+
+    // MARK: Photo
+
+    func testPhotoAreasCoverMostTemplates() {
+        let withPhoto = all.filter { $0.supportsPhoto }
+        XCTAssertGreaterThanOrEqual(withPhoto.count, 18)
+        for t in all where t.category == .creative || t.category == .modern || t.category == .entryLevel {
+            XCTAssertTrue(t.supportsPhoto, "\(t.name) should offer a photo area")
+        }
+        for t in all where t.isATSFriendly {
+            XCTAssertFalse(t.supportsPhoto, "\(t.name) is ATS friendly and must stay photo free")
+        }
+        XCTAssertTrue(all.contains { $0.category == .professional && $0.supportsPhoto })
+        XCTAssertTrue(all.contains { $0.category == .technical && $0.supportsPhoto })
     }
 
     func testTextContrastOnFills() {

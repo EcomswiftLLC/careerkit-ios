@@ -63,6 +63,7 @@ struct CKOnboardingArt: View {
                 .font(CK.Font.caption.weight(.medium))
                 .foregroundStyle(CK.Palette.ink)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)

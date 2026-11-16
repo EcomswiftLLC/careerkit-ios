@@ -25,6 +25,14 @@ final class ArtifactDumpTests: XCTestCase {
             if !report.passed {
                 try report.extractedText.write(to: dir.appendingPathComponent("text-\(template.id).txt"), atomically: true, encoding: .utf8)
             }
+            // What the template browser shows: photo templates carry the sample silhouette.
+            if template.supportsPhoto {
+                let preview: Resume = PortraitSilhouette.previewResume(for: template)
+                let previewDoc: RenderedDocument = DocumentRenderer.render(preview, template: template)
+                try previewDoc.pdfData.write(to: dir.appendingPathComponent("preview-\(template.id).pdf"))
+                let previewLine: String = "preview \(template.id) pages=\(previewDoc.pageCount) typical=\(template.typicalPages)"
+                summary.append(previewLine)
+            }
         }
 
         let letter: CoverLetter = SampleContent.coverLetter()

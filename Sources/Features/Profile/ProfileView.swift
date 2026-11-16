@@ -192,9 +192,7 @@ struct ProfileView: View {
 
     private var quarantineRow: some View {
         let count: Int = store.quarantinedFiles.count
-        let title: String = count == 1
-            ? String(localized: "1 document could not be opened")
-            : String(localized: "\(count) documents could not be opened")
+        let title: String = String(localized: "\(count) documents could not be opened")
         return Button {
             showQuarantineOptions = true
         } label: {
@@ -224,9 +222,7 @@ struct ProfileView: View {
 
     private var newerVersionRow: some View {
         let count: Int = store.newerVersionFileCount
-        let title: String = count == 1
-            ? String(localized: "1 document was made with a newer version of CareerKit")
-            : String(localized: "\(count) documents were made with a newer version of CareerKit")
+        let title: String = String(localized: "\(count) documents were made with a newer version of CareerKit")
         return CKSettingsRow(systemImage: "arrow.up.circle",
                              title: title,
                              detail: String(localized: "Update CareerKit from the App Store to open them. They are kept unchanged."))
@@ -344,10 +340,8 @@ struct ProfileView: View {
     }
 
     private var dataSummary: String {
-        let resumes = store.resumes.count
-        let letters = store.coverLetters.count
-        let resumeText = resumes == 1 ? String(localized: "1 resume") : String(localized: "\(resumes) resumes")
-        let letterText = letters == 1 ? String(localized: "1 cover letter") : String(localized: "\(letters) cover letters")
+        let resumeText: String = CKCountText.resumes(store.resumes.count)
+        let letterText: String = CKCountText.coverLetters(store.coverLetters.count)
         return String(localized: "Stored on this device: \(resumeText) and \(letterText). A backup is a single file you can keep anywhere. Restoring adds its documents and keeps the ones already here.")
     }
 

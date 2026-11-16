@@ -1,4 +1,4 @@
-# Submission checklist: Resume Builder: CareerKit
+# Submission checklist: Resume & CV Maker: CareerKit
 
 Legend: **Done** = finished in this repository. **Owner** = needs the account holder (logins, payments, legal identity). **Mac/CI** = needs macOS (Xcode) or the GitHub Actions macOS runner. **Open** = decision or check still to be made.
 
@@ -10,7 +10,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 |---|---|---|
 | 1.1 | Active Apple Developer Program membership for the team in `project.yml` (`DEVELOPMENT_TEAM: N84NGN3KSH`). Confirm the team id is the right one for Ecom Swift LLC. | Owner |
 | 1.2 | Register explicit App ID `com.ecomswift.careerkit` (Certificates, Identifiers & Profiles). No special capabilities are needed (no push, no IAP, no iCloud). | Owner |
-| 1.3 | Create the app in App Store Connect: name `Resume Builder: CareerKit`, English (U.S.), bundle id above, SKU `careerkit-ios`, full access. If the name is taken use the fallbacks in `metadata.md`. | Owner |
+| 1.3 | Create the app in App Store Connect: name `Resume & CV Maker: CareerKit`, English (U.S.), bundle id above, SKU `careerkit-ios`, full access. If the name is taken use the fallbacks in `metadata.md`. | Owner |
 | 1.4 | EU Digital Services Act trader status: as a business, Ecom Swift LLC declares itself a trader in App Store Connect (Business > Compliance). Address, phone and email are shown publicly in the EU. If the owner does not want that, remove EU countries from Availability. | Owner |
 | 1.5 | Set price to Free, availability, and no in-app purchases. | Owner |
 
@@ -20,7 +20,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 |---|---|---|
 | 2.1 | Project generates from `project.yml` with XcodeGen. Assets catalog, AppIcon, AccentColor and LaunchBackground exist. | Done (not compiled on this PC) |
 | 2.2 | First real compile on macOS (CI workflow `.github/workflows/ios.yml` or a Mac). Fix any compile errors reported by CI. | Mac/CI |
-| 2.3 | `Config/Release.xcconfig` already holds the three production AdMob ids (app "Resume Builder: CareerKit", created 2026-11-16). `Config/Debug.xcconfig` keeps Google's test ids. Before archiving, confirm the archive uses the Release configuration. | Done, confirm on archive |
+| 2.3 | `Config/Release.xcconfig` already holds the three production AdMob ids (app "Resume & CV Maker: CareerKit", created 2026-11-16). `Config/Debug.xcconfig` keeps Google's test ids. Before archiving, confirm the archive uses the Release configuration. | Done, confirm on archive |
 | 2.4 | Bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml` when needed (now 1.0.0 build 1). | Done |
 | 2.5 | Archive in Xcode (Product > Archive, Any iOS Device) with automatic signing. Upload through the Organizer, or export and upload with Transporter. | Mac |
 | 2.6 | Confirm the icon shows (1024 px, no alpha) and the build passes App Store Connect processing. | Mac |
@@ -93,7 +93,7 @@ Test script (about 15 minutes):
 
 1. **Rewarded video and the reviewer (resolved).** When the person asks for a video and none can be shown (no fill on a new unit, offline, consent declined, load or start failure), the export sheet offers Export without video for that one export. There is no rate limit, so a reviewer can always export. The review notes say so.
 2. **Apple guideline on ads.** Rewarded ads that gate a feature are allowed. The ad must be clearly opt-in, which the design already does. No interstitials, no ads in the editor.
-3. **Name availability** of `Resume Builder: CareerKit` is only known after creating the app record.
+3. **Name availability** of `Resume & CV Maker: CareerKit` is only known after creating the app record.
 4. **Screenshots with ads.** Never submit a screenshot that shows a test ad label.
 5. **Descriptions of UI.** The review notes and screenshot plan name buttons and screens (for example "Profile > Delete all local data", "Ad privacy choices", "Watch an ad to export"). Check each name against the real UI once the app runs and edit the text if the labels differ.
 

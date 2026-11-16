@@ -15,6 +15,7 @@ struct CKTemplateFilter: Equatable {
     var style: DesignStyle?
     var length: Length?
     var atsOnly: Bool = false
+    var photoOnly: Bool = false
 
     var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,7 +23,7 @@ struct CKTemplateFilter: Equatable {
 
     /// True when any chip is set (the search text is not counted).
     var hasFacets: Bool {
-        category != nil || industry != nil || level != nil || style != nil || length != nil || atsOnly
+        category != nil || industry != nil || level != nil || style != nil || length != nil || atsOnly || photoOnly
     }
 
     /// True when anything narrows the list, including search text.
@@ -46,6 +47,7 @@ struct CKTemplateFilter: Equatable {
             if let level = self.level, !template.levels.contains(level) { return false }
             if let style = self.style, template.designStyle != style { return false }
             if self.atsOnly && !template.isATSFriendly { return false }
+            if self.photoOnly && !template.supportsPhoto { return false }
             if let length = self.length {
                 switch length {
                 case .onePage:
@@ -71,6 +73,7 @@ struct CKTemplateFilter: Equatable {
         parts.append(contentsOf: template.industries.map { $0.rawValue })
         parts.append(contentsOf: template.levels.map { $0.rawValue })
         if template.isATSFriendly { parts.append("ats friendly") }
+        if template.supportsPhoto { parts.append("photo picture") }
         return parts.joined(separator: " ").lowercased()
     }
 

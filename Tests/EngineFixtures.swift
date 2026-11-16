@@ -20,9 +20,16 @@ enum EngineFixtures {
                      photo: PhotoPlacement = .none,
                      headingFont: FontChoice = .georgia,
                      bodyFont: FontChoice = .helveticaNeue,
-                     uppercase: Bool = false) -> TemplateSpec {
+                     uppercase: Bool = false,
+                     railFill: Bool = false,
+                     pageAccent: PageAccent = .none,
+                     paperHex: String? = nil,
+                     railSide: SidebarPosition = .right,
+                     fraction: Double = 0.30) -> TemplateSpec {
         let hasSidebar: Bool = layout != .singleColumn
         let dark: Bool = layout == .sidebarLeft || layout == .sidebarRight
+        let filledRail: Bool = railFill && layout == .headerThenTwoColumn
+        let banded: Bool = header == .banner || header == .bannerCentered
         return TemplateSpec(
             id: id,
             name: id,
@@ -34,7 +41,7 @@ enum EngineFixtures {
             isATSFriendly: layout == .singleColumn,
             typicalPages: 1,
             layout: layout,
-            sidebarFraction: 0.30,
+            sidebarFraction: fraction,
             header: header,
             headingStyle: heading,
             entryLayout: entry,
@@ -52,16 +59,19 @@ enum EngineFixtures {
             accentHex: "#1F4D3A",
             textHex: "#1F2421",
             mutedHex: "#5B605C",
-            sidebarFillHex: dark ? "#1F4D3A" : nil,
-            sidebarTextHex: dark ? "#FFFFFF" : nil,
-            headerFillHex: header == .banner ? "#16382A" : nil,
+            sidebarFillHex: dark ? "#1F4D3A" : (filledRail ? "#EEF3F0" : nil),
+            sidebarTextHex: dark ? "#FFFFFF" : (filledRail ? "#1F2421" : nil),
+            headerFillHex: banded ? "#16382A" : nil,
             marginTop: 44,
             marginSide: 44,
             marginBottom: 44,
             sectionSpacing: 14,
             entrySpacing: 9,
             mainSections: flowSections,
-            sidebarSections: hasSidebar ? [.skills, .languages] : []
+            sidebarSections: hasSidebar ? [.skills, .languages] : [],
+            pageAccent: pageAccent,
+            paperHex: paperHex,
+            railSide: railSide
         )
     }
 
@@ -108,7 +118,32 @@ enum EngineFixtures {
              entry: .dateRight, bullets: .chevron, skills: .groupedLines, headingFont: .didot, bodyFont: .georgia),
         spec(id: "t.sidebarleft.band", layout: .sidebarLeft, header: .sidebarCard, heading: .tintedBand,
              entry: .dateBelow, bullets: .disc, skills: .groupedLines, photo: .sidebarTop,
-             headingFont: .optima, bodyFont: .avenirNext)
+             headingFont: .optima, bodyFont: .avenirNext),
+        // Structures added in the silhouette pass.
+        spec(id: "t.single.right", layout: .singleColumn, header: .rightAligned, heading: .fullBar,
+             entry: .timeline, bullets: .dash, skills: .pills, photo: .headerLeft,
+             headingFont: .futura, bodyFont: .avenirNext, pageAccent: .topBar),
+        spec(id: "t.single.card", layout: .singleColumn, header: .tintedCard, heading: .ruleAbove,
+             entry: .dateRight, bullets: .disc, skills: .groupedLines, photo: .headerRight,
+             headingFont: .gillSans, bodyFont: .georgia, pageAccent: .frame, paperHex: "#FBF9F8"),
+        spec(id: "t.single.centerband", layout: .singleColumn, header: .bannerCentered, heading: .boxedLabel,
+             entry: .dateBelow, bullets: .square, skills: .bulletColumns, photo: .headerCenter,
+             headingFont: .optima, bodyFont: .helveticaNeue, pageAccent: .bottomBar),
+        spec(id: "t.single.initial", layout: .singleColumn, header: .initialLetter, heading: .leftBorder,
+             entry: .timeline, bullets: .chevron, skills: .commaList, photo: .headerLeft,
+             headingFont: .didot, bodyFont: .charter, pageAccent: .leftEdge),
+        spec(id: "t.single.capsname", layout: .singleColumn, header: .smallCapsCentered, heading: .ruleAbove,
+             entry: .dateRight, bullets: .disc, skills: .pipeList,
+             headingFont: .baskerville, bodyFont: .charter, uppercase: true, paperHex: "#F7F9FB"),
+        spec(id: "t.single.centerphoto", layout: .singleColumn, header: .centered, heading: .centeredRule,
+             entry: .stacked, bullets: .dash, skills: .pills, photo: .headerCenter,
+             headingFont: .cochin, bodyFont: .hoeflerText),
+        spec(id: "t.twocol.railleft", layout: .headerThenTwoColumn, header: .accentRuleLeft, heading: .underlineAccent,
+             entry: .timeline, bullets: .disc, skills: .pills, photo: .headerRight,
+             headingFont: .avenirNext, bodyFont: .charter, railFill: true, railSide: .left),
+        spec(id: "t.sidebarleft.bleed", layout: .sidebarLeft, header: .sidebarCard, heading: .fullBar,
+             entry: .timeline, bullets: .square, skills: .pills, photo: .sidebarBleed,
+             headingFont: .futura, bodyFont: .helveticaNeue, fraction: 0.38)
     ]
 
     static func coverLetterSpecs() -> [CoverLetterTemplateSpec] {

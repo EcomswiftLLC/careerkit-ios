@@ -32,7 +32,7 @@ LEGAL = ROOT / "docs" / "legal"
 BASE = "https://ecomswiftllc.github.io/careerkit/"
 SUPPORT_EMAIL = os.environ.get("CAREERKIT_SUPPORT_EMAIL", "").strip()
 UPDATED = "2026-11-16"
-SITE_NAME = "Resume Builder: CareerKit"
+SITE_NAME = "Resume & CV Maker: CareerKit"
 
 if not SUPPORT_EMAIL:
     sys.exit("Set CAREERKIT_SUPPORT_EMAIL to the public support address before building (see the top of this file).")
@@ -116,7 +116,7 @@ def head(title, description, path, extra_head="", root=""):
 <meta property="og:image" content="{BASE}assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The CareerKit app icon next to the name Resume Builder: CareerKit">
+<meta property="og:image:alt" content="The CareerKit app icon next to the name Resume & CV Maker: CareerKit">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">
 <meta name="twitter:description" content="{d}">
@@ -153,7 +153,7 @@ def footer(root):
     return f"""<footer class="site-footer">
   <div class="wrap">
     <div>
-      <h2>Resume Builder: CareerKit</h2>
+      <h2>Resume & CV Maker: CareerKit</h2>
       <p>A free resume and cover letter maker for iPhone and iPad. Coming soon to the App Store.</p>
     </div>
     <nav aria-label="Footer">
@@ -170,7 +170,7 @@ def footer(root):
       <p>30 N Gould St #37906<br>Sheridan, WY 82801<br>United States</p>
       <p class="email">{html.escape(SUPPORT_EMAIL)}</p>
     </div>
-    <p class="legalline">&copy; 2026 Ecom Swift LLC. Resume Builder: CareerKit and its templates are not affiliated with Apple, Google or any employer. Apple and iPhone are trademarks of Apple Inc.</p>
+    <p class="legalline">&copy; 2026 Ecom Swift LLC. Resume & CV Maker: CareerKit and its templates are not affiliated with Apple, Google or any employer. Apple and iPhone are trademarks of Apple Inc.</p>
   </div>
 </footer>
 </body>
@@ -245,7 +245,7 @@ def jsonld_faq():
 
 
 def build_index():
-    title = "Resume Builder: CareerKit | Free resume maker for iPhone and iPad"
+    title = "Resume & CV Maker: CareerKit | Free resume maker for iPhone and iPad"
     desc = "Free resume and cover letter maker for iPhone and iPad. 30 templates, general ATS guidance, job ad keyword check and export to PDF or Word. Your documents stay on your device. Coming soon."
     faq_html = "\n".join(
         f'        <details><summary>{html.escape(q)}</summary><div class="answer">{a}</div></details>' for q, a in FAQ)
@@ -390,7 +390,7 @@ def build_index():
 
 # ----------------------------------------------------------------------------- support
 def build_support():
-    title = "Support | Resume Builder: CareerKit"
+    title = "Support | Resume & CV Maker: CareerKit"
     desc = "Get help with CareerKit: contact details, what to include in a message, and answers to common questions about exports, ads and your data."
     items = [
         ("The export sheet says no video is available",
@@ -559,9 +559,9 @@ def main():
     build_index()
     build_support()
     build_legal("privacy-policy.md", "privacy", "Privacy Policy",
-                "How Resume Builder: CareerKit handles information: documents stay on your device, there is no account, and ads come from Google AdMob with your consent where required.")
+                "How Resume & CV Maker: CareerKit handles information: documents stay on your device, there is no account, and ads come from Google AdMob with your consent where required.")
     build_legal("terms-of-use.md", "terms", "Terms of Use",
-                "The terms for using Resume Builder: CareerKit, a free resume and cover letter app supported by ads.")
+                "The terms for using Resume & CV Maker: CareerKit, a free resume and cover letter app supported by ads.")
     build_misc()
     print("site built in", OUT)
 

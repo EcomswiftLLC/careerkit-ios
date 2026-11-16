@@ -1,6 +1,6 @@
 # CareerKit architecture contract
 
-App name on the App Store: **Resume Builder: CareerKit**. Home-screen name: CareerKit.
+App name on the App Store: **Resume & CV Maker: CareerKit**. Home-screen name: CareerKit.
 Bundle id `com.ecomswift.careerkit`, iOS 17+, Swift 5.10, SwiftUI, XcodeGen (`project.yml`), CI on macOS runners.
 
 ## Owner decisions that override anything else in the original brief
@@ -57,6 +57,7 @@ Rendering uses Core Text / NSAttributedString drawn into `UIGraphicsPDFRenderer`
 - Spacing multipliers (default 1): `sectionSpacing` and `entrySpacing` (0.7...1.6), `nameScale` (0.8...1.3).
 - Colours (nil = template, "#RRGGBB"): `textHex`, `sidebarFillHex`, `headerFillHex`.
 - Details (nil = template): `photoShape` (circle/rounded/square), `dateFormat` (`ResumeDateFormat`: "Jan 2024", "01/2024", "2024").
+- Photo (nil = template): `photoSize` (small/medium/large, multiplier 0.8/1/1.22), `photoBorder` (none/ring in accent), `photoSide` (left/right, only where `TemplateSpec.supportsPhotoFlip`). `PhotoPlacement` adds `headerLeft`, `headerCenter`, `sidebarBleed` (old raw values unchanged). `TemplateSpec` adds `pageAccent`, `paperHex`, `railSide` (defaulted vars). Template previews use `PortraitSilhouette.previewResume(for:)`; sample content and user documents never carry the silhouette. `DocumentRenderer.renderInspecting` returns the page-one photo and header text rects for tests.
 
 Where they apply, in one place each:
 - `TemplateSpec.applying(_:)` (`Sources/Templates/TemplateSpec+Overrides.swift`) returns the effective spec for structure, spacing, name size and text/sidebar/header colours. `DocumentRenderer.render` calls it once, so every builder, the preview and the PDF see the same spec. Call it only on a library template (the multipliers are not idempotent). Invalid combinations keep the template value: banner with a full height sidebar, sidebarCard without a sidebar, sideLabel outside single column, sidebar side or fill on non-sidebar layouts, bad hex. A custom sidebar fill clears `sidebarTextHex` so readable text is recomputed; a photo in a replaced sidebar card moves to `headerRight`.

@@ -1,6 +1,6 @@
-# Resume Builder: CareerKit
+# Resume & CV Maker: CareerKit
 
-CareerKit is a native SwiftUI resume and cover letter builder for iPhone and iPad (iOS 17 or later). The App Store name is **Resume Builder: CareerKit**, the home-screen name is **CareerKit**, the bundle id is `com.ecomswift.careerkit`.
+CareerKit is a native SwiftUI resume and cover letter builder for iPhone and iPad (iOS 17 or later). The App Store name is **Resume & CV Maker: CareerKit**, the home-screen name is **CareerKit**, the bundle id is `com.ecomswift.careerkit`.
 
 - 100 percent free. No StoreKit, no purchases, no account.
 - Google AdMob is the only monetisation: adaptive banners on browse screens and one rewarded video that unlocks one document export.

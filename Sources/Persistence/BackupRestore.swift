@@ -213,15 +213,16 @@ struct CKRestoreSummary: Equatable {
     /// "Restored 3 documents, skipped 1." plus a note when copies were kept or items could not be read.
     var message: String {
         var parts: [String] = []
-        parts.append(String(localized: "Restored \(CKDocumentNaming.documentCount(restored)), skipped \(skipped)."))
+        let restoredText: String = CKDocumentNaming.documentCount(restored)
+        let number: Int = skipped
+        parts.append(String(localized: "Restored \(restoredText), skipped \(number)."))
         if keptBoth > 0 {
-            let copies: String = keptBoth == 1
-                ? String(localized: "1 was added as a separate copy marked restored, because this device has newer changes.")
-                : String(localized: "\(keptBoth) were added as separate copies marked restored, because this device has newer changes.")
-            parts.append(copies)
+            let count: Int = keptBoth
+            parts.append(String(localized: "\(count) were added as separate copies marked restored, because this device has newer changes."))
         }
         if unreadable > 0 {
-            parts.append(String(localized: "\(CKDocumentNaming.documentCount(unreadable)) in the file could not be read."))
+            let count: Int = unreadable
+            parts.append(String(localized: "\(count) documents in the file could not be read."))
         }
         return parts.joined(separator: " ")
     }
@@ -230,12 +231,17 @@ struct CKRestoreSummary: Equatable {
 // MARK: - Names
 
 enum CKDocumentNaming {
-    private static let copyWord = " copy"
-    private static let restoredWord = " (restored"
+    /// Localized, so a duplicate is named in the app's language ("CV copy", "CV copia", ...).
+    private static var copyWord: String {
+        " " + String(localized: "copy", comment: "Suffix added to the title of a duplicated document, as in 'Design CV copy'.")
+    }
+    private static var restoredWord: String {
+        " (" + String(localized: "restored", comment: "Marker in parentheses added to the title of a restored copy, as in 'CV (restored)'.")
+    }
 
     /// "1 document", "3 documents".
     static func documentCount(_ count: Int) -> String {
-        return count == 1 ? String(localized: "1 document") : String(localized: "\(count) documents")
+        return String(localized: "\(count) documents")
     }
 
     /// "CV" -> "CV copy"; "CV copy" -> "CV copy 2"; "CV copy 2" -> "CV copy 3" (the first free number).

@@ -158,7 +158,7 @@ enum DocxWriter {
         var x: String = header
         x += "<w:styles xmlns:w=\"" + wordNamespace + "\">"
         x += "<w:docDefaults>"
-        x += "<w:rPrDefault><w:rPr>" + fonts(bodyFont) + "<w:color w:val=\"" + ink + "\"/><w:sz w:val=\"\(body)\"/><w:szCs w:val=\"\(body)\"/><w:lang w:val=\"en-US\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>"
+        x += "<w:rPrDefault><w:rPr>" + fonts(bodyFont) + "<w:color w:val=\"" + ink + "\"/><w:sz w:val=\"\(body)\"/><w:szCs w:val=\"\(body)\"/><w:lang w:val=\"" + ExportStrings.wordLanguageTag(document.language) + "\" w:eastAsia=\"zh-CN\" w:bidi=\"ar-SA\"/></w:rPr></w:rPrDefault>"
         x += "<w:pPrDefault><w:pPr><w:spacing w:after=\"80\" w:line=\"\(line)\" w:lineRule=\"auto\"/></w:pPr></w:pPrDefault>"
         x += "</w:docDefaults>"
 

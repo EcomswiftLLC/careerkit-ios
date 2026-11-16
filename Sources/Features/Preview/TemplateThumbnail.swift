@@ -165,7 +165,7 @@ struct TemplateThumbnail: View {
 
     var body: some View {
         PDFThumbnailView(
-            cacheKey: "resume.\(template.id)",
+            cacheKey: "resume.v2.\(template.id)",
             width: size,
             accessibilityName: "\(template.name) template preview with sample content",
             produce: Self.work(for: template)
@@ -174,7 +174,8 @@ struct TemplateThumbnail: View {
 
     private static func work(for template: TemplateSpec) -> @Sendable () -> RenderedDocument {
         return {
-            let sample = SampleContent.resume(for: template)
+            // Photo templates show a neutral silhouette in the photo area. It only exists in this sample.
+            let sample = PortraitSilhouette.previewResume(for: template)
             return DocumentRenderer.render(sample, template: template)
         }
     }

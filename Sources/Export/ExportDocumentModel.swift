@@ -103,6 +103,8 @@ struct ExportDocument {
     var lineSpacing: Double
     var uppercaseHeadings: Bool
     var blocks: [ExportBlock]
+    /// Language of the fixed words the exporter adds ("Present", file language tags), such as "en" or "zh-Hans".
+    var language: String = ExportStrings.currentLanguage
 
     /// True when most of the visible text is right to left. Used for the document direction of HTML.
     var isMostlyRightToLeft: Bool {
@@ -271,12 +273,13 @@ enum ExportText {
 
 /// Turns a resume or cover letter into an `ExportDocument`. Pure, safe on any thread.
 enum ExportDocumentBuilder {
-    static func build(_ source: ExportSource) -> ExportDocument {
+    /// `language` sets the fixed words and date formats of the file; it defaults to the app language.
+    static func build(_ source: ExportSource, language: String = ExportStrings.currentLanguage) -> ExportDocument {
         switch source {
         case .resume(let resume, let template):
-            return build(resume: resume, template: template)
+            return build(resume: resume, template: template, language: language)
         case .coverLetter(let letter, let template):
-            return build(letter: letter, template: template)
+            return build(letter: letter, template: template, language: language)
         }
     }
 
@@ -303,7 +306,7 @@ enum ExportDocumentBuilder {
 
     // MARK: Resume
 
-    static func build(resume: Resume, template: TemplateSpec) -> ExportDocument {
+    static func build(resume: Resume, template: TemplateSpec, language: String = ExportStrings.currentLanguage) -> ExportDocument {
         let effective: TemplateSpec = template.applying(resume.style)
         let o: StyleOverrides = resume.style
         let scale: Double = clamp(o.fontScale, 0.7, 1.4)
@@ -331,7 +334,7 @@ enum ExportDocumentBuilder {
                 blocks.append(ExportBlock(.paragraph, text: paragraph))
             }
             for entry in RenderContent.renderableEntries(section) {
-                blocks.append(contentsOf: entryBlocks(entry, dateFormat: dateFormat))
+                blocks.append(contentsOf: entryBlocks(entry, dateFormat: dateFormat, language: language))
             }
             for group in RenderContent.renderableSkillGroups(section) {
                 var runs: [ExportRun] = []
@@ -362,16 +365,18 @@ enum ExportDocumentBuilder {
                               nameSize: clamp(effective.nameSize * scale, 16, 36),
                               lineSpacing: clamp(leading, 1.0, 1.5),
                               uppercaseHeadings: uppercase,
-                              blocks: blocks)
+                              blocks: blocks,
+                              language: language)
     }
 
-    static func entryBlocks(_ entry: ResumeEntry, dateFormat: ResumeDateFormat?) -> [ExportBlock] {
+    static func entryBlocks(_ entry: ResumeEntry, dateFormat: ResumeDateFormat?,
+                            language: String = ExportStrings.currentLanguage) -> [ExportBlock] {
         var out: [ExportBlock] = []
         let heading: String = RenderContent.trimmed(entry.heading)
         let sub: String = RenderContent.trimmed(entry.subheading)
         let location: String = RenderContent.trimmed(entry.location)
         let extra: String = RenderContent.trimmed(entry.extra)
-        let dates: String = entry.dateRange(format: dateFormat, locale: Locale.current)
+        let dates: String = dateRange(entry, format: dateFormat, language: language)
         let primary: String = heading.isEmpty ? sub : heading
         let secondary: String = heading.isEmpty ? "" : sub
 
@@ -398,6 +403,22 @@ enum ExportDocumentBuilder {
         return out
     }
 
+    /// The entry's dates as `ResumeEntry.dateRange(format:locale:)` writes them, with the word for a current
+    /// role ("Present") and the month names in the export language.
+    static func dateRange(_ entry: ResumeEntry, format: ResumeDateFormat?, language: String) -> String {
+        let locale: Locale = ExportStrings.locale(for: language)
+        let english: String = entry.dateRange(format: format, locale: locale)
+        guard entry.isCurrent else { return english }
+        let present: String = ExportStrings.present(language)
+        guard present != "Present" else { return english }
+        if english == "Present" { return present }
+        let suffix: String = " \u{2013} Present"
+        if english.hasSuffix(suffix) {
+            return String(english.dropLast(suffix.count)) + " \u{2013} " + present
+        }
+        return english
+    }
+
     /// Contact items joined by " | ", each one a link when it has a safe URL.
     static func contactRuns(_ items: [RenderContactItem]) -> [ExportRun] {
         var runs: [ExportRun] = []
@@ -420,7 +441,7 @@ enum ExportDocumentBuilder {
 
     // MARK: Cover letter
 
-    static func build(letter: CoverLetter, template: CoverLetterTemplateSpec) -> ExportDocument {
+    static func build(letter: CoverLetter, template: CoverLetterTemplateSpec, language: String = ExportStrings.currentLanguage) -> ExportDocument {
         let o: StyleOverrides = letter.style
         let scale: Double = clamp(o.fontScale, 0.7, 1.4)
         let pageWidth: Double = Double(letter.pageSize.size.width)
@@ -444,7 +465,7 @@ enum ExportDocumentBuilder {
         if !blocks.isEmpty { blocks.append(ExportBlock(.gap, runs: [])) }
 
         let formatter = DateFormatter()
-        formatter.locale = Locale.current
+        formatter.locale = ExportStrings.locale(for: language)
         formatter.dateStyle = .long
         formatter.timeStyle = .none
         let dateText: String = formatter.string(from: letter.date)
@@ -492,7 +513,8 @@ enum ExportDocumentBuilder {
                               nameSize: clamp(template.nameSize * scale * nameFactor, 16, 36),
                               lineSpacing: clamp(leading, 1.0, 1.5),
                               uppercaseHeadings: false,
-                              blocks: blocks)
+                              blocks: blocks,
+                              language: language)
     }
 }
 

@@ -67,6 +67,8 @@ struct CKATSBadge: View {
                 .font(.system(size: compact ? 11 : 13, weight: .semibold))
             Text("ATS friendly")
                 .font(compact ? CK.Font.overline.weight(.semibold) : CK.Font.caption.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .foregroundStyle(CK.Palette.forest)
         .padding(.horizontal, compact ? 7 : 10)
@@ -74,6 +76,30 @@ struct CKATSBadge: View {
         .background(Capsule(style: .continuous).fill(CK.Palette.forest.opacity(0.10)))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("ATS friendly layout"))
+    }
+}
+
+// MARK: - Photo badge
+
+/// Marks a template that has a photo area.
+struct CKPhotoBadge: View {
+    var compact = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "person.crop.circle")
+                .font(.system(size: compact ? 11 : 13, weight: .semibold))
+            Text("Photo")
+                .font(compact ? CK.Font.overline.weight(.semibold) : CK.Font.caption.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .foregroundStyle(CK.Palette.ink)
+        .padding(.horizontal, compact ? 7 : 10)
+        .padding(.vertical, compact ? 3 : 5)
+        .background(Capsule(style: .continuous).fill(CK.Palette.stone))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Has a photo area"))
     }
 }
 
@@ -88,7 +114,8 @@ struct CKTemplateCard: View {
     let action: () -> Void
 
     private var pagesLabel: String {
-        template.typicalPages <= 1 ? String(localized: "1 page") : String(localized: "\(template.typicalPages) pages")
+        let pages: Int = max(1, template.typicalPages)
+        return String(localized: "\(pages) pages")
     }
 
     var body: some View {
@@ -117,6 +144,7 @@ struct CKTemplateCard: View {
                         .ckHeadlineFont(16)
                         .foregroundStyle(CK.Palette.ink)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                     if showsDetails {
                         Text(template.tagline)
                             .font(CK.Font.caption)
@@ -125,9 +153,12 @@ struct CKTemplateCard: View {
                             .multilineTextAlignment(.leading)
                         HStack(spacing: 6) {
                             if template.isATSFriendly { CKATSBadge(compact: true) }
+                            if template.supportsPhoto { CKPhotoBadge(compact: true) }
                             Text(pagesLabel)
                                 .font(CK.Font.caption)
                                 .foregroundStyle(CK.Palette.graphite)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                         .padding(.top, 2)
                     }
@@ -146,6 +177,7 @@ struct CKTemplateCard: View {
     private var accessibilityText: String {
         var parts = [template.name, template.tagline, pagesLabel]
         if template.isATSFriendly { parts.append(String(localized: "ATS friendly")) }
+        if template.supportsPhoto { parts.append(String(localized: "has a photo area")) }
         return parts.joined(separator: ", ")
     }
 }

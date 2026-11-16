@@ -23,7 +23,8 @@ struct CoverLetterTemplateGrid: View {
                             Text(template.name)
                                 .ckHeadlineFont(15)
                                 .foregroundStyle(CK.Palette.ink)
-                                .lineLimit(1)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
                             if isSelected {
                                 Image(systemName: "checkmark.circle.fill")
                                     .font(.system(size: 13))
@@ -44,7 +45,7 @@ struct CoverLetterTemplateGrid: View {
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("\(template.name). \(template.tagline)")
-                .accessibilityValue(isSelected ? "Selected" : "")
+                .accessibilityValue(Text(isSelected ? String(localized: "Selected") : ""))
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
             }
         }

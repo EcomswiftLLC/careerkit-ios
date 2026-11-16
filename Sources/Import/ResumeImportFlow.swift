@@ -284,8 +284,8 @@ struct ResumeImportReviewView: View {
 
     private var includedSummary: String {
         let count: Int = draft.sections.filter { $0.isIncluded }.count
-        if count == 1 { return String(localized: "1 section will be added.") }
-        return String(localized: "\(count) sections will be added.")
+        return String(localized: "\(count) sections will be added.",
+                      comment: "Import review. Plural by number of sections, can be 0.")
     }
 
     var body: some View {

@@ -31,7 +31,8 @@ enum ResumeImportError: Error, Equatable {
         case .tooLarge:
             return String(localized: "CareerKit imports PDFs up to 10 MB. Export a smaller copy, or paste the text instead.")
         case .tooManyPages(let pages):
-            return String(localized: "This PDF has \(pages) pages. CareerKit imports resumes of up to 10 pages. Paste the text of the pages you need instead.")
+            return String(localized: "This PDF has \(pages) pages. CareerKit imports resumes of up to 10 pages. Paste the text of the pages you need instead.",
+                          comment: "Import error. The number is always more than 10.")
         case .locked:
             return String(localized: "Remove the password in the app that made the PDF, then import it again. You can also paste the text instead.")
         case .unreadable:
@@ -75,14 +76,16 @@ struct ImportedSection: Identifiable, Equatable {
             if line.isEmpty { line = ResumeImporter.abbreviate(entry.detail, to: 120) }
             if !entry.bullets.isEmpty {
                 let count: Int = entry.bullets.count
-                let noun: String = count == 1 ? String(localized: "1 bullet") : String(localized: "\(count) bullets")
+                let noun: String = String(localized: "\(count) bullets",
+                                          comment: "Import review: how many bullet points an entry has. Plural.")
                 line = line.isEmpty ? noun : "\(line) (\(noun))"
             }
             if !line.isEmpty { out.append(line) }
         }
         if s.entries.count > 4 {
-            let more: Int = s.entries.count - 4
-            out.append(String(localized: "and \(more) more"))
+            let count: Int = s.entries.count - 4
+            out.append(String(localized: "and \(count) more",
+                              comment: "Import review: more entries than the preview shows."))
         }
         for group in s.skillGroups.prefix(3) {
             let items: String = group.items.prefix(8).joined(separator: ", ")
@@ -112,7 +115,9 @@ struct ResumeImportDraft: Equatable {
 
     var suggestedTitle: String {
         let name: String = personal.fullName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return name.isEmpty ? String(localized: "Imported resume") : String(localized: "\(name) Resume")
+        return name.isEmpty
+            ? String(localized: "Imported resume")
+            : String(localized: "\(name) Resume", comment: "Title of an imported resume. The placeholder is the person's name.")
     }
 
     /// Builds the resume. Required sections the source did not have are added empty, after the imported ones,
@@ -415,19 +420,77 @@ enum ResumeImporter {
                        "membresias", "mitgliedschaften"]
     ]
 
+    /// More headings in Spanish, French, German and Chinese. Kept apart from `headingNames` to keep both readable.
+    private static let moreHeadingNames: [SectionKind: [String]] = [
+        .summary: ["perfil personal", "objetivo profesional", "extracto", "presentacion", "resumen de perfil",
+                   "profil professionnel", "presentation", "objectif professionnel", "synthese", "en bref",
+                   "personliches profil", "profil und ziele", "kurzvorstellung", "berufliches profil", "uber mich",
+                   "自我评价", "个人简介", "个人总结", "个人优势", "职业目标", "求职意向", "个人评价", "自我介绍",
+                   "个人概述", "职业概述", "自己pr", "職務要約"],
+        .experience: ["trayectoria profesional", "experiencia laboral relevante", "historial profesional",
+                      "experiencia professional", "parcours", "experience", "experiences professionnelles",
+                      "emplois", "berufliche laufbahn", "praxiserfahrung", "berufspraxis", "beruflicher hintergrund",
+                      "工作经历", "工作经验", "职业经历", "工作履历", "工作背景", "从业经历", "職務経歴", "職歴"],
+        .education: ["educacion y formacion", "formacion academica y profesional", "titulacion", "estudios realizados",
+                     "formation academique", "diplomes et formations", "parcours academique", "cursus",
+                     "schulbildung", "akademische ausbildung", "studium und ausbildung", "ausbildung und studium",
+                     "hochschulbildung", "教育背景", "教育经历", "学历", "教育", "学习经历", "学历背景", "学歴"],
+        .skills: ["habilidades tecnicas", "conocimientos informaticos", "competencias profesionales",
+                  "habilidades y competencias", "herramientas", "competences cles", "competences professionnelles",
+                  "savoir faire", "outils", "it kenntnisse", "edv kenntnisse", "fachkenntnisse", "fachliche kompetenzen",
+                  "qualifikationen", "kenntnisse und fahigkeiten", "技能", "专业技能", "技能特长", "个人技能",
+                  "技术能力", "技能专长", "专业能力", "技术栈", "スキル", "保有スキル"],
+        .projects: ["proyectos destacados", "projets personnels", "projets professionnels", "projets realises",
+                    "ausgewahlte projekte", "projekterfahrung", "项目经历", "项目经验", "项目", "主要项目",
+                    "プロジェクト"],
+        .certifications: ["certificaciones y licencias", "certificats", "certifications professionnelles",
+                          "zertifikate und lizenzen", "zertifizierungen und lizenzen", "证书", "资格证书", "获得证书",
+                          "证书与资质", "资质证书", "认证", "資格", "免許 資格"],
+        .languages: ["idiomas y niveles", "competences linguistiques", "langues etrangeres", "fremdsprachen",
+                     "sprachkenntnisse und niveau", "语言能力", "语言", "外语能力", "语言技能", "語学"],
+        .awards: ["logros", "premios y reconocimientos", "honores", "realisations", "prix and distinctions",
+                  "ehrungen", "erfolge", "获奖情况", "荣誉奖项", "获奖经历", "荣誉", "奖项", "所获荣誉", "受賞歴"],
+        .volunteer: ["voluntariado y actividades", "engagement associatif", "benevolat et engagement",
+                     "soziales engagement", "志愿者经历", "志愿服务", "社会实践", "ボランティア"],
+        .references: ["referencias laborales", "referees", "referenzen und empfehlungen", "推荐人", "证明人"],
+        .publications: ["articulos", "veroffentlichungen", "发表论文", "论文发表", "出版物", "論文"],
+        .courses: ["formacion complementaria", "cursos y seminarios", "formation complementaire",
+                   "weiterbildungen", "kurse", "seminare", "培训经历", "培训", "进修经历", "研修"],
+        .interests: ["aficiones", "intereses personales", "centres d interet", "passions", "freizeit",
+                     "hobbys and interessen", "freizeitaktivitaten", "兴趣爱好", "爱好", "个人爱好", "興味", "趣味"],
+        .internships: ["practicas profesionales", "stage", "experience de stage", "praktikum", "实习经历",
+                       "实习经验", "实习", "インターン"],
+        .memberships: ["asociaciones", "associations", "verbande", "mitgliedschaften in verbanden", "社团经历",
+                       "社团活动", "学生工作", "所属団体"]
+    ]
+
     private static let contactNames: [String] = [
         "contact", "contact details", "contact information", "contact info", "personal details", "personal information",
         "personal info", "contacto", "datos de contacto", "datos personales", "contato", "dados pessoais",
-        "kontakt", "kontaktdaten", "personliche daten", "persoenliche daten", "coordonnees", "informations personnelles"
+        "kontakt", "kontaktdaten", "personliche daten", "persoenliche daten", "coordonnees", "informations personnelles",
+        "informacion de contacto", "informacion personal", "etat civil", "persoenliche angaben", "personliche angaben",
+        "联系方式", "个人信息", "基本信息", "联系信息", "个人资料", "連絡先", "基本情報"
     ]
+
+    /// The kind of section a heading names, in English, Spanish, Portuguese, French, German, Chinese or Japanese.
+    /// nil for contact headings and for anything unknown.
+    static func sectionKind(forHeading text: String) -> SectionKind? {
+        let key: String = headingKey(text)
+        guard !key.isEmpty, case .section(let kind)? = headingTable[key] else { return nil }
+        return kind
+    }
 
     private static let headingTable: [String: Heading] = {
         var table: [String: Heading] = [:]
-        for (kind, names) in headingNames {
-            for name in names {
-                let key: String = headingKey(name)
-                table[key] = .section(kind)
-                table[key.replacingOccurrences(of: " ", with: "")] = .section(kind)
+        for list in [headingNames, moreHeadingNames] {
+            for (kind, names) in list {
+                for name in names {
+                    let key: String = headingKey(name)
+                    // The first list wins when a name appears twice.
+                    if table[key] == nil { table[key] = .section(kind) }
+                    let compact: String = key.replacingOccurrences(of: " ", with: "")
+                    if table[compact] == nil { table[compact] = .section(kind) }
+                }
             }
         }
         for name in contactNames {
@@ -482,11 +545,21 @@ enum ResumeImporter {
             if !rest.isEmpty && !headingAllowsInlineContent(found) { return nil }
             return FoundHeading(heading: found, title: cleanHeadingTitle(head), remainder: rest)
         }
-        // Letter-spaced headings come out of some PDFs as "S K I L L S".
-        if words.count >= 4 && words.allSatisfy({ $0.count == 1 }) {
+        // Letter-spaced headings come out of some PDFs as "S K I L L S" or "工 作 经 历".
+        if words.count >= 2 && words.allSatisfy({ $0.count == 1 }) && (words.count >= 4 || CJKText.containsCJK(key)) {
             let compact: String = words.joined()
             if let found = headingTable[compact] {
                 return FoundHeading(heading: found, title: cleanHeadingTitle(compact), remainder: rest)
+            }
+        }
+        // Bilingual headings such as "工作经历 Work Experience": either half is enough.
+        if CJKText.containsCJK(key) && rest.isEmpty && words.count <= 6 {
+            let cjkPart: String = words.filter { CJKText.containsCJK(String($0)) }.joined()
+            let latinPart: String = words.filter { !CJKText.containsCJK(String($0)) }.joined(separator: " ")
+            for candidate in [cjkPart, latinPart] where !candidate.isEmpty {
+                if let found = headingTable[candidate] {
+                    return FoundHeading(heading: found, title: cleanHeadingTitle(head), remainder: rest)
+                }
             }
         }
         return nil
@@ -504,8 +577,20 @@ enum ResumeImporter {
     /// Lines that name the document rather than the person.
     private static let documentTitles: Set<String> = [
         "resume", "cv", "curriculum vitae", "curriculum", "resume cv", "lebenslauf", "curriculo", "hoja de vida",
-        "my resume", "c v"
+        "my resume", "c v", "mi curriculum", "mon cv", "tabellarischer lebenslauf", "简历", "个人简历", "求职简历",
+        "履历", "简 历", "履歴書", "職務経歴書"
     ]
+
+    /// "姓名：张伟", "Name: Jane Doe", "Nombre: Ana López": the value after a name label, or nil.
+    static func labelledName(_ line: String) -> String? {
+        guard let colon = line.firstIndex(of: ":") else { return nil }
+        let label: String = headingKey(String(line[..<colon]))
+        let labels: Set<String> = ["name", "full name", "nombre", "nombre completo", "nom", "nom complet",
+                                   "vorname and nachname", "姓名", "名字", "氏名"]
+        guard labels.contains(label) else { return nil }
+        let value: String = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
+        return value.isEmpty ? nil : value
+    }
 
     /// "WORK EXPERIENCE" becomes "Work Experience"; mixed case is kept as written.
     private static func cleanHeadingTitle(_ text: String) -> String {
@@ -541,6 +626,20 @@ enum ResumeImporter {
             if !nameFound && documentTitles.contains(headingKey(line)) {
                 result.leftover.append(line)
                 continue
+            }
+
+            if !nameFound, let labelled = labelledName(line) {
+                let parts: [String] = splitParts(labelled)
+                if let first = parts.first, looksLikeName(first) {
+                    personal.fullName = normaliseName(first)
+                    nameFound = true
+                    let rest: String = parts.dropFirst().joined(separator: " | ")
+                    if !rest.isEmpty {
+                        let left: String = extractContacts(from: rest, into: &personal, allowLooseLocation: true)
+                        if hasText(left) { result.leftover.append(left) }
+                    }
+                    continue
+                }
             }
 
             if !nameFound {
@@ -609,7 +708,23 @@ enum ResumeImporter {
         guard ratio >= 0.75 else { return false }
         if heading(for: value) != nil { return false }
         if value.hasSuffix(".") && words > 3 { return false }
+        if CJKText.containsCJK(value) { return looksLikeCJKName(value) }
         return true
+    }
+
+    /// Chinese and Japanese names: two to four characters with no spaces ("张伟", "欧阳娜娜"), or a
+    /// Japanese family and given name with one space ("山田 太郎"). A middle dot joins transliterated names.
+    static func looksLikeCJKName(_ text: String) -> Bool {
+        let value: String = text.trimmingCharacters(in: .whitespaces)
+        let parts: [Substring] = value.split(separator: " ")
+        guard parts.count <= 2 else { return false }
+        let compact: String = parts.joined()
+        guard compact.unicodeScalars.allSatisfy({ CJKText.isCJK($0) || $0 == "\u{00B7}" || $0 == "\u{30FB}" }) else {
+            return false
+        }
+        let count: Int = compact.filter { $0 != "\u{00B7}" && $0 != "\u{30FB}" }.count
+        if compact.contains("\u{00B7}") || compact.contains("\u{30FB}") { return (3...10).contains(count) }
+        return (2...4).contains(count)
     }
 
     private static func looksLikeUppercaseName(_ text: String) -> Bool {
@@ -662,7 +777,15 @@ enum ResumeImporter {
     private static let contactLabels: [String] = [
         "e-mail", "email", "mail", "phone", "telephone", "tel", "mobile", "cell", "linkedin", "website", "web",
         "portfolio", "github", "address", "location", "telefono", "movil", "correo", "telefone", "celular",
-        "telefon", "handy", "adresse", "courriel", "portable"
+        "telefon", "handy", "adresse", "courriel", "portable",
+        "direccion", "ubicacion", "correo electronico", "teléfono", "móvil", "dirección", "ubicación", "téléphone",
+        "mobil", "wohnort", "anschrift", "电话", "手机", "邮箱", "电子邮箱", "电子邮件", "地址", "现居", "所在地",
+        "现居地", "居住地", "联系电话", "微信", "電話", "メール", "住所"
+    ]
+
+    private static let locationLabels: Set<String> = [
+        "location", "address", "adresse", "direccion", "dirección", "ubicacion", "ubicación", "wohnort", "anschrift",
+        "地址", "现居", "所在地", "现居地", "居住地", "住所"
     ]
 
     /// Takes email, phone, links and (when it is clear) a location out of `line`, fills empty fields of
@@ -731,7 +854,7 @@ enum ResumeImporter {
                 }
                 if lower.hasPrefix(label + ":") {
                     value = String(value.dropFirst(label.count + 1)).trimmingCharacters(in: .whitespaces)
-                    if (label == "location" || label == "address" || label == "adresse") && personal.city.isEmpty && !value.isEmpty {
+                    if locationLabels.contains(label) && personal.city.isEmpty && !value.isEmpty {
                         assignLocation(value, to: &personal)
                         drop = true
                     }
@@ -877,7 +1000,8 @@ enum ResumeImporter {
     static func skillGroups(_ lines: [String]) -> [SkillGroup] {
         var named: [SkillGroup] = []
         var loose = SkillGroup()
-        let separators: Set<Character> = [",", ";", "|", "\u{2022}", "\u{00B7}", "\u{25AA}", "\u{25CF}"]
+        // "、" is the Chinese and Japanese list comma.
+        let separators: Set<Character> = [",", ";", "|", "\u{2022}", "\u{00B7}", "\u{25AA}", "\u{25CF}", "\u{3001}"]
         for raw in lines where !raw.isEmpty {
             let line: String = stripBullet(raw)
             var name: String = ""
@@ -1107,20 +1231,32 @@ enum ImportDateParser {
 
     private static let presentWords: [String] = [
         "present", "current", "now", "today", "ongoing", "actual", "actualidad", "actualmente", "presente", "atual",
-        "atualmente", "heute", "jetzt", "aujourd'hui", "aujourd\u{2019}hui", "en cours", "présent", "present day"
+        "atualmente", "heute", "jetzt", "aujourd'hui", "aujourd\u{2019}hui", "en cours", "présent", "present day",
+        "la actualidad", "hoy", "la fecha", "maintenant", "ce jour", "derzeit", "laufend", "aktuell", "gegenwart",
+        "至今", "今", "现在", "目前", "当前", "现今", "現在"
     ]
 
     /// Month spellings as typed, with accents, longest first so "mars" wins over "mar".
     private static let monthPattern: String = {
         var names: [String] = Array(months.keys)
-        names.append(contentsOf: ["março", "märz", "févr", "février", "août", "décembre"])
+        names.append(contentsOf: ["março", "märz", "févr", "février", "août", "décembre", "déc", "fév"])
         names.sort { $0.count > $1.count }
         return names.map { NSRegularExpression.escapedPattern(for: $0) }.joined(separator: "|")
     }()
 
+    /// "Jan 2020", "enero de 2020", "03/2018", "2020年1月", "2020.01", "2020/01", "2020年" or "2014".
     private static var datePattern: String {
-        return "(?:(?:\(monthPattern))\\.?,?\\s+(?:19|20)\\d{2}|(?:0?[1-9]|1[0-2])\\s*[/.\\-]\\s*(?:19|20)\\d{2}|(?:19|20)\\d{2})"
+        return "(?:(?:\(monthPattern))\\.?,?\\s+(?:de\\s+)?(?:19|20)\\d{2}"
+            + "|(?:0?[1-9]|1[0-2])\\s*[/.\\-]\\s*(?:19|20)\\d{2}"
+            + "|(?:19|20)\\d{2}\\s*\u{5E74}\\s*(?:0?[1-9]|1[0-2])\\s*\u{6708}?"
+            + "|(?:19|20)\\d{2}\\s*[./]\\s*(?:0[1-9]|1[0-2])(?!\\d)"
+            + "|(?:19|20)\\d{2}\\s*\u{5E74}"
+            + "|(?:19|20)\\d{2})"
     }
+
+    /// Letters next to a date that mean it is part of a word. Chinese and Japanese characters are excluded,
+    /// because those languages write dates directly next to other words ("2020年1月至今负责").
+    private static let wordLetter: String = "[\\p{Latin}\\p{Greek}\\p{Cyrillic}\\p{Arabic}\\p{Hebrew}\\d]"
 
     private static var presentPattern: String {
         return presentWords.sorted { $0.count > $1.count }
@@ -1129,13 +1265,19 @@ enum ImportDateParser {
     }
 
     private static let rangeRegex: NSRegularExpression = ResumeImporter.makeRegex(
-        "(?<![\\p{L}\\d])(\(datePattern))\\s*(?:-|\u{2013}|\u{2014}|\u{2212}|~|to|until|till|bis|hasta|ate|até|au|à|a)\\s*(\(datePattern)|\(presentPattern))(?![\\p{L}\\d])"
+        "(?<!\(wordLetter))(\(datePattern))\\s*(?:-|\u{2013}|\u{2014}|\u{2212}|~|\u{FF5E}|\u{81F3}|\u{5230}|to|until|till|bis|hasta|ate|até|au|à|a)\\s*(\(datePattern)|\(presentPattern))(?!\(wordLetter))"
     )
     private static let singleRegex: NSRegularExpression = ResumeImporter.makeRegex(
-        "(?<![\\p{L}\\d/.])(\(datePattern))(?![\\p{L}\\d/])"
+        "(?<![\\p{Latin}\\p{Greek}\\p{Cyrillic}\\p{Arabic}\\p{Hebrew}\\d/.])(\(datePattern))(?![\\p{Latin}\\p{Greek}\\p{Cyrillic}\\p{Arabic}\\p{Hebrew}\\d/])"
+    )
+    /// "seit 2019", "depuis mars 2020", "desde 2018", "since 2021": a role that is still current.
+    private static let sinceRegex: NSRegularExpression = ResumeImporter.makeRegex(
+        "(?<!\(wordLetter))(?:since|seit|depuis|desde)\\s+(\(datePattern))(?!\(wordLetter))"
     )
     private static let yearRegex: NSRegularExpression = ResumeImporter.makeRegex("(?:19|20)\\d{2}")
     private static let numericRegex: NSRegularExpression = ResumeImporter.makeRegex("^(\\d{1,2})\\s*[/.\\-]\\s*((?:19|20)\\d{2})$")
+    /// Year first: "2020年1月", "2020.01", "2020/1", "2020-01".
+    private static let yearFirstRegex: NSRegularExpression = ResumeImporter.makeRegex("^((?:19|20)\\d{2})\\s*[./\\-\u{5E74}]\\s*(\\d{1,2})\\s*\u{6708}?$")
 
     /// The first date range in `line`, or a single date when `allowSingle` is true.
     static func find(in line: String, allowSingle: Bool) -> ImportFoundDate? {
@@ -1152,6 +1294,13 @@ enum ImportDateParser {
                                    remainder: remainder(of: ns, removing: match.range))
         }
         guard allowSingle else { return nil }
+        if let match = sinceRegex.firstMatch(in: line, options: [], range: full), match.numberOfRanges >= 2 {
+            let text: String = ns.substring(with: match.range(at: 1))
+            if let date = parseDate(text) {
+                return ImportFoundDate(start: date, end: nil, isCurrent: true,
+                                       remainder: remainder(of: ns, removing: match.range))
+            }
+        }
         if let match = singleRegex.firstMatch(in: line, options: [], range: full) {
             let text: String = ns.substring(with: match.range)
             guard let date = parseDate(text) else { return nil }
@@ -1178,15 +1327,25 @@ enum ImportDateParser {
             guard (1950...2100).contains(year) else { return nil }
             return MonthYear(year: year, month: (1...12).contains(month) ? month : nil)
         }
+        if let yearFirst = yearFirstRegex.firstMatch(in: trimmed, options: [], range: full), yearFirst.numberOfRanges >= 3 {
+            let year: Int = Int(ns.substring(with: yearFirst.range(at: 1))) ?? 0
+            let month: Int = Int(ns.substring(with: yearFirst.range(at: 2))) ?? 0
+            guard (1950...2100).contains(year) else { return nil }
+            return MonthYear(year: year, month: (1...12).contains(month) ? month : nil)
+        }
         guard let yearMatch = yearRegex.firstMatch(in: trimmed, options: [], range: full) else { return nil }
         let year: Int = Int(ns.substring(with: yearMatch.range)) ?? 0
         guard (1950...2100).contains(year) else { return nil }
         var month: Int? = nil
         let before: String = ns.substring(to: yearMatch.range.location)
-        let word: String = before
+        var word: String = before
             .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
             .lowercased()
             .trimmingCharacters(in: CharacterSet(charactersIn: " .,"))
+        // "enero de 2020"
+        if word.hasSuffix(" de") {
+            word = String(word.dropLast(3)).trimmingCharacters(in: CharacterSet(charactersIn: " .,"))
+        }
         if !word.isEmpty { month = months[word] }
         return MonthYear(year: year, month: month)
     }

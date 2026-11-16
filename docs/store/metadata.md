@@ -1,30 +1,30 @@
-# App Store metadata: Resume Builder: CareerKit
+# App Store metadata: Resume & CV Maker: CareerKit
 
 Language: English (U.S.). Bundle id `com.ecomswift.careerkit`. Price: Free. No in-app purchases.
 
 Character and byte limits are checked by `python design/check_store_metadata.py`. The script reads the first fenced block under each heading below, so keep one fenced block per field and re-run it after any edit.
 
 ## App Name
+Limit 30 characters. Current: 28.
+
+```
+Resume & CV Maker: CareerKit
+```
+
+If App Store Connect says the name is taken, fall back in this order (all within 30): `Resume Builder & CV: CareerKit` (30), `CV & Resume Maker: CareerKit` (28), `Resume Builder: CareerKit` (25). Do not put Word, Google, Docs or any other company's trademark in the name, subtitle or keywords.
+
+## Subtitle
 Limit 30 characters. Current: 25.
 
 ```
-Resume Builder: CareerKit
-```
-
-If App Store Connect says the name is taken, fall back in this order (all within 30): `CareerKit Resume Builder` (24), `Resume Builder by CareerKit` (27), `CareerKit: Resume and CV` (24).
-
-## Subtitle
-Limit 30 characters. Current: 27.
-
-```
-CV Maker & Job Applications
+Templates & Cover Letters
 ```
 
 ## Keywords
 Limit 100 bytes. No spaces after commas. Words already in the name or subtitle (resume, builder, careerkit, cv, maker, job, applications) are left out because Apple indexes them already. No competitor or third-party trademarks. Apple combines single words into phrases, so "cover letter" and "curriculum vitae" are stored as two-word phrases the user can still search either way.
 
 ```
-cover letter,template,pdf,word,docx,ats,keywords,curriculum vitae,student,fresher,import
+builder,pdf,docx,ats,keywords,curriculum vitae,student,fresher,import,job,application,interview
 ```
 
 ## Promotional Text
@@ -38,7 +38,7 @@ Pick from 30 templates, import your old resume, match it to a job ad, then expor
 Limit 4000 characters. Plain text only (App Store Connect does not render formatting).
 
 ```
-Resume Builder: CareerKit helps you make a clear, well-formatted resume and cover letter on your iPhone or iPad. Choose a template, type in your details, watch the page update, and export to PDF or Word when you are ready.
+Resume & CV Maker: CareerKit helps you make a clear, well-formatted resume and cover letter on your iPhone or iPad. Choose a template, type in your details, watch the page update, and export to PDF or Word when you are ready.
 
 WHAT IS INSIDE
 

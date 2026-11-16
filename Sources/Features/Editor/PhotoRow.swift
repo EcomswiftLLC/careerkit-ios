@@ -1,33 +1,66 @@
 import SwiftUI
 import PhotosUI
 import UIKit
+import UniformTypeIdentifiers
 
-/// Optional profile photo. The picked image is downscaled to at most 800 px (ImageIO thumbnail, so very large
-/// HEIC and ProRAW files are safe) and stored as JPEG on the resume. Removing it can be undone.
+/// An image waiting in the crop sheet.
+struct PhotoCropSource: Identifiable {
+    let id = UUID()
+    let image: UIImage
+}
+
+/// Optional profile photo. A photo picked from Photos or Files is decoded at a working size (ImageIO thumbnail,
+/// so very large HEIC and ProRAW files are safe), cropped to a square in `PhotoCropSheet`, then stored as a JPEG
+/// of at most 800 px on the resume. Removing it can be undone.
 struct PhotoRow: View {
     @Binding var photoData: Data?
     let showsNote: Bool
+    /// Shape the crop sheet previews first.
+    var previewShape: PhotoShape = .circle
 
     @State private var item: PhotosPickerItem?
+    @State private var showPhotosPicker = false
+    @State private var showFileImporter = false
+    @State private var cropSource: PhotoCropSource?
     @State private var thumbnail: UIImage?
     @State private var isLoading = false
     @State private var errorText: String?
     /// The photo that was just removed, kept so "Undo" can put it back.
     @State private var removedPhoto: Data?
 
+    /// Working size for cropping. The stored photo is reduced to `PhotoProcessor.maxDimension` after the crop.
+    private static let cropWorkingSize: CGFloat = 1600
+
+    private static var photoTemplateCount: Int {
+        TemplateLibrary.all.filter { $0.supportsPhoto }.count
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
             HStack(spacing: CK.Space.m) {
                 avatar
                 VStack(alignment: .leading, spacing: 2) {
-                    PhotosPicker(selection: $item, matching: .images, photoLibrary: .shared()) {
+                    Menu {
+                        Button {
+                            showPhotosPicker = true
+                        } label: {
+                            Label("Choose from Photos", systemImage: "photo.on.rectangle")
+                        }
+                        Button {
+                            showFileImporter = true
+                        } label: {
+                            Label("Choose from Files", systemImage: "folder")
+                        }
+                    } label: {
                         Text(photoData == nil ? "Add photo" : "Change photo")
                             .font(CK.Font.label)
                             .foregroundStyle(CK.Palette.forest)
                             .frame(minHeight: 44, alignment: .leading)
                     }
                     .disabled(isLoading)
+                    .accessibilityHint("Choose a photo from Photos or Files, then crop it")
                     if photoData != nil {
+                        EdTextButton(title: "Adjust crop") { recrop() }
                         EdTextButton(title: "Remove photo", role: .destructive) { removePhoto() }
                             .accessibilityHint("You can undo this right after")
                     }
@@ -38,7 +71,7 @@ struct PhotoRow: View {
                 undoBar
             }
             if showsNote {
-                Text("The photo only appears on templates that have a photo area. Some employers prefer resumes without one.")
+                Text("Your photo shows on the \(Self.photoTemplateCount) templates marked Photo. Templates without a photo area keep it hidden. Employers in some countries prefer resumes without a photo.")
                     .font(CK.Font.caption)
                     .foregroundStyle(CK.Palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -50,9 +83,18 @@ struct PhotoRow: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .photosPicker(isPresented: $showPhotosPicker, selection: $item, matching: .images, photoLibrary: .shared())
+        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [UTType.image], allowsMultipleSelection: false) { result in
+            handleFile(result)
+        }
+        .sheet(item: $cropSource) { source in
+            PhotoCropSheet(image: source.image, initialCircle: previewShape == .circle) { cropped in
+                Task { await store(cropped) }
+            }
+        }
         .onChange(of: item) { _, newItem in
             guard let newItem else { return }
-            Task { await load(newItem) }
+            Task { await loadPicked(newItem) }
         }
         .onChange(of: photoData, initial: true) { _, newData in
             if let newData {
@@ -115,6 +157,8 @@ struct PhotoRow: View {
         .accessibilityLabel(isLoading ? "Loading photo" : (photoData == nil ? "No photo" : "Profile photo"))
     }
 
+    // MARK: Actions
+
     private func removePhoto() {
         removedPhoto = photoData
         errorText = nil
@@ -122,7 +166,13 @@ struct PhotoRow: View {
         UIAccessibility.post(notification: .announcement, argument: String(localized: "Photo removed. Undo is available."))
     }
 
-    private func load(_ pickerItem: PhotosPickerItem) async {
+    /// Opens the crop sheet on the stored photo.
+    private func recrop() {
+        guard let data = photoData, let image = UIImage(data: data) else { return }
+        cropSource = PhotoCropSource(image: image)
+    }
+
+    private func loadPicked(_ pickerItem: PhotosPickerItem) async {
         isLoading = true
         errorText = nil
         defer {
@@ -134,17 +184,66 @@ struct PhotoRow: View {
                 errorText = String(localized: "That photo could not be loaded. Try another one.")
                 return
             }
-            let result: Result<Data, PhotoProcessor.Failure> = await Task.detached(priority: .userInitiated) {
-                PhotoProcessor.process(data)
-            }.value
-            switch result {
-            case .success(let jpeg):
-                photoData = jpeg
-            case .failure(let failure):
-                errorText = failure.message
-            }
+            await prepareCrop(data)
         } catch {
             errorText = String(localized: "That photo could not be loaded. Try another one.")
+        }
+    }
+
+    private func handleFile(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure:
+            errorText = String(localized: "That file could not be opened. Try another one.")
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            let scoped: Bool = url.startAccessingSecurityScopedResource()
+            defer {
+                if scoped { url.stopAccessingSecurityScopedResource() }
+            }
+            guard let data = try? Data(contentsOf: url, options: .mappedIfSafe) else {
+                errorText = String(localized: "That file could not be opened. Try another one.")
+                return
+            }
+            Task { await prepareCrop(data) }
+        }
+    }
+
+    /// Decodes the picked file at a working size and opens the crop sheet.
+    private func prepareCrop(_ data: Data) async {
+        isLoading = true
+        errorText = nil
+        let working: CGFloat = Self.cropWorkingSize
+        let result: Result<Data, PhotoProcessor.Failure> = await Task.detached(priority: .userInitiated) {
+            PhotoProcessor.process(data, maxDimension: working)
+        }.value
+        isLoading = false
+        switch result {
+        case .success(let jpeg):
+            guard let image = UIImage(data: jpeg) else {
+                errorText = PhotoProcessor.Failure.unreadable.message
+                return
+            }
+            cropSource = PhotoCropSource(image: image)
+        case .failure(let failure):
+            errorText = failure.message
+        }
+    }
+
+    /// Stores the cropped square as a JPEG of at most 800 px.
+    private func store(_ cropped: UIImage) async {
+        guard let raw = cropped.jpegData(compressionQuality: 0.95) else {
+            errorText = PhotoProcessor.Failure.unreadable.message
+            return
+        }
+        let result: Result<Data, PhotoProcessor.Failure> = await Task.detached(priority: .userInitiated) {
+            PhotoProcessor.process(raw)
+        }.value
+        switch result {
+        case .success(let jpeg):
+            photoData = jpeg
+            UIAccessibility.post(notification: .announcement, argument: String(localized: "Photo added."))
+        case .failure(let failure):
+            errorText = failure.message
         }
     }
 }
