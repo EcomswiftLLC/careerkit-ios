@@ -55,8 +55,8 @@ jobs:
           TEST_RUNNER_CAREERKIT_SHOT_DIR: /tmp/careerkit-shots
         run: |
           set -o pipefail
-          DEST=$(xcrun simctl list devices available | grep -E "iPhone 16 Pro Max" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/')
-          if [ -z "$DEST" ]; then DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[5-7]" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/'); fi
+          DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[6-9] Pro Max" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/' || true)
+          if [ -z "$DEST" ]; then DEST=$(xcrun simctl list devices available | grep -E "iPhone 1[5-9]" | head -1 | sed -E 's/^ *(.*) \(([0-9A-F-]{36})\).*/\2/'); fi
           echo "Simulator: $DEST"
           xcodebuild test \
             -project CareerKit.xcodeproj \
