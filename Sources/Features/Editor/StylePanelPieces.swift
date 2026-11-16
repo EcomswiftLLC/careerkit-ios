@@ -31,7 +31,7 @@ struct EdStyleGroup<Content: View>: View {
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(title)
-                                .font(CK.Font.headline(18))
+                                .ckHeadlineFont(18)
                                 .foregroundStyle(CK.Palette.ink)
                                 .multilineTextAlignment(.leading)
                             Text(summary)
@@ -55,7 +55,7 @@ struct EdStyleGroup<Content: View>: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(title), \(summary)")
                 .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
-                .accessibilityHint(isExpanded ? "Double tap to collapse" : "Double tap to expand")
+                .accessibilityHint(isExpanded ? "Hides the options" : "Shows the options")
 
                 if isModified {
                     Button(action: onReset) {
@@ -271,7 +271,7 @@ struct EdColorRow: View {
                     }
                     .labelsHidden()
                     .frame(width: 44, height: 44)
-                    .accessibilityLabel("\(title), choose any colour")
+                    .accessibilityLabel("\(title), choose any color")
                     .accessibilityValue(current)
                 }
                 .padding(.vertical, 2)
@@ -286,7 +286,7 @@ struct EdColorRow: View {
                 Circle()
                     .fill(Color(hexString: templateHex))
                     .frame(width: 18, height: 18)
-                    .overlay(Circle().strokeBorder(Color.black.opacity(0.12), lineWidth: 0.5))
+                    .overlay(Circle().strokeBorder(CK.Palette.graphite.opacity(0.55), lineWidth: 0.5))
                 Text("Template")
                     .font(CK.Font.label)
                     .foregroundStyle(selected ? CK.Palette.onForest : CK.Palette.ink)
@@ -298,7 +298,7 @@ struct EdColorRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title), template colour")
+        .accessibilityLabel("\(title), template color")
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : [.isButton])
     }
 
@@ -309,7 +309,7 @@ struct EdColorRow: View {
             Circle()
                 .fill(Color(hexString: swatch.hex))
                 .frame(width: 30, height: 30)
-                .overlay(Circle().strokeBorder(Color.black.opacity(0.12), lineWidth: 0.5))
+                .overlay(Circle().strokeBorder(CK.Palette.graphite.opacity(0.55), lineWidth: 0.5))
                 .overlay {
                     if selected {
                         Image(systemName: "checkmark")

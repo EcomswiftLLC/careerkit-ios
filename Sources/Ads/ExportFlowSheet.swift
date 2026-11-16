@@ -28,6 +28,8 @@ private struct ExportedFile {
 }
 
 /// The whole export experience for one document: explanation, one opt-in video, then Share, Save to Files or Print.
+/// When no video can be provided after the person asked for one, the export continues without a video
+/// (see `ExportFallbackPolicy`), so there is never a dead end.
 /// Needs `ExportGate` in the environment (injected at the app root).
 @MainActor
 struct ExportFlowSheet: View {
@@ -44,7 +46,8 @@ struct ExportFlowSheet: View {
     private enum Phase: Equatable {
         case explanation
         case loadingAd
-        case adProblem(title: String, message: String, offerPrivacyOptions: Bool)
+        case noVideo(RewardedUnavailableReason)
+        case notFinished
         case destination
         case finished
     }
@@ -57,8 +60,7 @@ struct ExportFlowSheet: View {
 
     private enum AdWait {
         case ready
-        case unavailable(String)
-        case timedOut
+        case unavailable(RewardedUnavailableReason)
     }
 
     @EnvironmentObject private var gate: ExportGate
@@ -75,6 +77,7 @@ struct ExportFlowSheet: View {
     @State private var notice: String?
     @State private var destinationBusy = false
     @State private var didAppear = false
+    @State private var unlockedWithoutVideo = false
 
     // MARK: Body
 
@@ -95,6 +98,7 @@ struct ExportFlowSheet: View {
         .presentationCornerRadius(CK.Radius.sheet)
         .interactiveDismissDisabled(phase == .loadingAd)
         .onAppear(perform: handleAppear)
+        .onDisappear { rewarded.cancelRetries() }
     }
 
     private var header: some View {
@@ -108,8 +112,8 @@ struct ExportFlowSheet: View {
             .frame(width: 52, height: 52)
             .accessibilityHidden(true)
 
-            Text("Export your resume")
-                .font(CK.Font.title(titleSize))
+            Text("Export as PDF")
+                .ckTitleFont(titleSize)
                 .foregroundStyle(CK.Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
@@ -123,8 +127,10 @@ struct ExportFlowSheet: View {
             explanationContent
         case .loadingAd:
             loadingContent
-        case .adProblem(let title, let message, let offerPrivacyOptions):
-            problemContent(title: title, message: message, offerPrivacyOptions: offerPrivacyOptions)
+        case .noVideo(let reason):
+            noVideoContent(reason)
+        case .notFinished:
+            notFinishedContent
         case .destination:
             destinationContent
         case .finished:
@@ -136,7 +142,7 @@ struct ExportFlowSheet: View {
 
     private var explanationContent: some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
-            Text("Watch one short video to unlock one export of this document. Creating, editing and previewing stay free.")
+            Text("Watch one short video to export this document once. After the video, the export stays unlocked for 24 hours, so you can finish later. Creating, editing and previewing stay free.")
                 .font(CK.Font.body)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -180,37 +186,70 @@ struct ExportFlowSheet: View {
         }
     }
 
-    // MARK: (c) Ad unavailable or failed
+    // MARK: (c) No video could be provided: export without one
 
-    private func problemContent(title: String, message: String, offerPrivacyOptions: Bool) -> some View {
+    private func noVideoContent(_ reason: RewardedUnavailableReason) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
-            VStack(alignment: .leading, spacing: CK.Space.s) {
-                Text(title)
-                    .font(CK.Font.headline())
-                    .foregroundStyle(CK.Palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                Text(message)
-                    .font(CK.Font.body)
-                    .foregroundStyle(CK.Palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .ckCard()
+            messageCard(title: String(localized: "No video right now"), message: reason.exportMessage)
 
             VStack(spacing: CK.Space.s) {
-                Button(action: startAdFlow) { Text("Try again") }
-                    .buttonStyle(.ckPrimary)
-                if offerPrivacyOptions {
+                Button(action: exportWithoutVideo) {
+                    Text("Export without video").multilineTextAlignment(.center)
+                }
+                .buttonStyle(.ckPrimary)
+
+                if reason != .notConfigured {
+                    Button(action: startAdFlow) { Text("Try the video again") }
+                        .buttonStyle(.ckSecondary)
+                }
+                if ExportFallbackPolicy.offersPrivacyOptions(for: reason, privacyOptionsRequired: ads.privacyOptionsRequired) {
                     Button { ads.presentPrivacyOptions() } label: { Text("Review privacy choices") }
                         .buttonStyle(.ckSecondary)
                 }
-                Button { dismiss() } label: { Text("Close") }
+                Button { dismiss() } label: { Text("Not now") }
                     .buttonStyle(.ckSecondary)
             }
         }
     }
 
-    // MARK: (d) Unlocked, choose destination
+    // MARK: (d) Video closed early
+
+    private var notFinishedContent: some View {
+        VStack(alignment: .leading, spacing: CK.Space.l) {
+            messageCard(
+                title: String(localized: "Video not finished"),
+                message: String(localized: "The video was closed before the end, so this export is still locked. You can watch it again from the start.")
+            )
+
+            VStack(spacing: CK.Space.s) {
+                Button(action: startAdFlow) { Text("Watch again") }
+                    .buttonStyle(.ckPrimary)
+                Button { dismiss() } label: { Text("Not now") }
+                    .buttonStyle(.ckSecondary)
+            }
+        }
+    }
+
+    private func messageCard(title: String, message: String) -> some View {
+        VStack(alignment: .leading, spacing: CK.Space.s) {
+            Text(title)
+                .font(CK.Font.headline())
+                .foregroundStyle(CK.Palette.ink)
+                .accessibilityAddTraits(.isHeader)
+            Text(message)
+                .font(CK.Font.body)
+                .foregroundStyle(CK.Palette.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .ckCard()
+    }
+
+    // MARK: (e) Unlocked, choose destination
+
+    private var unlockedTitle: String {
+        unlockedWithoutVideo ? String(localized: "Ready to export") : String(localized: "Export unlocked")
+    }
 
     private var destinationContent: some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
@@ -219,7 +258,7 @@ struct ExportFlowSheet: View {
                     .font(.title3)
                     .foregroundStyle(CK.Palette.forest)
                     .accessibilityHidden(true)
-                Text("Export unlocked")
+                Text(unlockedTitle)
                     .font(CK.Font.label)
                     .foregroundStyle(CK.Palette.ink)
                 Spacer(minLength: 0)
@@ -239,7 +278,7 @@ struct ExportFlowSheet: View {
 
             case .failed:
                 VStack(alignment: .leading, spacing: CK.Space.m) {
-                    Text("We could not prepare your PDF. Your unlocked export is still available.")
+                    Text("We could not prepare your PDF. Your export is still available.")
                         .font(CK.Font.body)
                         .foregroundStyle(CK.Palette.graphite)
                         .fixedSize(horizontal: false, vertical: true)
@@ -287,18 +326,10 @@ struct ExportFlowSheet: View {
 
     private var finishedContent: some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
-            VStack(alignment: .leading, spacing: CK.Space.s) {
-                Text("Your export is done")
-                    .font(CK.Font.headline())
-                    .foregroundStyle(CK.Palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                Text("Each export uses one short video. To export this document again, you will be asked to watch another one.")
-                    .font(CK.Font.body)
-                    .foregroundStyle(CK.Palette.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .ckCard()
+            messageCard(
+                title: String(localized: "Your export is done"),
+                message: String(localized: "To export this document again, tap Export. Each new export starts with one short video when one is available.")
+            )
 
             Button { dismiss() } label: { Text("Done") }
                 .buttonStyle(.ckPrimary)
@@ -319,7 +350,12 @@ struct ExportFlowSheet: View {
         guard !didAppear else { return }
         didAppear = true
         // A valid grant from earlier (for example a cancelled share) skips straight to the destination step.
-        if gate.hasGrant(for: documentID) { enterDestination() }
+        if gate.hasGrant(for: documentID) {
+            enterDestination()
+        } else {
+            // Load in the background so the video is ready when the person taps. Nothing plays without that tap.
+            rewarded.preload()
+        }
     }
 
     private func startAdFlow() {
@@ -337,72 +373,89 @@ struct ExportFlowSheet: View {
 
     private func runAdFlow() async {
         if !ads.canRequestAds { await ads.start() }
-        guard !Task.isCancelled else { return }
-
-        rewarded.expireIfStale()
-        if rewarded.state != .ready { rewarded.load() }
-
-        let outcome = await waitForAd()
-        // Only present if the person is still waiting on this screen. They tapped the button; nothing else may start a video.
         guard !Task.isCancelled, phase == .loadingAd else { return }
 
-        switch outcome {
-        case .ready:
-            let earned = await rewarded.present()
-            if earned {
-                gate.grant(for: documentID)
-                enterDestination()
-            } else if rewarded.lastPresentationFailed {
-                go(.adProblem(
-                    title: String(localized: "Video could not play"),
-                    message: String(localized: "Something stopped the video from playing, so this export is still locked. Please try again."),
-                    offerPrivacyOptions: false
-                ))
-            } else {
-                go(.adProblem(
-                    title: String(localized: "Video not finished"),
-                    message: String(localized: "The video was closed before it finished, so this export is still locked. Watch the whole video to unlock it."),
-                    offerPrivacyOptions: false
-                ))
-            }
-        case .unavailable(let message):
-            go(.adProblem(
-                title: String(localized: "Video not available"),
-                message: message,
-                offerPrivacyOptions: !ads.canRequestAds && ads.privacyOptionsRequired
-            ))
-        case .timedOut:
-            go(.adProblem(
-                title: String(localized: "Video not available"),
-                message: String(localized: "The video is taking too long to load. Check your internet connection and try again."),
-                offerPrivacyOptions: false
-            ))
+        let outcome = await obtainVideoOutcome()
+        // Only act if the person is still waiting on this screen.
+        guard !Task.isCancelled, phase == .loadingAd else { return }
+
+        switch ExportFallbackPolicy.decision(for: outcome) {
+        case .unlock:
+            gate.grant(for: documentID)
+            unlockedWithoutVideo = false
+            enterDestination()
+        case .offerExportWithoutVideo(let reason):
+            go(.noVideo(reason))
+            AccessibilityNotification.Announcement(reason.exportMessage).post()
+        case .offerWatchAgain:
+            go(.notFinished)
         }
     }
 
+    private func obtainVideoOutcome() async -> ExportVideoOutcome {
+        rewarded.expireIfStale()
+        switch await waitForAd() {
+        case .unavailable(let reason):
+            return .unavailable(reason)
+        case .ready:
+            break
+        }
+        // They tapped the button; nothing else may start a video.
+        guard !Task.isCancelled, phase == .loadingAd else { return .closedEarly }
+        let earned = await rewarded.present()
+        if earned { return .earned }
+        return rewarded.lastPresentationFailed ? .unavailable(.couldNotPresent) : .closedEarly
+    }
+
+    /// Waits for a loaded video. Retries one plain load failure, then reports why no video is available.
     private func waitForAd() async -> AdWait {
-        let deadline = Date().addingTimeInterval(20)
+        let deadline = Date().addingTimeInterval(ExportFallbackPolicy.adWaitTimeout)
+        var attempts = 0
+        switch rewarded.state {
+        case .ready:
+            return .ready
+        case .loading:
+            attempts = 1
+        case .idle, .unavailable, .presenting:
+            attempts = 1
+            rewarded.load()
+        }
         while !Task.isCancelled {
             switch rewarded.state {
             case .ready:
                 return .ready
-            case .unavailable(let message):
-                return .unavailable(message)
+            case .unavailable:
+                let reason = rewarded.unavailableReason ?? .loadFailed
+                if ExportFallbackPolicy.shouldRetryLoad(after: reason, attemptsSoFar: attempts) {
+                    attempts += 1
+                    rewarded.load()
+                } else {
+                    return .unavailable(reason)
+                }
             case .idle:
                 rewarded.load()
             case .loading, .presenting:
                 break
             }
-            if Date() >= deadline { return .timedOut }
+            if Date() >= deadline { return .unavailable(.timedOut) }
             try? await Task.sleep(nanoseconds: 150_000_000)
         }
-        return .timedOut
+        return .unavailable(.timedOut)
+    }
+
+    /// The fallback: no video could be provided after the person asked for one, so this one export is granted.
+    private func exportWithoutVideo() {
+        session.adTask?.cancel()
+        session.adTask = nil
+        gate.grant(for: documentID)
+        unlockedWithoutVideo = true
+        enterDestination()
     }
 
     private func enterDestination() {
         notice = nil
         go(.destination)
-        AccessibilityNotification.Announcement(String(localized: "Export unlocked")).post()
+        AccessibilityNotification.Announcement(unlockedTitle).post()
         prepareFile()
     }
 
@@ -455,9 +508,9 @@ struct ExportFlowSheet: View {
             gate.consume(for: documentID)
             go(.finished)
         case .cancelled:
-            show(notice: String(localized: "Nothing was exported. Your unlocked export is still available."))
+            show(notice: String(localized: "Nothing was exported. Your export is still available."))
         case .failed:
-            show(notice: String(localized: "Something went wrong, so nothing was exported. Your unlocked export is still available. Please try again."))
+            show(notice: String(localized: "Something went wrong, so nothing was exported. Your export is still available. Please try again."))
         }
     }
 

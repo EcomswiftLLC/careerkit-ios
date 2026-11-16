@@ -1,5 +1,7 @@
 import Foundation
 import UIKit
+import ImageIO
+import UniformTypeIdentifiers
 
 // Pure helpers used by the editor screens. No SwiftUI, no store access, so they are unit tested.
 
@@ -284,8 +286,30 @@ struct StyleLimits {
 
 // MARK: - Photo
 
+/// Turns a picked photo into a small JPEG for the resume. Uses ImageIO thumbnails, so a 48 MP HEIC or ProRAW file
+/// is decoded straight to the target size instead of being expanded to full resolution in memory first.
 enum PhotoProcessor {
-    static let maxDimension: CGFloat = 600
+    static let maxDimension: CGFloat = 800
+    static let defaultQuality: CGFloat = 0.85
+    /// Files larger than this are refused before decoding.
+    static let maxInputBytes: Int = 150 * 1024 * 1024
+    /// Images with more pixels than this are refused (about 14000 x 14000). Real camera photos are far below it.
+    static let maxSourcePixels: Double = 200_000_000
+
+    enum Failure: Error, Equatable {
+        /// Not an image format iOS can read, or the data is damaged.
+        case unreadable
+        /// The file or the image dimensions are too large to process safely.
+        case tooLarge
+
+        /// Plain message for the editor.
+        var message: String {
+            switch self {
+            case .unreadable: return String(localized: "That image could not be read. Try another photo.")
+            case .tooLarge: return String(localized: "That image is too large to use. Try a smaller photo.")
+            }
+        }
+    }
 
     /// Fits `size` inside a `maxDimension` square. Never upscales.
     static func targetSize(for size: CGSize, maxDimension: CGFloat = PhotoProcessor.maxDimension) -> CGSize {
@@ -296,21 +320,105 @@ enum PhotoProcessor {
         return CGSize(width: (size.width * scale).rounded(), height: (size.height * scale).rounded())
     }
 
-    /// Decodes any image data iOS understands and returns a JPEG no larger than 600 px on its longest side.
-    static func downscaledJPEG(from data: Data, maxDimension: CGFloat = PhotoProcessor.maxDimension,
-                               quality: CGFloat = 0.82) -> Data? {
-        guard let image = UIImage(data: data) else { return nil }
-        let target = targetSize(for: image.size, maxDimension: maxDimension)
-        guard target.width > 0, target.height > 0 else { return nil }
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        format.opaque = true
-        let renderer = UIGraphicsImageRenderer(size: target, format: format)
-        let scaled = renderer.image { _ in
-            UIColor.white.setFill()
-            UIRectFill(CGRect(origin: .zero, size: target))
-            image.draw(in: CGRect(origin: .zero, size: target))
+    /// Pixel size of the first image in `data` as stored (before orientation), read from the header only.
+    static func pixelSize(of data: Data) -> CGSize? {
+        let options = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithData(data as CFData, options),
+              CGImageSourceGetCount(source) > 0,
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, options) as? [CFString: Any] else { return nil }
+        let width: Double = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.doubleValue ?? 0
+        let height: Double = (properties[kCGImagePropertyPixelHeight] as? NSNumber)?.doubleValue ?? 0
+        guard width > 0, height > 0 else { return nil }
+        return CGSize(width: width, height: height)
+    }
+
+    /// Decodes any image ImageIO understands (JPEG, PNG, HEIC, ProRAW DNG and more) to at most `maxDimension` pixels
+    /// on its longest side, applies the EXIF orientation, flattens transparency onto white and encodes a JPEG.
+    static func process(_ data: Data,
+                        maxDimension: CGFloat = PhotoProcessor.maxDimension,
+                        quality: CGFloat = PhotoProcessor.defaultQuality,
+                        maxInputBytes: Int = PhotoProcessor.maxInputBytes,
+                        maxSourcePixels: Double = PhotoProcessor.maxSourcePixels) -> Result<Data, Failure> {
+        guard !data.isEmpty else { return .failure(.unreadable) }
+        guard data.count <= maxInputBytes else { return .failure(.tooLarge) }
+        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions),
+              CGImageSourceGetCount(source) > 0 else { return .failure(.unreadable) }
+        if let size = pixelSize(of: data), Double(size.width) * Double(size.height) > maxSourcePixels {
+            return .failure(.tooLarge)
         }
-        return scaled.jpegData(compressionQuality: quality)
+        let limit: Int = max(1, Int(maxDimension.rounded()))
+        let thumbnailOptions: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: limit
+        ]
+        guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, thumbnailOptions as CFDictionary) else {
+            return .failure(.unreadable)
+        }
+        guard let flattened = flattenedOnWhite(thumbnail, maxDimension: limit) else { return .failure(.unreadable) }
+        guard let jpeg = jpegData(flattened, quality: quality) else { return .failure(.unreadable) }
+        return .success(jpeg)
+    }
+
+    /// Small preview image for the editor row. Safe for any stored data size (decodes a thumbnail only).
+    static func previewImage(from data: Data, maxPixels: Int = 192) -> UIImage? {
+        guard !data.isEmpty, data.count <= maxInputBytes else { return nil }
+        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions),
+              CGImageSourceGetCount(source) > 0 else { return nil }
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixels)
+        ]
+        guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else { return nil }
+        return UIImage(cgImage: image)
+    }
+
+    /// Convenience used where only success matters.
+    static func downscaledJPEG(from data: Data, maxDimension: CGFloat = PhotoProcessor.maxDimension,
+                               quality: CGFloat = PhotoProcessor.defaultQuality) -> Data? {
+        switch process(data, maxDimension: maxDimension, quality: quality) {
+        case .success(let jpeg): return jpeg
+        case .failure: return nil
+        }
+    }
+
+    /// Draws the image into an opaque sRGB bitmap. Also enforces the size limit in case a decoder ignored it.
+    private static func flattenedOnWhite(_ image: CGImage, maxDimension: Int) -> CGImage? {
+        let target: CGSize = targetSize(for: CGSize(width: image.width, height: image.height),
+                                        maxDimension: CGFloat(maxDimension))
+        let width: Int = Int(target.width)
+        let height: Int = Int(target.height)
+        guard width > 0, height > 0 else { return nil }
+        let space: CGColorSpace = CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(data: nil,
+                                      width: width,
+                                      height: height,
+                                      bitsPerComponent: 8,
+                                      bytesPerRow: 0,
+                                      space: space,
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return nil }
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        context.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+        context.fill(rect)
+        context.interpolationQuality = .high
+        context.draw(image, in: rect)
+        return context.makeImage()
+    }
+
+    private static func jpegData(_ image: CGImage, quality: CGFloat) -> Data? {
+        let output = NSMutableData()
+        guard let destination = CGImageDestinationCreateWithData(output as CFMutableData,
+                                                                 UTType.jpeg.identifier as CFString,
+                                                                 1, nil) else { return nil }
+        let clamped: CGFloat = min(max(quality, 0.1), 1)
+        let properties = [kCGImageDestinationLossyCompressionQuality: clamped] as CFDictionary
+        CGImageDestinationAddImage(destination, image, properties)
+        guard CGImageDestinationFinalize(destination) else { return nil }
+        return output as Data
     }
 }

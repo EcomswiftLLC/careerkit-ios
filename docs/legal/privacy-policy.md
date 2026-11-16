@@ -54,11 +54,12 @@ Some US state privacy laws treat advertising of this kind as "sharing" or "targe
 - **Consent form (EEA, UK and other regions where required).** When you first open the app, a consent form from Google's User Messaging Platform may appear. You can accept, decline or manage your choices. You can reopen it later in the Profile tab, in the Ad privacy choices row, where one is required.
 - **Tracking prompt.** After the consent step, iOS may ask whether CareerKit may track you across apps and websites owned by other companies (App Tracking Transparency). If you tap "Ask App Not to Track", the advertising identifier is not shared, and ads you see will be less personalised. The app works the same either way.
 - **iOS settings.** You can change the tracking choice at any time in Settings > Privacy & Security > Tracking, and reset your advertising identifier in the same area.
-- **Ads cannot be switched off inside the app**, because ads are how CareerKit is paid for. If you decline the consent form where one is required, ads may not load for you. In that case no banner appears and exporting a document is not available, because an export needs a completed rewarded video. Writing, editing and previewing still work.
+- **Ads cannot be switched off inside the app**, because ads are how CareerKit is paid for. If you decline the consent form where one is required, ads may not load for you. In that case no banner appears, and when you export a document the app tells you that no video is available and lets you export without one. Writing, editing, previewing and exporting all still work.
+- **Report an ad.** If you see an ad that is offensive, misleading or inappropriate, use the Report an ad row in the Profile tab, or write to support@ecomswiftllc.com. Tell us roughly when and where in the app you saw it and what it showed. A screenshot helps. We review reports and block ad categories or advertisers through Google AdMob where we can.
 
 ## 6. Rewarded video and exports
 
-A rewarded video is shown only if you choose to watch it. The reward (one export of the document you are working on) is recorded on your device only. The record contains no personal information and is not sent anywhere.
+A rewarded video is shown only if you choose to watch it. Watching one to the end unlocks one export of the document you are working on for 24 hours. If no video can be shown (for example when you are offline, when no ad is available, or when your consent choice does not allow ads), the app lets you make that export without a video. Either way, the unlock is recorded on your device only, as a document identifier and a time. The record contains no personal information and is not sent anywhere.
 
 ## 7. Deleting your data
 
@@ -70,7 +71,7 @@ A rewarded video is shown only if you choose to watch it. The reward (one export
 
 ## 8. Children
 
-CareerKit is a tool for job seekers and is not directed to children under 13 (or under 16 where that is the local age of digital consent). We do not knowingly collect personal information from children. The app is not designed for the Kids category and does not use child-directed ad treatment. If you believe a child has sent us personal information, write to support@ecomswiftllc.com and we will delete it.
+CareerKit is a tool for job seekers and is not directed to children under 13 (or under 16 where that is the local age of digital consent). We do not knowingly collect personal information from children. The app is not designed for the Kids category and does not use child-directed ad treatment. Ads in the app are limited to content Google rates as suitable for general audiences. If you believe a child has sent us personal information, write to support@ecomswiftllc.com and we will delete it.
 
 ## 9. Your rights
 

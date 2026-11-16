@@ -24,10 +24,10 @@ We give you a personal, non-exclusive, non-transferable, revocable licence to in
 CareerKit is free. There is no subscription and no in-app purchase. The app is supported by advertising from Google AdMob:
 
 - banner ads can appear on browse screens such as Home, My Resumes, Templates, Cover Letters and Profile;
-- to export a finished document (to Files, the share sheet or a printer) you choose to watch one rewarded video. One completed video covers one export of that document;
+- to export a finished document (to Files, the share sheet or a printer) you choose to watch one rewarded video. One completed video covers one export of that document, and that export stays unlocked for 24 hours;
 - writing, editing, previewing, creating cover letters and running the ATS check do not require an ad.
 
-Ads are provided by a third party. We do not control which ads are shown, and we are not responsible for the products, services or websites that ads promote. If an ad cannot be loaded (for example when you are offline, when no ad is available, or when you decline a consent form that applies to your region), exporting may not be possible until one can be loaded. How ad data is handled is explained in the Privacy Policy.
+Ads are provided by a third party. We do not control which ads are shown, and we are not responsible for the products, services or websites that ads promote. If a video cannot be shown (for example when you are offline, when no ad is available, or when you decline a consent form that applies to your region), the app lets you make that export without a video. You can report an ad that seems inappropriate from the Profile tab (Report an ad) or by writing to support@ecomswiftllc.com. How ad data is handled is explained in the Privacy Policy.
 
 ## 4. Your content
 

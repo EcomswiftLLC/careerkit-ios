@@ -20,7 +20,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 |---|---|---|
 | 2.1 | Project generates from `project.yml` with XcodeGen. Assets catalog, AppIcon, AccentColor and LaunchBackground exist. | Done (not compiled on this PC) |
 | 2.2 | First real compile on macOS (CI workflow `.github/workflows/ios.yml` or a Mac). Fix any compile errors reported by CI. | Mac/CI |
-| 2.3 | Replace the three Google test ids in `Config/Release.xcconfig` with production ids (section 3). Never ship test ids. | Owner + Mac |
+| 2.3 | `Config/Release.xcconfig` already holds the three production AdMob ids (app "Resume Builder: CareerKit", created 2026-11-16). `Config/Debug.xcconfig` keeps Google's test ids. Before archiving, confirm the archive uses the Release configuration. | Done, confirm on archive |
 | 2.4 | Bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml` when needed (now 1.0.0 build 1). | Done |
 | 2.5 | Archive in Xcode (Product > Archive, Any iOS Device) with automatic signing. Upload through the Organizer, or export and upload with Transporter. | Mac |
 | 2.6 | Confirm the icon shows (1024 px, no alpha) and the build passes App Store Connect processing. | Mac |
@@ -33,12 +33,13 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 | 3.1 | AdMob account in good standing, payment profile and tax info completed (needed to get paid, not needed for approval). | Owner |
 | 3.2 | Add the app to AdMob as **iOS**, with the bundle id above. Copy the **App ID** (`ca-app-pub-XXXX~YYYY`). | Owner |
 | 3.3 | Create two ad units: **Banner** and **Rewarded**. Name them clearly (for example `careerkit_ios_banner`, `careerkit_ios_rewarded`). Reward amount 1, type "export". The app grants one export per completed video regardless of these values. | Owner |
-| 3.4 | Put the three ids in `Config/Release.xcconfig`: `ADMOB_APP_ID`, `ADMOB_BANNER_UNIT_ID`, `ADMOB_REWARDED_UNIT_ID`. The Debug config stays on Google test ids. | Owner + Mac |
+| 3.4 | The three ids are in `Config/Release.xcconfig` (`ADMOB_APP_ID`, `ADMOB_BANNER_UNIT_ID`, `ADMOB_REWARDED_UNIT_ID`, publisher `pub-8621573128492952`). The Debug config stays on Google test ids. | Done |
 | 3.5 | Privacy and messaging: create and publish the **GDPR** message (consent form) and, if wanted, the US state regulations message and an IDFA explainer. The app already calls the UMP SDK. A message that is not published means no consent form is shown. | Owner |
 | 3.6 | Block sensitive ad categories in Blocking controls (gambling, dating, political, weight loss and similar) so the 4+ rating and a job-seeker audience stay consistent. | Owner |
-| 3.7 | `app-ads.txt`: publish `https://ecomswiftllc.com/app-ads.txt` (root of the domain used as the Marketing URL) with the AdMob line `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0` using the owner's real publisher id. This protects ad revenue. It cannot be created here because the publisher id is not known. | Owner |
+| 3.7 | `app-ads.txt` with exactly this line: `google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0`. It must be served at the **root of the host used in the Marketing URL** (`https://<host>/app-ads.txt`). Problem: the planned Marketing URL `https://ecomswiftllc.github.io/careerkit/` is a GitHub project page, and its host root is not controllable from the project repo. Fix: use `https://www.ecomswiftllc.com` as the Marketing URL if the owner controls that domain and serve `https://www.ecomswiftllc.com/app-ads.txt`; otherwise create the user-site repo `EcomswiftLLC/ecomswiftllc.github.io` with `app-ads.txt` at its root. Then check AdMob > Apps > app-ads.txt shows the file as found. | Owner |
 | 3.8 | `SKAdNetworkItems` in Info.plist holds Google's list of 50 ids (ads owner, fetched 2026-11-16). Re-check against Google's current list shortly before release. | Done, re-check |
-| 3.9 | New ad units can have limited fill for a few days, and Apple's reviewers may not get a rewarded video. See the open risk in section 7. | Open |
+| 3.9 | New ad units can have limited fill for a few days, and Apple's reviewers may not get a rewarded video. Handled in the app: when no video can be shown, the export sheet offers Export without video (see section 7). | Done |
+| 3.10 | Ads are limited to general-audience content in code (`maxAdContentRating = .general`), matching the 4+ rating. Child-directed tags are not set. | Done |
 
 ## 4. Website and legal URLs (must be live before submission)
 
@@ -70,9 +71,10 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 
 | # | Step | Status |
 |---|---|---|
+| 6.0 | **Before any TestFlight build reaches a phone:** TestFlight builds use the Release configuration, so they request **real** ads with the production ids. Register every tester's iPhone and iPad as a test device in AdMob (Settings > Test devices, using the IDFA or the id printed in the Xcode console) before installing. Never tap a production ad, never reload ads on purpose, and never ask friends to click. Invalid traffic on this account can suspend ad serving for every app on it. | Owner |
 | 6.1 | Wait for the uploaded build to finish processing. | Mac/CI |
 | 6.2 | Internal testing (up to 100 App Store Connect users, no review). Test on a real iPhone and an iPad. | Owner |
-| 6.3 | Run the test script below, with **test ids** first and **production ids** in the final candidate. | Owner |
+| 6.3 | Run the test script below with a Debug build (test ids) first. The TestFlight build has production ids: only on registered test devices (6.0). | Owner |
 | 6.4 | Optional external group (needs a short Beta App Review). | Owner, optional |
 
 Test script (about 15 minutes):
@@ -82,14 +84,14 @@ Test script (about 15 minutes):
 4. ATS check on a resume with missing items and on a complete one.
 5. Cover letter from a resume.
 6. Export: watch the rewarded video to the end, then Share, Files and Print. Confirm that a second export of the same document asks for another video.
-7. Close the ad early and confirm no export is granted.
-8. Airplane mode: writing, editing, previewing, cover letters and the ATS check work. Export is unavailable until the rewarded video can load, and the export sheet says so.
+7. Close the ad early and confirm no export is granted and Watch again is offered.
+8. Airplane mode: writing, editing, previewing, cover letters and the ATS check work. Tap Export, then Watch an ad to export: within about 20 seconds the sheet says no video is available and offers Export without video, which leads to Share, Save to Files and Print. Repeat with the consent form declined (EEA debug geography).
 9. Profile: Export backup, then Delete all local data (two steps). Relaunch and confirm the app is empty.
 10. Dark mode, largest Dynamic Type, VoiceOver on the editor, iPad portrait and landscape.
 
 ## 7. Open risks
 
-1. **Rewarded video can block the reviewer.** Export needs a completed rewarded video, and a video needs ad consent. A brand-new ad unit, a region without fill, or a person who declines the consent form where one is required can leave them unable to export, which can be rejected as non-working. `docs/handoff/ads.md` lists this as a known product gap that needs an owner decision (for example allowing export when ads cannot be requested). Decide before submission and update the review notes to match. This is an app behaviour decision, so it is left open here.
+1. **Rewarded video and the reviewer (resolved).** When the person asks for a video and none can be shown (no fill on a new unit, offline, consent declined, load or start failure), the export sheet offers Export without video for that one export. There is no rate limit, so a reviewer can always export. The review notes say so.
 2. **Apple guideline on ads.** Rewarded ads that gate a feature are allowed. The ad must be clearly opt-in, which the design already does. No interstitials, no ads in the editor.
 3. **Name availability** of `Resume Builder: CareerKit` is only known after creating the app record.
 4. **Screenshots with ads.** Never submit a screenshot that shows a test ad label.

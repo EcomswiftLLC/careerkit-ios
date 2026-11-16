@@ -75,9 +75,9 @@ struct HomeView: View {
                 CKFreeModelCard(learnMore: { path.append(.howExportsWork) })
                     .padding(.horizontal, CK.Space.m)
 
-                BannerAdView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, CK.Space.m)
+                // End-of-content banner (inline adaptive). Spacing and label only appear once an ad loads.
+                CKInlineBanner()
+                    .padding(.horizontal, CK.Space.m)
             }
             .padding(.vertical, CK.Space.m)
             .frame(maxWidth: 820)

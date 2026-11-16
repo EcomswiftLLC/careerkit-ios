@@ -50,6 +50,10 @@ struct CKRootContainer: View {
             CKScreenshotSupport.seedIfRequested(store: store, appState: appState)
             #endif
         }
+        .task {
+            // Exported PDFs and backups left in tmp by an earlier session (older than one hour).
+            await CKTempFiles.cleanStaleInBackground()
+        }
         .task(id: appState.hasCompletedOnboarding) {
             await startAdsWhenReady()
         }

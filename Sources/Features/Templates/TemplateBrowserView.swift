@@ -5,6 +5,8 @@ struct TemplateBrowserView: View {
     @State private var path: [AppRoute] = []
     @State private var filter = CKTemplateFilter()
     @State private var previewTemplate: TemplateSpec?
+    /// One banner for this screen, kept while filters toggle the no-results state.
+    @StateObject private var bannerSlot = BannerAdSlot()
 
     private var results: [TemplateSpec] {
         filter.apply(to: TemplateLibrary.all)
@@ -30,8 +32,11 @@ struct TemplateBrowserView: View {
                         sectionedResults
                     }
 
-                    BannerAdView()
-                        .padding(.top, CK.Space.s)
+                    // No banner on the no-results state. Otherwise one inline banner after the last template.
+                    if !results.isEmpty {
+                        CKInlineBanner(slot: bannerSlot)
+                            .padding(.horizontal, CK.Space.m)
+                    }
                 }
                 .padding(.vertical, CK.Space.s)
                 .frame(maxWidth: 1000)

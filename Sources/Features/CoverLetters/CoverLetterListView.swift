@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// List of cover letters. This is the only editor-owned screen that shows a banner ad (at the bottom).
+/// List of cover letters. This is the only editor-owned screen that shows a banner ad (after the last letter).
 /// Expects to sit inside a NavigationStack.
 struct CoverLetterListView: View {
     @EnvironmentObject private var store: DocumentStore
@@ -10,6 +10,7 @@ struct CoverLetterListView: View {
     @State private var pendingOpenID: UUID?
     @State private var openedID: UUID?
     @State private var pendingDelete: CoverLetter?
+    @StateObject private var bannerSlot = BannerAdSlot()
 
     init() {}
 
@@ -64,8 +65,6 @@ struct CoverLetterListView: View {
         } message: { letter in
             Text("\"\(letter.title)\" will be removed from this device. This cannot be undone.")
         }
-        // Banner ads are allowed on this browse screen only, never in the editor.
-        .safeAreaInset(edge: .bottom, spacing: 0) { BannerAdView() }
     }
 
     private var deleteBinding: Binding<Bool> {
@@ -131,6 +130,14 @@ struct CoverLetterListView: View {
                         Button("Delete", systemImage: "trash", role: .destructive) { pendingDelete = letter }
                     }
             }
+
+            // Banner ads are allowed on this browse screen only, never in the editor, and never on the
+            // empty or no-results states. It is the last row (inline), so it never covers a letter or sits
+            // against the tab bar. The screen owns the slot, so row recycling never sends a new request.
+            CKInlineBanner(slot: bannerSlot)
+                .listRowInsets(EdgeInsets(top: 0, leading: CK.Space.m, bottom: 0, trailing: CK.Space.m))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)

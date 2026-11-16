@@ -48,12 +48,26 @@ final class RenderLetterComposer {
         let pageCount: Int = max(1, pages.count)
         let title: String = RenderContent.trimmed(letter.title)
         let author: String = RenderContent.trimmed(letter.senderName)
+        let footerStyle: RenderStyle = style
 
         let data: Data = RenderPDFWriter.makePDF(pageSize: page, pageCount: pageCount, title: title, author: author, canvas: canvas) { index in
             RenderDraw.fill(CGRect(origin: CGPoint.zero, size: page), UIColor.white)
             guard index < pages.count else { return }
+            var lowest: CGFloat = 0
             for placement in pages[index] {
                 placement.item.drawBlock(CGPoint(x: placement.x, y: placement.y), placement.columnLeft)
+                lowest = max(lowest, placement.y + placement.item.height)
+            }
+            // Pages 2 and later: small sender name and page number in the bottom margin.
+            if let footer = RenderPageFooter.text(name: author, page: index + 1, of: pageCount) {
+                RenderPageFooter.draw(footer,
+                                      style: footerStyle,
+                                      color: theme.muted,
+                                      columnLeft: style.marginSide,
+                                      columnWidth: contentWidth,
+                                      contentBottom: column.bottom,
+                                      pageHeight: page.height,
+                                      lowestContent: lowest)
             }
         }
         return RenderedDocument(pdfData: data, pageCount: pageCount, pageSize: letter.pageSize)

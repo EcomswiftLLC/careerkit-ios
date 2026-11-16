@@ -26,6 +26,29 @@ Features
 - `Templates/TemplateBrowserView.swift`, `TemplateFilter.swift`, `TemplatePreviewSheet.swift`, `TemplateFlows.swift`: browser, filters, large preview, "Use this template" flow, template picker for existing resumes.
 - `Profile/ProfileView.swift`, `HowExportsWorkView.swift`, `CKLinks.swift`: settings, backup, two-step delete, explainer, links.
 
+## Audit fixes, 2026-11-16 (app shell, persistence, Profile)
+
+Still not compiled here (no Mac). New and changed files:
+
+- `Sources/Models/ModelDecoding.swift` (new): tolerant `init(from:)` for `Resume`, `PersonalInfo`, `ResumeSection`, `ResumeEntry`, `SkillGroup`, `MonthYear`, `CoverLetter`, plus `SectionKind` (unknown raw value becomes `.custom`, title and content kept). Helpers: `CKCodingKey`, `KeyedDecodingContainer.ck(_:_:)`, `ckOptional(_:as:)`, `ckLossyArray(_:of:)` (one bad array item is skipped, the rest kept). Encoding is untouched: the compiler-generated `encode(to:)` and keys stay, so files look exactly as before. `StyleOverrides` keeps its own decoder. Also `CKPersistedDocument` (shared shape of resumes and letters) and `Date.ckWholeSeconds`.
+- `Sources/Persistence/SchemaMigration.swift` (new): `CKSchema.current` (non-isolated; `DocumentStore.currentSchemaVersion` returns it), `CKJSON` encoder/decoder, `CKSchemaPeek`, `CKSchemaMigration.migrate(_:)` step hook.
+- `Sources/Persistence/BackupRestore.swift` (new): `CKBackupPayload` (same keys as before, tolerant), `CKBackupParser` (empty, 150 MB cap, format, newer version, security-scoped file read), `CKBackupMerge` (pure merge by id), `CKRestoreSummary`, `CKDocumentNaming` ("X copy", "X copy 2", "X (restored)").
+- `Sources/Persistence/TempFileCleanup.swift` (new): `CKTempFiles` removes `CareerKitExport-*` and `CareerKit-Backup-*` in tmp. Stale (older than 1 hour) at launch, everything on delete-all.
+- `Sources/Persistence/DocumentStore.swift`: newer-schema files are never decoded, rewritten or quarantined (`newerVersionFileCount`); `quarantinedFiles`, `refreshQuarantine()`, `deleteQuarantinedFiles()`; `restoreBackup(from:)`; the file name UUID wins when the id inside is missing; a failed quarantine move no longer deletes the file; numbered copy titles.
+- `Sources/App/LocalDataReset.swift` (new): `CKLocalDataReset.eraseEverything(store:exportGate:appState:)` and `Notification.Name.ckCachesShouldClear`.
+- `Sources/App/AppState.swift`: `dataResetGeneration` + `resetNavigation()`. `RootTabView` uses it as `.id` on Home, My Resumes, Templates and Cover Letters (Profile keeps its identity so its toast stays).
+- `Sources/App/CareerKitApp.swift`: background temp cleanup task at launch.
+- `Sources/App/AppRoute.swift`: `.preview` now shows `ResumePreviewScreen` (new, `Features/MyResumes/`), which adds an Export button that opens `ExportFlowSheet`.
+- `Sources/Features/Profile/ProfileView.swift`: Restore from backup (`.fileImporter`, JSON), result alert ("Restored N documents, skipped M."), unreadable files row (export via share sheet, delete with confirmation), newer-version row, Report an ad (mailto, subject "Ad report"), `CKInlineBanner(slot:)`, backup temp file removed when the share sheet closes. `CKSettingsRow` moved to `CKSettingsRow.swift` (adds `isBusy`).
+- `Sources/Features/ATS/ATSCheckView.swift`: info icon uses forest instead of champagne (contrast).
+- Tests: `Tests/PersistenceDecodingTests.swift`, `Tests/PersistenceBackupTests.swift`, `Tests/AppShellTests.swift`.
+
+Delete all local data now clears: documents and `.bak` copies, Quarantine, newer-version files, every ExportGate grant (via `forget`), `CareerKitExport-*` and `CareerKit-Backup-*` temp items, the local name, and posts `ckCachesShouldClear`, then rebuilds the browse tabs.
+
+For the Preview and DesignSystem owner: please observe `Notification.Name.ckCachesShouldClear` (posted on the main thread) and empty `CKImageCache` and `ThumbnailRenderer.cache`. `CKImageCache` has no public clear method yet, so this module cannot clear it directly.
+
+Restore rules (`CKBackupMerge`): same id and same content is skipped; a newer backup version replaces the device copy; when the device copy is newer (or the same second with different content) both are kept, and the backup copy gets a new id and "(restored)" in its title. Ids of newer-version files are never reused. Timestamps are compared in whole seconds because JSON keeps whole seconds.
+
 ## Contract APIs relied on
 
 `DocumentStore` (resumes, coverLetters, resume(id:), upsert, delete, duplicate, setArchived, flushNow, deleteAllData, makeBackupFile), `ExportGate` (injected only), `AdsManager.shared` (start, presentPrivacyOptions, privacyOptionsRequired), `BannerAdView()`, `DocumentRenderer.render`, `TemplateLibrary` (all, spec(id:), defaultTemplateID), `SampleContent` (resume(for:), sampleLabel), `ResumeEditorView(resumeID:)`, `ResumePreviewView(resumeID:)`, `NewResumeFlow(templateID:onCreated:)`, `CoverLetterListView()`, `ATSCheckView(resumeID:)`, `TemplateThumbnail(template:size:)`.
@@ -48,7 +71,7 @@ Features
 
 ## Known gaps
 
-- No unit tests were added (this owner has no test directory in the ownership table). Good candidates: `CKTemplateFilter`, `CKResumeSort`, `CKResumeSearch`, `CKResumeStats`, `AppState.suggestedPageSize`.
+- Unit tests now cover `CKResumeSort`, `CKResumeSearch`, `AppState.suggestedPageSize`, backup merge, tolerant decoding and temp cleanup. Still untested: `CKTemplateFilter`, `CKResumeStats`.
 - Resume thumbnails render on a background task per card; very large libraries may want a concurrency limit.
 - No localisation table yet. User-facing strings use `Text` literals, `LocalizedStringKey` or `String(localized:)`, so a catalog can be extracted later.
 - VoiceOver, Dynamic Type and Reduce Motion were designed in but not tested on a device.
@@ -60,3 +83,7 @@ Features
 - `CKAppearance` uses `#available(iOS 26, *)`; on an older Xcode the check should still compile.
 - Generic closures passed to `CKFilterChipBar`, `CKFilterMenuChip` and `CKAdaptiveGrid` carry explicit parameter types to help inference.
 - Views that call `@MainActor` store APIs rely on the `@EnvironmentObject` wrapper for actor inference.
+- Model decoders are `init(from:)` in extensions in `ModelDecoding.swift`, a different file from the type declarations. This is a supported pattern (explicit witness, memberwise initialisers kept). If CI complains, move each extension into the file of its type.
+- `SectionKind.init(from:)` overrides the standard `RawRepresentable` decoding; it must stay a concrete member of `SectionKind`.
+- `ckLossyArray` relies on `UnkeyedDecodingContainer.currentIndex` advancing after decoding `CKSkippedValue`; a guard stops the loop if it does not.
+- `ProfileView` uses `.fileImporter` and `.alert` on the `NavigationStack` and a second `.alert` / `.confirmationDialog` on the unreadable-files row, so no two presentations share a view.

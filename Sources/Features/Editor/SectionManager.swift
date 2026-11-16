@@ -26,7 +26,7 @@ struct EdSectionManagerList: View {
             } header: {
                 Text("Sections on your resume")
             } footer: {
-                Text("Drag the handles to reorder. Hidden sections stay saved but are left out of the document.")
+                Text("Drag the handles to reorder, or with VoiceOver use the Move up and Move down actions. Hidden sections stay saved but are left out of the document.")
             }
 
             Section {
@@ -102,7 +102,8 @@ struct EdSectionManagerList: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(section.wrappedValue.isVisible ? "Hide \(section.wrappedValue.title)" : "Show \(section.wrappedValue.title)")
+            .accessibilityLabel(section.wrappedValue.isVisible ? "Hide \(displayTitle(section.wrappedValue))" : "Show \(displayTitle(section.wrappedValue))")
+            .modifier(reorderActions(section.wrappedValue))
 
             VStack(alignment: .leading, spacing: 0) {
                 TextField("Section heading", text: section.title)
@@ -110,12 +111,66 @@ struct EdSectionManagerList: View {
                     .foregroundStyle(section.wrappedValue.isVisible ? CK.Palette.ink : CK.Palette.graphite)
                     .textInputAutocapitalization(.words)
                     .submitLabel(.done)
+                    .accessibilityLabel("Section heading")
+                    .accessibilityHint(positionHint(section.wrappedValue))
+                    .modifier(reorderActions(section.wrappedValue))
                 Text(section.wrappedValue.isVisible ? SectionOps.summaryLine(for: section.wrappedValue) : "Hidden from the document")
                     .font(CK.Font.caption)
                     .foregroundStyle(CK.Palette.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .frame(minHeight: 52)
+    }
+
+    // MARK: VoiceOver reordering
+
+    private func displayTitle(_ section: ResumeSection) -> String {
+        let trimmed = section.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? String(localized: "Untitled section") : trimmed
+    }
+
+    private func positionHint(_ section: ResumeSection) -> String {
+        guard let index = sections.firstIndex(where: { $0.id == section.id }) else { return "" }
+        return String(localized: "Position \(index + 1) of \(sections.count). Swipe up or down for move actions.")
+    }
+
+    private func reorderActions(_ section: ResumeSection) -> EdReorderActions {
+        let index: Int = sections.firstIndex(where: { $0.id == section.id }) ?? 0
+        return EdReorderActions(
+            canMoveUp: index > 0,
+            canMoveDown: index < sections.count - 1,
+            moveUp: { move(section.id, by: -1) },
+            moveDown: { move(section.id, by: 1) }
+        )
+    }
+
+    private func move(_ id: UUID, by offset: Int) {
+        guard let index = sections.firstIndex(where: { $0.id == id }) else { return }
+        var copy = sections
+        guard ListEditing.move(&copy, index: index, by: offset) else { return }
+        let title: String = displayTitle(copy[index + offset])
+        sections = copy
+        UIAccessibility.post(notification: .announcement,
+                             argument: String(localized: "\(title) moved to position \(index + offset + 1) of \(copy.count)"))
+    }
+}
+
+/// "Move up" and "Move down" VoiceOver actions for a row in a reorderable list.
+struct EdReorderActions: ViewModifier {
+    let canMoveUp: Bool
+    let canMoveDown: Bool
+    let moveUp: () -> Void
+    let moveDown: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .accessibilityAction(named: Text("Move up")) {
+                if canMoveUp { moveUp() }
+            }
+            .accessibilityAction(named: Text("Move down")) {
+                if canMoveDown { moveDown() }
+            }
     }
 }
 

@@ -7,6 +7,9 @@ import Combine
 ///   Documents/Resumes/<uuid>.json      (plus <uuid>.json.bak, the previous version)
 ///   Documents/CoverLetters/<uuid>.json
 ///   Quarantine/                        files that could not be read
+///
+/// A file whose `schemaVersion` is newer than this build is never decoded, rewritten or quarantined.
+/// It stays where it is and is counted in `newerVersionFileCount` so Profile can explain it.
 @MainActor
 final class DocumentStore: ObservableObject {
     enum SaveState: Equatable {
@@ -16,12 +19,18 @@ final class DocumentStore: ObservableObject {
         case failed(String)
     }
 
-    /// Version written into new documents. Older versions pass through `migrated(_:)` when loaded.
-    static let currentSchemaVersion: Int = 1
+    /// Version written into new documents. Older versions pass through `CKSchemaMigration` when loaded.
+    static let currentSchemaVersion: Int = CKSchema.current
 
     @Published private(set) var resumes: [Resume] = []
     @Published private(set) var coverLetters: [CoverLetter] = []
     @Published private(set) var saveState: SaveState = .idle
+    /// Files in Quarantine (could not be read). Profile offers to export or delete them.
+    @Published private(set) var quarantinedFiles: [URL] = []
+    /// Documents written by a newer CareerKit. Kept untouched on disk.
+    @Published private(set) var newerVersionFileCount: Int = 0
+    /// Ids of the newer-version files, so a restore never reuses them.
+    private var newerVersionIDs: Set<UUID> = []
 
     let rootDirectory: URL
     let resumesDirectory: URL
@@ -57,13 +66,8 @@ final class DocumentStore: ObservableObject {
         self.quarantineDirectory = root.appendingPathComponent("Quarantine", isDirectory: true)
         self.debounceNanoseconds = UInt64(max(0, debounceInterval) * 1_000_000_000)
 
-        let newEncoder = JSONEncoder()
-        newEncoder.dateEncodingStrategy = .iso8601
-        newEncoder.outputFormatting = [.sortedKeys]
-        self.encoder = newEncoder
-        let newDecoder = JSONDecoder()
-        newDecoder.dateDecodingStrategy = .iso8601
-        self.decoder = newDecoder
+        self.encoder = CKJSON.encoder()
+        self.decoder = CKJSON.decoder()
 
         createDirectories()
         loadAll()
@@ -125,7 +129,7 @@ final class DocumentStore: ObservableObject {
         guard let original = resume(id: resumeID) else { return nil }
         var copy = original
         copy.id = UUID()
-        copy.title = original.title + " copy"
+        copy.title = CKDocumentNaming.copyTitle(for: original.title, existingTitles: resumes.map { $0.title })
         copy.createdAt = Date()
         copy.isArchived = false
         copy.linkedCoverLetterID = nil
@@ -139,7 +143,7 @@ final class DocumentStore: ObservableObject {
         guard let original = coverLetter(id: coverLetterID) else { return nil }
         var copy = original
         copy.id = UUID()
-        copy.title = original.title + " copy"
+        copy.title = CKDocumentNaming.copyTitle(for: original.title, existingTitles: coverLetters.map { $0.title })
         copy.createdAt = Date()
         upsert(copy)
         flushNow()
@@ -213,8 +217,11 @@ final class DocumentStore: ObservableObject {
         }
     }
 
-    // MARK: Delete everything and backup
 
+    // MARK: Delete everything
+
+    /// Removes every document, every `.bak` copy, quarantined files and newer-version files.
+    /// Temporary share files, export grants, caches and navigation are reset by `CKLocalDataReset`.
     func deleteAllData() throws {
         saveTask?.cancel()
         saveTask = nil
@@ -234,27 +241,24 @@ final class DocumentStore: ObservableObject {
         resumes = []
         coverLetters = []
         saveState = .idle
+        newerVersionIDs = []
+        newerVersionFileCount = 0
+        refreshQuarantine()
         if let error = firstError {
             throw error
         }
     }
 
-    private struct BackupPayload: Codable {
-        var format: String
-        var schemaVersion: Int
-        var createdAt: Date
-        var resumes: [Resume]
-        var coverLetters: [CoverLetter]
-    }
+    // MARK: Backup and restore
 
     /// One JSON file holding every document, written to a temporary location for the share sheet.
+    /// The caller removes it when the share sheet closes; stale ones are cleaned at launch.
     func makeBackupFile() throws -> URL {
         flushNow()
-        let payload = BackupPayload(format: "careerkit-backup",
-                                    schemaVersion: DocumentStore.currentSchemaVersion,
-                                    createdAt: Date(),
-                                    resumes: resumes,
-                                    coverLetters: coverLetters)
+        let payload = CKBackupPayload(schemaVersion: DocumentStore.currentSchemaVersion,
+                                      createdAt: Date(),
+                                      resumes: resumes,
+                                      coverLetters: coverLetters)
         let data: Data = try encoder.encode(payload)
         let stamp = DateFormatter()
         stamp.locale = Locale(identifier: "en_US_POSIX")
@@ -263,6 +267,78 @@ final class DocumentStore: ObservableObject {
         let url: URL = fileManager.temporaryDirectory.appendingPathComponent(name)
         try data.write(to: url, options: [.atomic])
         return url
+    }
+
+    /// Validates a backup file's contents and merges it into the library by id.
+    /// Never overwrites a document that is newer on this device (see `CKBackupMerge`).
+    func restoreBackup(from data: Data) throws -> CKRestoreSummary {
+        let payload: CKBackupPayload = try CKBackupParser.parse(data, currentSchemaVersion: DocumentStore.currentSchemaVersion)
+        flushNow()
+
+        let incomingResumes: [Resume] = payload.resumes.map { CKSchemaMigration.migrate($0) }
+        let incomingLetters: [CoverLetter] = payload.coverLetters.map { CKSchemaMigration.migrate($0) }
+        let resumeMerge = CKBackupMerge.merge(incoming: incomingResumes,
+                                              existing: resumes,
+                                              reservedIDs: newerVersionIDs,
+                                              currentSchemaVersion: DocumentStore.currentSchemaVersion)
+        let letterMerge = CKBackupMerge.merge(incoming: incomingLetters,
+                                              existing: coverLetters,
+                                              reservedIDs: newerVersionIDs,
+                                              currentSchemaVersion: DocumentStore.currentSchemaVersion)
+
+        // Restored documents keep their own dates, so `upsert` (which stamps updatedAt) is not used.
+        for resume in resumeMerge.inserts + resumeMerge.replacements {
+            if let index = resumes.firstIndex(where: { $0.id == resume.id }) {
+                resumes[index] = resume
+            } else {
+                resumes.append(resume)
+            }
+            dirtyResumeIDs.insert(resume.id)
+        }
+        for letter in letterMerge.inserts + letterMerge.replacements {
+            if let index = coverLetters.firstIndex(where: { $0.id == letter.id }) {
+                coverLetters[index] = letter
+            } else {
+                coverLetters.append(letter)
+            }
+            dirtyLetterIDs.insert(letter.id)
+        }
+        resumes.sort(by: { $0.updatedAt > $1.updatedAt })
+        coverLetters.sort(by: { $0.updatedAt > $1.updatedAt })
+        saveState = .saving
+        flushNow()
+
+        return CKRestoreSummary(restored: resumeMerge.restoredCount + letterMerge.restoredCount,
+                                skipped: resumeMerge.skippedCount + letterMerge.skippedCount,
+                                keptBoth: resumeMerge.keptBoth + letterMerge.keptBoth,
+                                unreadable: payload.unreadableItems,
+                                replacedExisting: resumeMerge.replacements.count + letterMerge.replacements.count)
+    }
+
+    // MARK: Quarantine
+
+    /// Re-reads the Quarantine folder.
+    func refreshQuarantine() {
+        let contents: [URL] = (try? fileManager.contentsOfDirectory(at: quarantineDirectory, includingPropertiesForKeys: nil)) ?? []
+        quarantinedFiles = contents
+            .filter { !$0.lastPathComponent.hasPrefix(".") }
+            .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+    }
+
+    /// Permanently removes every quarantined file.
+    func deleteQuarantinedFiles() throws {
+        var firstError: Error? = nil
+        for url in quarantinedFiles {
+            do {
+                try fileManager.removeItem(at: url)
+            } catch {
+                if firstError == nil { firstError = error }
+            }
+        }
+        refreshQuarantine()
+        if let error = firstError {
+            throw error
+        }
     }
 
     // MARK: Files
@@ -295,68 +371,91 @@ final class DocumentStore: ObservableObject {
     // MARK: Loading
 
     private func loadAll() {
-        let loadedResumes: [Resume] = loadDocuments(in: resumesDirectory, as: Resume.self)
-        resumes = loadedResumes.map { migrated($0) }.sorted(by: { $0.updatedAt > $1.updatedAt })
-        let loadedLetters: [CoverLetter] = loadDocuments(in: lettersDirectory, as: CoverLetter.self)
-        coverLetters = loadedLetters.map { migrated($0) }.sorted(by: { $0.updatedAt > $1.updatedAt })
+        var newerIDs: Set<UUID> = []
+        var newerCount: Int = 0
+
+        let loadedResumes: [Resume] = loadDocuments(in: resumesDirectory, as: Resume.self, newerIDs: &newerIDs, newerCount: &newerCount)
+        resumes = loadedResumes.map { CKSchemaMigration.migrate($0) }.sorted(by: { $0.updatedAt > $1.updatedAt })
+        let loadedLetters: [CoverLetter] = loadDocuments(in: lettersDirectory, as: CoverLetter.self, newerIDs: &newerIDs, newerCount: &newerCount)
+        coverLetters = loadedLetters.map { CKSchemaMigration.migrate($0) }.sorted(by: { $0.updatedAt > $1.updatedAt })
+
+        newerVersionIDs = newerIDs
+        newerVersionFileCount = newerCount
+        refreshQuarantine()
     }
 
-    private func loadDocuments<T: Decodable>(in folder: URL, as type: T.Type) -> [T] {
+    private enum FileRead<T> {
+        case document(T)
+        case newerVersion
+        case unreadable
+    }
+
+    private func loadDocuments<T: Decodable & CKPersistedDocument>(in folder: URL,
+                                                                     as type: T.Type,
+                                                                     newerIDs: inout Set<UUID>,
+                                                                     newerCount: inout Int) -> [T] {
         let contents: [URL] = (try? fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
         var out: [T] = []
         for url in contents where url.pathExtension.lowercased() == "json" {
-            if let value = decodeFile(url, as: type) {
-                out.append(value)
+            let fileID: UUID? = UUID(uuidString: url.deletingPathExtension().lastPathComponent)
+            switch readFile(url, as: type) {
+            case .document(let value):
+                out.append(withFileID(value, fileID))
                 continue
+            case .newerVersion:
+                // Made by a newer CareerKit: leave the file and its .bak exactly as they are.
+                newerCount += 1
+                if let fileID = fileID { newerIDs.insert(fileID) }
+                continue
+            case .unreadable:
+                break
             }
             // The main file is unreadable. Move it aside, then try the previous version.
             let backup: URL = url.appendingPathExtension("bak")
             quarantine(url)
-            if let recovered = decodeFile(backup, as: type) {
+            switch readFile(backup, as: type) {
+            case .document(let recovered):
                 try? fileManager.copyItem(at: backup, to: url)
-                out.append(recovered)
-            } else if fileManager.fileExists(atPath: backup.path) {
-                quarantine(backup)
+                out.append(withFileID(recovered, fileID))
+            case .newerVersion:
+                // Unusual, but never touch a newer file.
+                newerCount += 1
+                if let fileID = fileID { newerIDs.insert(fileID) }
+            case .unreadable:
+                if fileManager.fileExists(atPath: backup.path) {
+                    quarantine(backup)
+                }
             }
         }
         return out
     }
 
-    private func decodeFile<T: Decodable>(_ url: URL, as type: T.Type) -> T? {
-        guard let data = try? Data(contentsOf: url), !data.isEmpty else { return nil }
-        return try? decoder.decode(type, from: data)
+    private func readFile<T: Decodable>(_ url: URL, as type: T.Type) -> FileRead<T> {
+        guard let data = try? Data(contentsOf: url), !data.isEmpty else { return .unreadable }
+        if let version = CKSchemaPeek.version(of: data), CKSchemaMigration.isFromNewerApp(version, current: DocumentStore.currentSchemaVersion) {
+            return .newerVersion
+        }
+        guard let value = try? decoder.decode(type, from: data) else { return .unreadable }
+        return .document(value)
+    }
+
+    /// Files are named after their id. If the id inside is missing or different, the file name wins,
+    /// so the next save replaces this file instead of creating a second one.
+    private func withFileID<T: CKPersistedDocument>(_ value: T, _ fileID: UUID?) -> T {
+        guard let fileID = fileID, value.id != fileID else { return value }
+        var copy = value
+        copy.id = fileID
+        return copy
     }
 
     /// Moves a file that cannot be read into Quarantine so it is never loaded again and nothing is lost.
+    /// If the move fails the file stays where it is; it is never deleted here.
     private func quarantine(_ url: URL) {
         guard fileManager.fileExists(atPath: url.path) else { return }
         try? fileManager.createDirectory(at: quarantineDirectory, withIntermediateDirectories: true, attributes: nil)
         let stamp: Int = Int(Date().timeIntervalSince1970)
         let name: String = url.lastPathComponent + "." + String(stamp) + "." + String(UUID().uuidString.prefix(6)) + ".corrupt"
         let destination: URL = quarantineDirectory.appendingPathComponent(name)
-        do {
-            try fileManager.moveItem(at: url, to: destination)
-        } catch {
-            try? fileManager.removeItem(at: url)
-        }
-    }
-
-    // MARK: Migration
-
-    /// Upgrade hook. Version 1 is the first schema, so nothing needs to change yet.
-    private func migrated(_ resume: Resume) -> Resume {
-        var copy = resume
-        if copy.schemaVersion < DocumentStore.currentSchemaVersion {
-            copy.schemaVersion = DocumentStore.currentSchemaVersion
-        }
-        return copy
-    }
-
-    private func migrated(_ letter: CoverLetter) -> CoverLetter {
-        var copy = letter
-        if copy.schemaVersion < DocumentStore.currentSchemaVersion {
-            copy.schemaVersion = DocumentStore.currentSchemaVersion
-        }
-        return copy
+        try? fileManager.moveItem(at: url, to: destination)
     }
 }

@@ -185,7 +185,7 @@ FAQ = [
     ("Is CareerKit really free?",
      "<p>Yes. There is no subscription, no in-app purchase and no paid version. Ads pay for the app: a banner on browse screens, and one rewarded video that you choose to watch when you export a finished document.</p>"),
     ("Why do I watch a video to export?",
-     "<p>Exporting is the one step where the app asks for something in return. One completed video covers one export of that document, and if you do not finish exporting, the unlock stays for up to 24 hours. Writing, editing, previewing, cover letters and the ATS check never need a video.</p>"),
+     "<p>Exporting is the one step where the app asks for something in return. One completed video covers one export of that document, and if you do not finish exporting, the unlock stays for up to 24 hours. If no video can be shown, for example when you are offline or no ad is available, the app lets you export without one. Writing, editing, previewing, cover letters and the ATS check never need a video.</p>"),
     ("Do I need an account?",
      "<p>No. There is no sign-in and no sign-up.</p>"),
     ("Where are my documents stored?",
@@ -193,7 +193,7 @@ FAQ = [
     ("Will an applicant tracking system accept my resume?",
      "<p>Nobody can promise that. Employers use many different systems and each one reads a resume in its own way. The ATS check in CareerKit flags common formatting problems and explains each finding, so use it as a checklist and not as a verdict.</p>"),
     ("Does it work offline?",
-     "<p>Writing, editing and previewing work without a connection. Exporting needs one, because the rewarded video has to load. Banner ads only appear when you are online.</p>"),
+     "<p>Yes. Writing, editing, previewing and exporting work without a connection. Offline, no video can load, so the export sheet lets you export without one. Banner ads only appear when you are online.</p>"),
     ("What happens if I do not allow tracking?",
      "<p>The app works the same. The ads you see will be less personalised. You can change the choice any time in iOS Settings under Privacy and Security, then Tracking.</p>"),
     ("Which devices does it run on?",
@@ -360,7 +360,7 @@ def build_index():
             </ul>
           </div>
         </div>
-        <p>Where the law asks for it, the app shows a consent form before personalised ads, and iOS may ask whether the app may track you. You can say no to the iOS tracking prompt and still use everything. If you decline a consent form that applies in your region, ads may not load, and exporting is unavailable until you change that choice in the Profile tab. The <a href="privacy/">privacy policy</a> explains what the ad network collects.</p>
+        <p>Where the law asks for it, the app shows a consent form before personalised ads, and iOS may ask whether the app may track you. You can say no to the iOS tracking prompt and still use everything. If you decline a consent form that applies in your region, ads may not load, and the export sheet lets you export without a video. You can change that choice later in the Profile tab. The <a href="privacy/">privacy policy</a> explains what the ad network collects.</p>
       </div>
     </div>
   </section>
@@ -394,9 +394,11 @@ def build_support():
     desc = "Get help with CareerKit: contact details, what to include in a message, and answers to common questions about exports, ads and your data."
     items = [
         ("The export sheet says no video is available",
-         "<p>Check your connection, then tap Try again on the export sheet. Ad availability changes by country and by time of day. If it still fails after a few tries, wait a little and try again. If it keeps happening, write to us with your country and your iOS version.</p>"),
+         "<p>Tap Export without video to finish that export. Ad availability changes by country and by time of day, and no video can load while you are offline or when your ad privacy choice does not allow ads. You can also tap Try the video again.</p>"),
         ("I closed the video early and nothing was exported",
-         "<p>The export is released only after a video has played to the end. Start the export again to watch another one.</p>"),
+         "<p>A video unlocks the export only when it has played to the end. Tap Watch again on the export sheet to start another one.</p>"),
+        ("I saw an ad that seems wrong",
+         "<p>Open the Profile tab and tap Report an ad, or write to us at the address above. Tell us roughly when and where in the app you saw it and what it showed. A screenshot helps. We block ad categories and advertisers through Google AdMob where we can.</p>"),
         ("I want to change my ad or tracking choice",
          "<p>Open the Profile tab and look for the Ad privacy choices row, which appears where the law requires it. You can also change tracking in iOS Settings under Privacy and Security, then Tracking, and reset your advertising identifier there.</p>"),
         ("I deleted the app and my resumes are gone",

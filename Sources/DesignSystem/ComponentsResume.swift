@@ -23,36 +23,99 @@ enum CKPageImages {
     }
 }
 
-final class CKImageCache {
-    static let shared = CKImageCache()
-    private let cache = NSCache<NSString, UIImage>()
+// MARK: - Cache clearing
 
-    private init() {
-        cache.countLimit = 80
+/// Image caches register here. They are emptied when the app posts "CKCachesShouldClear"
+/// (for example after "Delete all data" or a restore). NSCache already evicts under memory pressure.
+enum CKCacheClearing {
+    static let notification = Notification.Name("CKCachesShouldClear")
+
+    static func register(_ clear: @escaping () -> Void) {
+        _ = NotificationCenter.default.addObserver(forName: notification, object: nil, queue: nil) { _ in
+            clear()
+        }
     }
 
-    func image(for key: String) -> UIImage? {
-        cache.object(forKey: key as NSString)
-    }
-
-    func set(_ image: UIImage, for key: String) {
-        cache.setObject(image, forKey: key as NSString)
+    /// Bytes an image holds once decoded, used as its NSCache cost.
+    static func cost(of image: UIImage) -> Int {
+        let pixels: CGFloat = image.size.width * image.scale * image.size.height * image.scale
+        return max(1, Int(pixels * 4))
     }
 }
 
-enum CKResumeMeta {
-    static func templateName(_ resume: Resume) -> String {
-        TemplateLibrary.spec(id: resume.templateID)?.name ?? String(localized: "Template")
+/// One cached page image plus the content fingerprint it was rendered from.
+final class CKThumbnailEntry {
+    let image: UIImage
+    let fingerprint: Int
+
+    init(image: UIImage, fingerprint: Int) {
+        self.image = image
+        self.fingerprint = fingerprint
+    }
+}
+
+/// Resume card images. One entry per resume and size (the key has no edit date), so editing a resume replaces
+/// its entry instead of piling up stale ones. Bounded by count and decoded size.
+final class CKImageCache {
+    static let shared = CKImageCache()
+    private let cache = NSCache<NSString, CKThumbnailEntry>()
+
+    private init() {
+        cache.countLimit = 60
+        cache.totalCostLimit = 32 * 1024 * 1024
+        let storage = cache
+        CKCacheClearing.register { storage.removeAllObjects() }
     }
 
-    static func completionPercent(_ resume: Resume) -> Int {
-        Int((resume.completion * 100).rounded())
+    func entry(for key: String) -> CKThumbnailEntry? {
+        cache.object(forKey: key as NSString)
+    }
+
+    func set(_ image: UIImage, fingerprint: Int, for key: String) {
+        cache.setObject(CKThumbnailEntry(image: image, fingerprint: fingerprint),
+                        forKey: key as NSString,
+                        cost: CKCacheClearing.cost(of: image))
+    }
+
+    func image(for key: String) -> UIImage? {
+        entry(for: key)?.image
+    }
+
+    func set(_ image: UIImage, for key: String) {
+        set(image, fingerprint: 0, for: key)
+    }
+
+    func removeAll() {
+        cache.removeAllObjects()
+    }
+}
+
+/// A hash of everything that changes how a resume's page looks. The edit date, creation date and archive flag
+/// are left out, so archiving or a save without visible changes does not re-render the card.
+enum CKResumeFingerprint {
+    static func make(_ resume: Resume) -> Int {
+        var copy = resume
+        let fixed = Date(timeIntervalSince1970: 0)
+        copy.updatedAt = fixed
+        copy.createdAt = fixed
+        copy.isArchived = false
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        encoder.dateEncodingStrategy = .secondsSince1970
+        guard let data = try? encoder.encode(copy) else { return resume.id.hashValue }
+        var hasher = Hasher()
+        data.withUnsafeBytes { buffer in
+            hasher.combine(bytes: buffer)
+        }
+        return hasher.finalize()
     }
 }
 
 // MARK: - Real thumbnail of a user's resume
 
 /// First page of the person's own resume, rendered with the same renderer as preview and export.
+/// Renders go through the serial `ThumbnailRenderer` (one at a time), are skipped when the card leaves the screen
+/// before its turn, and wait for a quiet moment when the resume is being edited (the old image stays meanwhile).
 struct CKResumeThumbnail: View {
     let resume: Resume
     let width: CGFloat
@@ -60,9 +123,18 @@ struct CKResumeThumbnail: View {
     @Environment(\.displayScale) private var displayScale
     @State private var image: UIImage?
 
-    private var cacheKey: String {
-        "\(resume.id.uuidString)|\(resume.updatedAt.timeIntervalSince1970)|\(resume.templateID)|\(Int(width))"
+    private struct Request: Equatable {
+        let resume: Resume
+        let width: CGFloat
+        let scale: CGFloat
     }
+
+    /// No edit date in the key: an edited resume reuses (and then replaces) its entry.
+    private var cacheKey: String {
+        "\(resume.id.uuidString)|\(Int(width))|\(Int(renderScale * 10))"
+    }
+
+    private var renderScale: CGFloat { min(max(displayScale, 1), 3) }
 
     private var pageHeight: CGFloat {
         let size = resume.pageSize.size
@@ -85,27 +157,41 @@ struct CKResumeThumbnail: View {
                 .strokeBorder(CK.Palette.hairline, lineWidth: 0.5)
         )
         .shadow(color: .black.opacity(0.10), radius: 8, y: 4)
-        .task(id: cacheKey) { await load() }
+        .task(id: Request(resume: resume, width: width, scale: renderScale)) { await load() }
         .accessibilityHidden(true)
     }
 
     private func load() async {
         let key = cacheKey
-        if let cached = CKImageCache.shared.image(for: key) {
-            image = cached
-            return
-        }
-        guard let spec = TemplateLibrary.spec(id: resume.templateID)
-            ?? TemplateLibrary.spec(id: TemplateLibrary.defaultTemplateID) else { return }
         let snapshot = resume
         let targetWidth = width
-        let scale = min(displayScale, 3)
-        let rendered: UIImage? = await Task.detached(priority: .utility) { () -> UIImage? in
-            let document = DocumentRenderer.render(snapshot, template: spec)
-            return CKPageImages.images(from: document.pdfData, width: targetWidth, scale: scale, maxPages: 1).first
+        let scale = renderScale
+        let cached: CKThumbnailEntry? = CKImageCache.shared.entry(for: key)
+        if image == nil, let cached {
+            image = cached.image
+        }
+        let fingerprint: Int = await Task.detached(priority: .utility) { () -> Int in
+            CKResumeFingerprint.make(snapshot)
         }.value
+        if Task.isCancelled { return }
+        if let cached, cached.fingerprint == fingerprint {
+            image = cached.image
+            return
+        }
+        if image != nil {
+            // An open editor saves after every change. Wait until it settles before rendering again.
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            if Task.isCancelled { return }
+        }
+        let spec: TemplateSpec? = TemplateLibrary.spec(id: snapshot.templateID)
+            ?? TemplateLibrary.spec(id: TemplateLibrary.defaultTemplateID)
+        guard let spec else { return }
+        let rendered: UIImage? = await ThumbnailRenderer.shared.pageImage(width: targetWidth, scale: scale) {
+            DocumentRenderer.render(snapshot, template: spec)
+        }
+        if Task.isCancelled { return }
         if let rendered {
-            CKImageCache.shared.set(rendered, for: key)
+            CKImageCache.shared.set(rendered, fingerprint: fingerprint, for: key)
             image = rendered
         }
     }

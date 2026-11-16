@@ -34,7 +34,7 @@ struct CoverLetterForm: View {
     private var titleBlock: some View {
         VStack(alignment: .leading, spacing: 4) {
             TextField("Letter title", text: $letter.title)
-                .font(CK.Font.title(26))
+                .ckTitleFont(26)
                 .foregroundStyle(CK.Palette.ink)
                 .frame(minHeight: 44)
             Text("Shown in your list and used as the file name when you export.")
@@ -90,7 +90,7 @@ struct CoverLetterForm: View {
            match.id != letter.templateID {
             VStack(alignment: .leading, spacing: CK.Space.s) {
                 Text("Match your resume")
-                    .font(CK.Font.headline(17))
+                    .ckHeadlineFont(17)
                     .foregroundStyle(CK.Palette.ink)
                 Text("\"\(resume.title)\" uses the \(EditorRender.template(id: resume.templateID).name) design. The \(match.name) letter template shares it, so the two documents look like a set.")
                     .font(CK.Font.callout)

@@ -58,7 +58,7 @@ A4 or US Letter page size.
 
 PDF export with selectable text. Share it, save it to Files or print it. A backup option saves a copy of everything to one file you can keep anywhere.
 
-Writing, editing and previewing work offline. Exporting needs an internet connection to load the video. There is no account to create, and your resumes and letters are stored on your device only.
+Writing, editing and previewing work offline. There is no account to create, and your resumes and letters are stored on your device only.
 
 FREE, WITH ADS
 
@@ -66,7 +66,7 @@ CareerKit is free. There is no subscription and nothing to buy.
 
 The app is paid for by ads from Google AdMob. A banner ad can appear on browse screens such as Home, My Resumes, Templates, Cover Letters and Profile. There are no ads in the editor or the preview.
 
-To export a finished document you watch one short rewarded video. That one video covers one export of that document. Writing, editing, previewing, cover letters and the ATS check never need an ad.
+To export a finished document you choose to watch one short rewarded video. That one video covers one export of that document, and the export stays unlocked for 24 hours. If no video is available, for example when you are offline, you can export without one. Writing, editing, previewing, cover letters and the ATS check never need an ad.
 
 Where the law requires it, the app asks for your consent before showing personalised ads, and you can change your choice later in the Profile tab.
 
@@ -94,21 +94,21 @@ Answer the questionnaire in App Store Connect as follows. Apple has changed this
 
 | Question | Answer |
 |---|---|
-| Cartoon or fantasy violence, realistic violence, prolonged graphic violence | None |
-| Sexual content or nudity, graphic sexual content | None |
-| Profanity or crude humor | None |
-| Horror or fear themes | None |
-| Mature or suggestive themes | None |
-| Alcohol, tobacco or drug use or references | None |
-| Simulated gambling, real gambling, contests | None |
-| Medical or treatment information | None |
+| Every content descriptor (cartoon or fantasy violence, realistic violence, prolonged graphic or sadistic violence, sexual content or nudity, graphic sexual content and nudity, profanity or crude humor, horror or fear themes, mature or suggestive themes, alcohol, tobacco or drug use or references, simulated gambling, contests) | None |
+| Guns or other weapons | None |
+| Medical or treatment information / health or wellness topics | None / No |
+| Gambling (real money) | No |
+| Loot boxes | No |
 | Unrestricted web access | No (ads open in the system browser or in the App Store sheet, the app itself has no browser) |
-| User-generated content shared with other users | No (documents are private and never shared inside the app) |
-| Messaging or chat between users | No |
-| Parental controls, age assurance features | No |
+| User-generated content | No (documents are private and never shared inside the app) |
+| Messaging or chat | No |
+| Social media | No |
+| Advertising | **Yes** (Google AdMob banners on browse screens and an opt-in rewarded video for export) |
+| Parental controls | No |
+| Age assurance | No |
 | Made for Kids | No. The app is for job seekers. |
 
-Expected result: **4+**. Because ads are shown, also set the AdMob content filters (see `submission-checklist.md`) so that sensitive ad categories are blocked.
+Expected result: **4+**. The app limits ad requests to general-audience content (`maxAdContentRating = .general` in `AdsManager`), which matches 4+. Also set the AdMob blocking controls (see `submission-checklist.md` 3.6) so that sensitive ad categories are blocked.
 
 ## URLs
 
@@ -120,6 +120,12 @@ Expected result: **4+**. Because ads are shown, also set the AdMob content filte
 | Terms of use (Custom EULA field or link in description) | `https://ecomswiftllc.github.io/careerkit/terms/` |
 
 The static site in `website/careerkit/` is built for exactly these paths. The URLs must return 200 before submission.
+
+**Marketing URL and app-ads.txt.** AdMob reads `app-ads.txt` from the root of the host in the Marketing URL (or the developer website). A GitHub project page (`ecomswiftllc.github.io/careerkit/`) does not let you control the host root, so `https://ecomswiftllc.github.io/app-ads.txt` cannot be served from the project repo. Recommended: set the Marketing URL to `https://www.ecomswiftllc.com` if the owner controls that domain, and serve `https://www.ecomswiftllc.com/app-ads.txt`. Otherwise publish a user-site repo `EcomswiftLLC/ecomswiftllc.github.io` with `app-ads.txt` at its root. The file content is exactly one line:
+
+```
+google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0
+```
 
 ## Copyright
 
@@ -149,10 +155,12 @@ What the app does: builds resumes and cover letters on device and exports them a
 
 Ads: the app is free and uses Google AdMob only. There are no purchases and no StoreKit. Two placements exist.
 1. A banner on browse screens (Home, My Resumes, Templates, Cover Letters, Profile). Never in the editor or on the preview and export screens.
-2. One rewarded video that the user opts into before exporting a finished document. One completed video covers one export of that document. The reward is granted only after the video has been watched to the end. Creating, editing, previewing, cover letters and the ATS check never show an ad.
+2. One rewarded video that the user opts into before exporting a finished document. One completed video covers one export of that document. The export is unlocked only after the video has been watched to the end. Creating, editing, previewing, cover letters and the ATS check never show an ad.
 There are no interstitial ads and no app-open ads.
 
-Consent: on first launch the app shows the Google User Messaging Platform consent form where required, then the App Tracking Transparency prompt. Everything except export stays usable if the user declines both. If ad consent is required in the user's region and is declined, ads cannot load and export is unavailable; the export sheet says so and offers Review privacy choices. The Profile tab has an Ad privacy choices row (shown where the consent form requires it) to change the answer.
+Export always works. If no video can be shown (no ad available, offline, ads not allowed by the consent choice, or the video fails to load or start), the export sheet says "No video is available right now, so this export is free." and offers Export without video, which continues straight to Share, Save to Files and Print.
+
+Consent: on first launch the app shows the Google User Messaging Platform consent form where required, then the App Tracking Transparency prompt. Everything stays usable if the user declines both. The Profile tab has an Ad privacy choices row (shown where the consent form requires it) to change the answer, and a Report an ad row.
 
 How to test:
 1. Launch the app and finish the five short welcome pages (Skip is available).
@@ -163,7 +171,7 @@ How to test:
 6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an ad to export, let the video finish, then choose Share, Save to Files or Print.
 7. Profile > Delete all local data (two confirmation steps, with an option to export a backup first) removes every resume and letter from the device.
 
-If no rewarded video is available when you test (new ad units can have no fill for the first days, and fill varies by region), tap Try again on the export sheet after a moment.
+If no rewarded video is available when you test (new ad units can have no fill for the first days, and fill varies by region), the sheet offers Export without video after about 20 seconds at most. Tap it to finish the export.
 
 Contact: support@ecomswiftllc.com
 ```
@@ -204,7 +212,9 @@ Record from the Simulator or a device on 6.9-inch size (1320 x 2868, 30 fps, H.2
 | 0:10 to 0:14 | Style panel: accent colour and font are changed | Change every detail |
 | 0:14 to 0:18 | Cover Letters: a letter is created with the matching look | A cover letter to match |
 | 0:18 to 0:22 | ATS check list scrolls | General guidance, no scores |
-| 0:22 to 0:25 | Export sheet with Share, Files and Print, then the app icon on ivory | Free, with ads |
+| 0:22 to 0:25 | Export sheet with Share, Files and Print, then the app icon on ivory | Share, save or print |
+
+No caption may mention price ("free", "with ads" or similar): Apple guideline 2.3.7 keeps prices out of screenshots and previews.
 
 ## Icon concepts note
 

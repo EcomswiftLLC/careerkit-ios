@@ -16,7 +16,8 @@ private struct AppRouteDestinations: ViewModifier {
                 ResumeEditorView(resumeID: id)
                     .toolbar(.hidden, for: .tabBar)
             case .preview(let id):
-                ResumePreviewView(resumeID: id)
+                // Read-only preview plus an Export button (Sources/Features/MyResumes/ResumePreviewScreen.swift).
+                ResumePreviewScreen(resumeID: id)
                     .toolbar(.hidden, for: .tabBar)
             case .atsCheck(let id):
                 ATSCheckView(resumeID: id)

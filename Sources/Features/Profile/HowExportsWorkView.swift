@@ -15,19 +15,19 @@ struct CKHowExportsWorkView: View {
         ),
         Block(
             title: "What needs a short video",
-            text: "Turning a finished document into a file leaves the app: saving the PDF to Files, sharing it, or printing it. Each of those needs you to watch one short rewarded video first."
+            text: "Turning a finished document into a file leaves the app: saving the PDF to Files, sharing it, or printing it. Each of those starts with one optional short video."
         ),
         Block(
             title: "What one video covers",
-            text: "One completed video covers one export of that document. The permission is used up once the export finishes, so the next export asks again."
+            text: "One completed video covers one export of that document and stays valid for 24 hours. It is used up once the export finishes, so the next export asks again."
         ),
         Block(
             title: "If a video is not available",
-            text: "Videos need an internet connection and an ad to be available. If none loads you can try again in a moment. Your document is never lost or locked."
+            text: "If no video can be shown, for example when you are offline or no ad is available, the app says so and lets you export without a video. Your document is never lost or locked."
         ),
         Block(
             title: "Banner ads",
-            text: "A small banner sits at the bottom of Home, My Resumes, Templates, Cover Letters and Profile. It never appears in the editor, the preview or the export screen."
+            text: "A small labelled banner appears at the end of the lists on Home, My Resumes, Templates, Cover Letters and Profile. It never appears in the editor, the preview or the export screen. You can report an ad from Profile."
         ),
         Block(
             title: "Your documents and your choices",

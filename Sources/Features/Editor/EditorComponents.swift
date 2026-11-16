@@ -20,7 +20,7 @@ struct EdField: View {
                 .font(CK.Font.caption)
                 .foregroundStyle(CK.Palette.graphite)
                 .accessibilityHidden(true)
-            TextField(label, text: $text, prompt: Text(prompt.isEmpty ? label : prompt).foregroundColor(CK.Palette.graphite.opacity(0.6)))
+            TextField(label, text: $text, prompt: Text(prompt.isEmpty ? label : prompt).foregroundColor(CK.Palette.placeholder))
                 .font(CK.Font.body)
                 .foregroundStyle(CK.Palette.ink)
                 .keyboardType(keyboard)
@@ -60,7 +60,7 @@ struct EdTextArea: View {
                 if text.isEmpty && !prompt.isEmpty {
                     Text(prompt)
                         .font(CK.Font.body)
-                        .foregroundStyle(CK.Palette.graphite.opacity(0.6))
+                        .foregroundStyle(CK.Palette.placeholder)
                         .padding(.horizontal, 11)
                         .padding(.vertical, 12)
                         .allowsHitTesting(false)
@@ -86,6 +86,7 @@ struct EdDisclosureCard<Accessory: View, Content: View>: View {
     @ViewBuilder var content: () -> Content
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .headline) private var iconSize: CGFloat = 16
 
     var body: some View {
         VStack(spacing: 0) {
@@ -95,21 +96,26 @@ struct EdDisclosureCard<Accessory: View, Content: View>: View {
                 } label: {
                     HStack(spacing: CK.Space.s + 4) {
                         if let systemImage {
-                            Image(systemName: systemImage)
-                                .font(.system(size: 16, weight: .regular))
-                                .foregroundStyle(CK.Palette.forest)
-                                .frame(width: 24)
+                            Image(systemName: dimmed ? "eye.slash" : systemImage)
+                                .font(.system(size: iconSize, weight: .regular))
+                                .foregroundStyle(dimmed ? CK.Palette.graphite : CK.Palette.forest)
+                                .frame(width: max(24, iconSize + 8))
                                 .accessibilityHidden(true)
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(title)
-                                .font(CK.Font.headline(18))
-                                .foregroundStyle(CK.Palette.ink)
+                                .ckHeadlineFont(18)
+                                .foregroundStyle(dimmed ? CK.Palette.graphite : CK.Palette.ink)
                                 .multilineTextAlignment(.leading)
+                                .lineLimit(nil)
+                                .fixedSize(horizontal: false, vertical: true)
                             if !subtitle.isEmpty {
                                 Text(subtitle)
                                     .font(CK.Font.caption)
                                     .foregroundStyle(CK.Palette.graphite)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(nil)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
                         Spacer(minLength: 8)
@@ -127,7 +133,8 @@ struct EdDisclosureCard<Accessory: View, Content: View>: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(subtitle.isEmpty ? title : "\(title), \(subtitle)")
                 .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
-                .accessibilityHint("Double tap to \(isExpanded ? "collapse" : "expand")")
+                .accessibilityHint(isExpanded ? "Hides the fields" : "Shows the fields")
+                .accessibilityAddTraits(.isHeader)
                 accessory()
                     .padding(.trailing, CK.Space.s)
             }
@@ -142,7 +149,6 @@ struct EdDisclosureCard<Accessory: View, Content: View>: View {
         }
         .background(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).fill(CK.Palette.surface))
         .overlay(RoundedRectangle(cornerRadius: CK.Radius.card, style: .continuous).strokeBorder(CK.Palette.hairline, lineWidth: 0.5))
-        .opacity(dimmed ? 0.72 : 1)
     }
 }
 
@@ -209,11 +215,10 @@ struct EdSaveIndicator: View {
     var body: some View {
         Group {
             switch state {
-            case .idle:
-                Text(" ").font(CK.Font.caption)
             case .saving:
                 Text("Saving").font(CK.Font.caption).foregroundStyle(CK.Palette.graphite)
-            case .saved:
+            case .idle, .saved:
+                // A document opened from disk is already saved, so the line reads "Saved" from the start.
                 Label("Saved", systemImage: "checkmark")
                     .labelStyle(.titleAndIcon)
                     .font(CK.Font.caption)
@@ -232,6 +237,13 @@ enum EditorMode: String, CaseIterable, Identifiable {
     case edit = "Edit"
     case preview = "Preview"
     var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .edit: return String(localized: "Edit")
+        case .preview: return String(localized: "Preview")
+        }
+    }
 }
 
 /// Two-segment switch with a sliding forest highlight.
@@ -246,10 +258,12 @@ struct EdModeSwitch: View {
                 Button {
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { mode = item }
                 } label: {
-                    Text(item.rawValue)
+                    Text(item.title)
                         .font(CK.Font.label)
                         .foregroundStyle(mode == item ? CK.Palette.onForest : CK.Palette.ink)
-                        .frame(maxWidth: .infinity, minHeight: 36)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .frame(maxWidth: .infinity, minHeight: 44)
                         .background {
                             if mode == item {
                                 Capsule().fill(CK.Palette.forest).matchedGeometryEffect(id: "mode", in: namespace)
@@ -258,14 +272,56 @@ struct EdModeSwitch: View {
                         .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)
-                .accessibilityAddTraits(mode == item ? .isSelected : [])
             }
         }
         .padding(3)
         .background(Capsule().fill(CK.Palette.stone))
-        .frame(maxWidth: 260)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Editor mode")
+        .frame(maxWidth: 280)
+        // The pill grows with text size up to a point; past that the words would no longer fit side by side.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+        // VoiceOver reads it as a standard segmented control ("Editor mode, Edit, selected, 1 of 2").
+        .accessibilityRepresentation {
+            Picker("Editor mode", selection: $mode) {
+                ForEach(EditorMode.allCases) { item in
+                    Text(item.title).tag(item)
+                }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+// MARK: - Bottom toolbar button
+
+/// Icon over a short caption, at least 64 x 48 pt. Bars have a fixed height, so the caption stops growing at the
+/// largest standard text size and a long press shows the large content viewer instead, as system tab bars do.
+struct EdToolbarButton: View {
+    let title: String
+    let symbol: String
+    var hint: String = ""
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 2) {
+                Image(systemName: symbol)
+                    .font(.system(size: 18, weight: .regular))
+                    .accessibilityHidden(true)
+                Text(title)
+                    .font(CK.Font.caption)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(CK.Palette.ink)
+            .frame(minWidth: 64, minHeight: 48)
+            .contentShape(Rectangle())
+        }
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+        .accessibilityLabel(title)
+        .accessibilityHint(hint)
+        .accessibilityShowsLargeContentViewer {
+            Label(title, systemImage: symbol)
+        }
     }
 }
 

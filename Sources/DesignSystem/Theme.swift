@@ -17,6 +17,8 @@ enum CK {
         static let champagne  = dynamic(light: 0xB89B5E, dark: 0xCDB27A)
         static let danger     = dynamic(light: 0xA33A2F, dark: 0xE28A80)
         static let onForest   = dynamic(light: 0xFFFFFF, dark: 0x0F1A14)
+        /// Placeholder text in fields. At least 4.5:1 on surface and ivory in both modes (lighter than graphite).
+        static let placeholder = dynamic(light: 0x6A6E6B, dark: 0x8E928D)
 
         static func dynamic(light: UInt32, dark: UInt32) -> Color {
             Color(UIColor { trait in
@@ -41,18 +43,53 @@ enum CK {
     }
 
     enum Font {
-        /// Editorial serif for titles (New York), scales with Dynamic Type.
+        /// Editorial serif for titles (New York). The size is scaled with the reader's Dynamic Type setting
+        /// (UIFontMetrics, relative to Title 1) when the view is built.
+        /// In views prefer `.ckTitleFont(_:)`: it also follows live text size changes and `dynamicTypeSize` caps.
         static func title(_ size: CGFloat = 30) -> SwiftUI.Font {
-            .system(size: size, weight: .semibold, design: .serif)
+            .system(size: scaled(size, relativeTo: .title1), weight: .semibold, design: .serif)
         }
+        /// Serif headline, scaled relative to Headline. In views prefer `.ckHeadlineFont(_:)`.
         static func headline(_ size: CGFloat = 19) -> SwiftUI.Font {
-            .system(size: size, weight: .semibold, design: .serif)
+            .system(size: scaled(size, relativeTo: .headline), weight: .semibold, design: .serif)
+        }
+        /// `size` at the default text size, scaled to the current Dynamic Type setting.
+        static func scaled(_ size: CGFloat, relativeTo style: UIFont.TextStyle) -> CGFloat {
+            UIFontMetrics(forTextStyle: style).scaledValue(for: size)
         }
         static let body = SwiftUI.Font.system(.body, design: .default)
         static let callout = SwiftUI.Font.system(.callout, design: .default)
         static let label = SwiftUI.Font.system(.subheadline, design: .default).weight(.medium)
         static let caption = SwiftUI.Font.system(.caption, design: .default)
         static let overline = SwiftUI.Font.system(.caption2, design: .default).weight(.semibold)
+    }
+}
+
+// MARK: - Scaling serif fonts
+
+/// Semibold serif at `size` points for the default text size, scaled live with Dynamic Type through `@ScaledMetric`,
+/// so it respects `.dynamicTypeSize(...)` caps set on a parent.
+struct CKScaledSerifFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+
+    init(size: CGFloat, relativeTo style: Font.TextStyle) {
+        _size = ScaledMetric(wrappedValue: size, relativeTo: style)
+    }
+
+    func body(content: Content) -> some View {
+        content.font(.system(size: size, weight: .semibold, design: .serif))
+    }
+}
+
+extension View {
+    /// Editorial serif title that follows Dynamic Type. Same look as `CK.Font.title(size)` at the default size.
+    func ckTitleFont(_ size: CGFloat = 30) -> some View {
+        modifier(CKScaledSerifFont(size: size, relativeTo: .title))
+    }
+
+    /// Serif headline that follows Dynamic Type. Same look as `CK.Font.headline(size)` at the default size.
+    func ckHeadlineFont(_ size: CGFloat = 19) -> some View {
+        modifier(CKScaledSerifFont(size: size, relativeTo: .headline))
     }
 }
 
@@ -161,8 +198,9 @@ struct SectionTitle: View {
     let text: String
     var body: some View {
         Text(text)
-            .font(CK.Font.headline())
+            .ckHeadlineFont()
             .foregroundStyle(CK.Palette.ink)
+            .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
     }
 }

@@ -12,6 +12,7 @@ struct ResumeEditorView: View {
 
     @EnvironmentObject private var store: DocumentStore
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var draft = AutosaveDraft<Resume>()
     @State private var mode: EditorMode = .edit
     @State private var sheet: EditorSheet?
@@ -27,15 +28,32 @@ struct ResumeEditorView: View {
                 editor(resume)
             } else if draft.isLoaded {
                 EdUnavailableView(title: "This resume is no longer available",
-                                  message: "It may have been deleted. Go back to My Resumes to choose another.")
+                                  message: "It may have been deleted. Go back to My Resumes to choose another.",
+                                  backTitle: "Back",
+                                  onBack: { dismiss() })
             } else {
                 CK.Palette.ivory.ignoresSafeArea()
             }
         }
         .onAppear {
             draft.start(initial: store.resume(id: resumeID),
-                        persist: { [store] updated in store.upsert(updated) },
+                        persist: { [store] updated in
+                            // Never re-create a resume that was deleted on another screen.
+                            guard store.resume(id: updated.id) != nil else { return false }
+                            store.upsert(updated)
+                            return true
+                        },
                         makeWork: { EditorRender.work(for: $0) })
+        }
+        .onReceive(store.$resumes) { list in
+            let stored: Resume? = list.first(where: { $0.id == resumeID })
+            draft.reconcile(with: stored) { current, latest in
+                DraftAdoption.adopt(&current, from: latest)
+            }
+        }
+        .onChange(of: draft.isGone) { _, gone in
+            // Close any open panel so nothing keeps editing a resume that no longer exists.
+            if gone { sheet = nil }
         }
         .onDisappear {
             draft.renderer.cancel()
@@ -119,7 +137,8 @@ struct ResumeEditorView: View {
     private func titleField(_ resume: Binding<Resume>) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             TextField("Resume title", text: resume.title)
-                .font(CK.Font.title(26))
+                .ckTitleFont(26)
+                .submitLabel(.done)
                 .foregroundStyle(CK.Palette.ink)
                 .frame(minHeight: 44)
             Text("Shown in My Resumes and used as the file name when you export.")
@@ -152,12 +171,16 @@ struct ResumeEditorView: View {
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
                 Text(resume.wrappedValue.title.isEmpty ? "Untitled resume" : resume.wrappedValue.title)
-                    .font(CK.Font.headline(16))
+                    .ckHeadlineFont(16)
                     .foregroundStyle(CK.Palette.ink)
                     .lineLimit(1)
                 EdSaveIndicator(state: store.saveState)
             }
+            // The navigation bar has a fixed height, so the two-line title stops growing at the largest standard size.
+            // The full title is still read by VoiceOver and shown in the title field below.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button("Export") { sheet = .export }
@@ -185,16 +208,16 @@ struct ResumeEditorView: View {
     }
 
     private func toolButton(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 2) {
-                Image(systemName: symbol).font(.system(size: 18, weight: .regular))
-                Text(title).font(CK.Font.caption)
-            }
-            .foregroundStyle(CK.Palette.ink)
-            .frame(minWidth: 64, minHeight: 44)
-            .contentShape(Rectangle())
+        EdToolbarButton(title: title, symbol: symbol, hint: toolHint(title), action: action)
+    }
+
+    private func toolHint(_ title: String) -> String {
+        switch title {
+        case "Template": return "Choose another template. Your content stays the same."
+        case "Style": return "Change color, fonts, spacing and layout."
+        case "Sections": return "Add, hide or reorder sections."
+        default: return "Checks how readable the resume is for applicant tracking software."
         }
-        .accessibilityLabel(title)
     }
 
     /// Template and style changes are easier to judge with the preview in view, so the panel opens over it.

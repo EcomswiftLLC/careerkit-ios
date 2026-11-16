@@ -169,6 +169,10 @@ final class RenderResumeComposer {
             ? RenderContent.trimmed(resume.personal.fullName)
             : RenderContent.trimmed(resume.title)
         let author: String = RenderContent.trimmed(resume.personal.fullName)
+        let footerStyle: RenderStyle = style
+        let footerColor: UIColor = mainTheme.muted
+        let footerLeft: CGFloat = fullWidthHeader ? style.marginSide : mainLeft
+        let footerWidth: CGFloat = fullWidthHeader ? contentWidth : mainWidth
 
         let data: Data = RenderPDFWriter.makePDF(pageSize: page, pageCount: pageCount, title: title, author: author, canvas: canvas) { index in
             RenderDraw.fill(CGRect(origin: CGPoint.zero, size: page), UIColor.white)
@@ -194,6 +198,18 @@ final class RenderResumeComposer {
             if let x = dividerX, lowest > 0 {
                 let top: CGFloat = index == 0 ? belowHeader : marginTop
                 RenderDraw.fill(CGRect(x: x - 0.25, y: top, width: 0.5, height: max(0, lowest - top)), ruleColor)
+            }
+            // Pages 2 and later: small name and page number in the bottom margin, under the main column
+            // (centred on the page for single column and header-then-two-column layouts).
+            if let footer = RenderPageFooter.text(name: author, page: index + 1, of: pageCount) {
+                RenderPageFooter.draw(footer,
+                                      style: footerStyle,
+                                      color: footerColor,
+                                      columnLeft: footerLeft,
+                                      columnWidth: footerWidth,
+                                      contentBottom: bottom,
+                                      pageHeight: page.height,
+                                      lowestContent: lowest)
             }
         }
         return RenderedDocument(pdfData: data, pageCount: pageCount, pageSize: resume.pageSize)

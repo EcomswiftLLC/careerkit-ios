@@ -24,7 +24,7 @@ struct NewCoverLetterSheet: View {
                 VStack(alignment: .leading, spacing: CK.Space.l) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("New cover letter")
-                            .font(CK.Font.title(28))
+                            .ckTitleFont(28)
                             .foregroundStyle(CK.Palette.ink)
                             .accessibilityAddTraits(.isHeader)
                         Text("Link a resume to fill in your contact details. You can change everything afterwards.")

@@ -1,17 +1,29 @@
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 struct ProfileView: View {
     @EnvironmentObject private var store: DocumentStore
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var ads: AdsManager
+    @EnvironmentObject private var exportGate: ExportGate
     @Environment(\.openURL) private var openURL
 
     @State private var path: [AppRoute] = []
-    @State private var shareItem: CKShareItem?
+    @State private var shareItem: ProfileShareItem?
     @State private var showDeleteFirst = false
     @State private var showDeleteFinal = false
+    @State private var showImporter = false
+    @State private var isRestoring = false
+    @State private var showQuarantineOptions = false
+    @State private var showQuarantineDelete = false
+    @State private var showResult = false
+    @State private var resultTitle = ""
+    @State private var resultMessage = ""
     @State private var toast: String?
+    /// Temporary files to remove once the share sheet closes (the backup copy).
+    @State private var pendingCleanup: [URL] = []
+    @StateObject private var bannerSlot = BannerAdSlot()
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -31,8 +43,8 @@ struct ProfileView: View {
             .navigationBarTitleDisplayMode(.large)
             .ckScreen()
             .appRouteDestinations()
-            .sheet(item: $shareItem) { item in
-                CKShareSheet(items: [item.url])
+            .sheet(item: $shareItem, onDismiss: removeSharedTempFiles) { item in
+                CKShareSheet(items: item.urls)
                     .presentationDetents([.medium, .large])
             }
             .confirmationDialog(
@@ -46,7 +58,7 @@ struct ProfileView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes every resume and cover letter stored in CareerKit on this device.")
+                Text("This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved export passes.")
             }
             .alert("Delete everything permanently?", isPresented: $showDeleteFinal) {
                 Button("Delete everything", role: .destructive) { deleteEverything() }
@@ -55,6 +67,16 @@ struct ProfileView: View {
                 Text("Your resumes, cover letters and drafts cannot be recovered afterwards unless you saved a backup file.")
             }
             .ckToast($toast)
+        }
+        .fileImporter(isPresented: $showImporter,
+                      allowedContentTypes: [UTType.json],
+                      allowsMultipleSelection: false) { result in
+            handleImport(result)
+        }
+        .alert(resultTitle, isPresented: $showResult) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(resultMessage)
         }
     }
 
@@ -130,19 +152,86 @@ struct ProfileView: View {
             } label: {
                 CKSettingsRow(systemImage: "square.and.arrow.up", title: String(localized: "Export backup"), detail: String(localized: "Save a copy of everything"), showsChevron: true)
             }
+            .accessibilityHint(Text("Creates one backup file and opens the share sheet"))
             .listRowBackground(CK.Palette.surface)
+
+            Button {
+                showImporter = true
+            } label: {
+                CKSettingsRow(systemImage: "square.and.arrow.down",
+                              title: String(localized: "Restore from backup"),
+                              detail: String(localized: "Add documents from a backup file"),
+                              showsChevron: true,
+                              isBusy: isRestoring)
+            }
+            .disabled(isRestoring)
+            .accessibilityHint(Text("Choose a CareerKit backup file. Documents already on this device are kept."))
+            .listRowBackground(CK.Palette.surface)
+
+            if !store.quarantinedFiles.isEmpty {
+                quarantineRow
+            }
+
+            if store.newerVersionFileCount > 0 {
+                newerVersionRow
+            }
 
             Button(role: .destructive) {
                 showDeleteFirst = true
             } label: {
                 CKSettingsRow(systemImage: "trash", title: String(localized: "Delete all local data"), tint: CK.Palette.danger, isDestructive: true)
             }
+            .accessibilityHint(Text("Asks you to confirm twice before anything is deleted"))
             .listRowBackground(CK.Palette.surface)
         } header: {
             sectionHeader("Your data")
         } footer: {
             Text(dataSummary)
         }
+    }
+
+    private var quarantineRow: some View {
+        let count: Int = store.quarantinedFiles.count
+        let title: String = count == 1
+            ? String(localized: "1 document could not be opened")
+            : String(localized: "\(count) documents could not be opened")
+        return Button {
+            showQuarantineOptions = true
+        } label: {
+            CKSettingsRow(systemImage: "exclamationmark.triangle",
+                          title: title,
+                          detail: String(localized: "Kept aside so nothing is lost. Export or delete the files."),
+                          showsChevron: true)
+        }
+        .accessibilityHint(Text("Shows options to export or delete the unreadable files"))
+        .listRowBackground(CK.Palette.surface)
+        .confirmationDialog("Unreadable documents", isPresented: $showQuarantineOptions, titleVisibility: .visible) {
+            Button("Export the files") { exportQuarantinedFiles() }
+            Button("Delete the files", role: .destructive) {
+                CKDeferred.afterDismiss { showQuarantineDelete = true }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("These files were damaged or could not be read. Export them to keep a copy or to send to support.")
+        }
+        .alert("Delete the unreadable files?", isPresented: $showQuarantineDelete) {
+            Button("Delete files", role: .destructive) { deleteQuarantinedFiles() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("They cannot be recovered afterwards. Your other documents are not affected.")
+        }
+    }
+
+    private var newerVersionRow: some View {
+        let count: Int = store.newerVersionFileCount
+        let title: String = count == 1
+            ? String(localized: "1 document was made with a newer version of CareerKit")
+            : String(localized: "\(count) documents were made with a newer version of CareerKit")
+        return CKSettingsRow(systemImage: "arrow.up.circle",
+                             title: title,
+                             detail: String(localized: "Update CareerKit from the App Store to open them. They are kept unchanged."))
+            .accessibilityElement(children: .combine)
+            .listRowBackground(CK.Palette.surface)
     }
 
     private var adsAndExportsSection: some View {
@@ -160,6 +249,14 @@ struct ProfileView: View {
                 }
                 .listRowBackground(CK.Palette.surface)
             }
+
+            Button {
+                reportAd()
+            } label: {
+                CKSettingsRow(systemImage: "flag", title: String(localized: "Report an ad"), showsChevron: true)
+            }
+            .accessibilityHint(Text("Opens an email to CareerKit support about an ad you saw"))
+            .listRowBackground(CK.Palette.surface)
         } header: {
             sectionHeader("Ads and exports")
         }
@@ -184,8 +281,7 @@ struct ProfileView: View {
             .listRowBackground(CK.Palette.surface)
 
             Button {
-                let body = String(localized: "\n\n\nCareerKit \(CKLinks.appVersionText), iOS \(UIDevice.current.systemVersion)")
-                openMail(subject: String(localized: "CareerKit feedback"), body: body)
+                openMail(subject: String(localized: "CareerKit feedback"), body: "\n\n\n" + deviceLine)
             } label: {
                 CKSettingsRow(systemImage: "text.bubble", title: String(localized: "Send feedback"), showsChevron: true)
             }
@@ -215,12 +311,14 @@ struct ProfileView: View {
         }
     }
 
+    /// `CKInlineBanner` adds its own spacing above (and an "Advertisement" label) only while an ad shows,
+    /// so it never sits flush against the Support and About rows.
     private var bannerSection: some View {
         Section {
-            BannerAdView()
-                .frame(maxWidth: .infinity)
+            CKInlineBanner(slot: bannerSlot)
+                .listRowInsets(EdgeInsets(top: 0, leading: CK.Space.m, bottom: 0, trailing: CK.Space.m))
                 .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
         }
     }
 
@@ -247,7 +345,11 @@ struct ProfileView: View {
         let letters = store.coverLetters.count
         let resumeText = resumes == 1 ? String(localized: "1 resume") : String(localized: "\(resumes) resumes")
         let letterText = letters == 1 ? String(localized: "1 cover letter") : String(localized: "\(letters) cover letters")
-        return String(localized: "Stored on this device: \(resumeText) and \(letterText). A backup is a single file you can keep anywhere.")
+        return String(localized: "Stored on this device: \(resumeText) and \(letterText). A backup is a single file you can keep anywhere. Restoring adds its documents and keeps the ones already here.")
+    }
+
+    private var deviceLine: String {
+        return String(localized: "CareerKit \(CKLinks.appVersionText), iOS \(UIDevice.current.systemVersion)")
     }
 
     // MARK: Actions
@@ -261,20 +363,112 @@ struct ProfileView: View {
         }
     }
 
+    /// Guideline 2.5.18: a way to report an inappropriate ad.
+    private func reportAd() {
+        let template: String = String(localized: """
+        Tell us about the ad:
+        - What did it show?
+        - Where in CareerKit did you see it?
+        - Roughly when did you see it?
+
+        If you can, attach a screenshot of the ad.
+        """)
+        openMail(subject: String(localized: "Ad report"), body: template + "\n\n" + deviceLine)
+    }
+
+    private func presentResult(title: String, message: String) {
+        resultTitle = title
+        resultMessage = message
+        CKDeferred.afterDismiss { showResult = true }
+    }
+
     private func exportBackup() {
         do {
             let url = try store.makeBackupFile()
             // A moment's delay lets a closing dialog finish before the share sheet opens.
-            CKDeferred.afterDismiss { shareItem = CKShareItem(url: url) }
+            CKDeferred.afterDismiss {
+                pendingCleanup = [url]
+                shareItem = ProfileShareItem(urls: [url], removeAfterSharing: true)
+            }
         } catch {
             toast = String(localized: "The backup could not be created. Free up some space and try again.")
         }
     }
 
+    /// The backup is a temporary copy; once the share sheet is closed it is no longer needed.
+    /// Runs after SwiftUI has already cleared `shareItem`, so the files are kept in `pendingCleanup`.
+    private func removeSharedTempFiles() {
+        let urls: [URL] = pendingCleanup
+        pendingCleanup = []
+        for url in urls {
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
+
+    private func exportQuarantinedFiles() {
+        store.refreshQuarantine()
+        let files: [URL] = store.quarantinedFiles
+        guard !files.isEmpty else { return }
+        CKDeferred.afterDismiss { shareItem = ProfileShareItem(urls: files, removeAfterSharing: false) }
+    }
+
+    private func deleteQuarantinedFiles() {
+        do {
+            try store.deleteQuarantinedFiles()
+            toast = String(localized: "The unreadable files were deleted.")
+        } catch {
+            toast = String(localized: "Some files could not be deleted. Restart the app and try again.")
+        }
+    }
+
+    private func handleImport(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure:
+            presentResult(title: String(localized: "Backup not restored"), message: CKBackupError.cannotOpenFile.message)
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            isRestoring = true
+            Task { @MainActor in
+                let read: Result<Data, Error> = await Task.detached(priority: .userInitiated) { () -> Result<Data, Error> in
+                    do {
+                        return .success(try CKBackupParser.readFile(at: url))
+                    } catch {
+                        return .failure(error)
+                    }
+                }.value
+                isRestoring = false
+                switch read {
+                case .success(let data):
+                    restore(data)
+                case .failure(let error):
+                    let message: String = (error as? CKBackupError)?.message ?? CKBackupError.cannotOpenFile.message
+                    presentResult(title: String(localized: "Backup not restored"), message: message)
+                }
+            }
+        }
+    }
+
+    private func restore(_ data: Data) {
+        do {
+            let summary: CKRestoreSummary = try store.restoreBackup(from: data)
+            if summary.replacedExisting > 0 {
+                // An editor left open in another tab must not write the older version back.
+                appState.resetNavigation()
+            }
+            let title: String = summary.restored > 0
+                ? String(localized: "Backup restored")
+                : String(localized: "Nothing new to restore")
+            presentResult(title: title, message: summary.message)
+        } catch let error as CKBackupError {
+            presentResult(title: String(localized: "Backup not restored"), message: error.message)
+        } catch {
+            presentResult(title: String(localized: "Backup not restored"), message: CKBackupError.unreadable.message)
+        }
+    }
+
     private func deleteEverything() {
         do {
-            try store.deleteAllData()
-            appState.displayName = ""
+            try CKLocalDataReset.eraseEverything(store: store, exportGate: exportGate, appState: appState)
             toast = String(localized: "All local data was deleted.")
         } catch {
             toast = String(localized: "Some data could not be deleted. Restart the app and try again.")
@@ -282,50 +476,9 @@ struct ProfileView: View {
     }
 }
 
-/// Icon, title and optional detail used by every settings row.
-struct CKSettingsRow: View {
-    let systemImage: String
-    let title: String
-    var detail: String? = nil
-    var showsChevron = false
-    var trailingSymbol: String? = nil
-    var tint: Color = CK.Palette.forest
-    var isDestructive = false
-
-    var body: some View {
-        HStack(spacing: CK.Space.m) {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(tint)
-                .frame(width: 30, height: 30)
-                .background(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous).fill(tint.opacity(0.10))
-                )
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(CK.Font.body)
-                    .foregroundStyle(isDestructive ? CK.Palette.danger : CK.Palette.ink)
-                if let detail {
-                    Text(detail)
-                        .font(CK.Font.caption)
-                        .foregroundStyle(CK.Palette.graphite)
-                }
-            }
-            Spacer(minLength: 0)
-            if let trailingSymbol {
-                Image(systemName: trailingSymbol)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(CK.Palette.graphite)
-                    .accessibilityHidden(true)
-            } else if showsChevron {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(CK.Palette.graphite)
-                    .accessibilityHidden(true)
-            }
-        }
-        .frame(minHeight: 44)
-        .contentShape(Rectangle())
-    }
+/// One or more files for the share sheet. Backups are temporary and removed when the sheet closes.
+struct ProfileShareItem: Identifiable {
+    let id = UUID()
+    let urls: [URL]
+    let removeAfterSharing: Bool
 }

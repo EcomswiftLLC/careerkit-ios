@@ -37,7 +37,9 @@ private struct CKTitleModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .font(CK.Font.title(size))
+            // `size` is already scaled by @ScaledMetric, so the fixed-size system font is used here
+            // (CK.Font.title would scale a second time).
+            .font(.system(size: size, weight: .semibold, design: .serif))
             .foregroundStyle(CK.Palette.ink)
     }
 }
@@ -51,7 +53,7 @@ private struct CKHeadlineModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .font(CK.Font.headline(size))
+            .font(.system(size: size, weight: .semibold, design: .serif))
             .foregroundStyle(CK.Palette.ink)
     }
 }

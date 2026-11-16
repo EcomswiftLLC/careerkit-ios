@@ -68,6 +68,15 @@ final class AppState: ObservableObject {
     /// Not persisted. Lets any screen jump to another tab.
     @Published var selectedTab: AppTab = .home
 
+    /// Not persisted. Goes up by one after "Delete all local data" or a restore that replaced documents.
+    /// `RootTabView` uses it as the identity of the browse tabs, so every NavigationStack (and any editor
+    /// left open in another tab) is rebuilt and cannot write a deleted or replaced document back.
+    @Published private(set) var dataResetGeneration: Int = 0
+
+    func resetNavigation() {
+        dataResetGeneration += 1
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         self.hasCompletedOnboarding = defaults.bool(forKey: Key.onboarded)

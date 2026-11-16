@@ -43,7 +43,11 @@ enum PDFValidator {
         if !expected.isEmpty {
             for index in 0..<pages {
                 guard let page = pdf.page(at: index) else { continue }
-                let pageText: String = (page.string ?? "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                var pageText: String = (page.string ?? "").trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                // The page footer ("Name · 2 / 3") alone does not make a page non-blank.
+                if let footer = RenderPageFooter.text(name: resume.personal.fullName, page: index + 1, of: pages) {
+                    pageText = RenderPageFooter.removingFooter(footer, from: pageText)
+                }
                 if pageText.isEmpty {
                     issues.append(String(localized: "Page \(index + 1) has no text."))
                 }

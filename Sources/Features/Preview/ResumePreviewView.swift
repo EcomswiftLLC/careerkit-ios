@@ -33,9 +33,12 @@ struct ResumePreviewView: View {
 }
 
 /// Shared empty/error message used when a document id no longer exists.
+/// Pass `backTitle` and `onBack` to show a button that leaves the screen (for example a pushed editor).
 struct EdUnavailableView: View {
     let title: String
     let message: String
+    var backTitle: String? = nil
+    var onBack: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: CK.Space.s) {
@@ -44,13 +47,24 @@ struct EdUnavailableView: View {
                 .foregroundStyle(CK.Palette.graphite)
                 .accessibilityHidden(true)
             Text(title)
-                .font(CK.Font.headline())
+                .ckHeadlineFont()
                 .foregroundStyle(CK.Palette.ink)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
             Text(message)
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+            if let backTitle, let onBack {
+                Button(action: onBack) {
+                    Text(backTitle)
+                }
+                .buttonStyle(.ckPrimary)
+                .frame(maxWidth: 280)
+                .padding(.top, CK.Space.m)
+            }
         }
         .padding(CK.Space.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

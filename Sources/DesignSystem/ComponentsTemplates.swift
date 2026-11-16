@@ -114,7 +114,7 @@ struct CKTemplateCard: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(template.name)
-                        .font(CK.Font.headline(16))
+                        .ckHeadlineFont(16)
                         .foregroundStyle(CK.Palette.ink)
                         .lineLimit(1)
                     if showsDetails {

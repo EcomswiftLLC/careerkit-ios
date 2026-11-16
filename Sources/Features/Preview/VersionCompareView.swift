@@ -64,7 +64,7 @@ private struct ComparePane: View {
     private func header(_ resume: Resume?) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(resume?.title ?? "Unavailable")
-                .font(CK.Font.headline(16))
+                .ckHeadlineFont(16)
                 .foregroundStyle(CK.Palette.ink)
                 .lineLimit(1)
             if let resume {

@@ -5,15 +5,26 @@ import UIKit
 // MARK: - Cache and renderer
 
 /// Renders first-page thumbnails one at a time on a background executor, so a grid of 30 never stalls scrolling.
+/// Every thumbnail in the app (template cards, letter cards, the person's own resume cards) goes through `shared`,
+/// so at most one thumbnail render runs at any moment. A request whose task was cancelled (the cell scrolled away)
+/// is skipped when its turn comes.
 actor ThumbnailRenderer {
     static let shared = ThumbnailRenderer()
 
     /// NSCache is thread safe. Values are keyed by template id, width and screen scale.
+    /// Bounded by count and by decoded bytes, and emptied on "CKCachesShouldClear".
     static let cache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
-        cache.countLimit = 120
+        cache.countLimit = 90
+        cache.totalCostLimit = 40 * 1024 * 1024
+        CKCacheClearing.register { cache.removeAllObjects() }
         return cache
     }()
+
+    /// Empties the template thumbnail cache.
+    static func clearCache() {
+        cache.removeAllObjects()
+    }
 
     func image(key: String, width: CGFloat, scale: CGFloat, produce: @Sendable () -> RenderedDocument) -> UIImage? {
         if Task.isCancelled { return nil }
@@ -22,8 +33,16 @@ actor ThumbnailRenderer {
         if Task.isCancelled { return nil }
         guard let pdf = PDFDocument(data: document.pdfData), let page = pdf.page(at: 0) else { return nil }
         let image = ThumbnailRenderer.draw(page: page, width: width, scale: scale)
-        ThumbnailRenderer.cache.setObject(image, forKey: key as NSString)
+        ThumbnailRenderer.cache.setObject(image, forKey: key as NSString, cost: CKCacheClearing.cost(of: image))
         return image
+    }
+
+    /// First page at its own aspect ratio, not cached here (the caller keeps its own cache).
+    func pageImage(width: CGFloat, scale: CGFloat, produce: @Sendable () -> RenderedDocument) -> UIImage? {
+        if Task.isCancelled { return nil }
+        let document = produce()
+        if Task.isCancelled { return nil }
+        return CKPageImages.images(from: document.pdfData, width: width, scale: scale, maxPages: 1).first
     }
 
     static func height(forWidth width: CGFloat) -> CGFloat {

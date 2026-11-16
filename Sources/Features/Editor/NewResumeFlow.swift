@@ -42,7 +42,7 @@ struct NewResumeFlow: View {
                 VStack(alignment: .leading, spacing: CK.Space.l) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(template == nil ? "Start from a blank page" : "Name your resume")
-                            .font(CK.Font.title(28))
+                            .ckTitleFont(28)
                             .foregroundStyle(CK.Palette.ink)
                             .accessibilityAddTraits(.isHeader)
                         Text(template == nil
@@ -97,7 +97,7 @@ struct NewResumeFlow: View {
             TemplateThumbnail(template: template, size: 112)
             VStack(alignment: .leading, spacing: CK.Space.s) {
                 Text(template.name)
-                    .font(CK.Font.headline(20))
+                    .ckHeadlineFont(20)
                     .foregroundStyle(CK.Palette.ink)
                 Text(template.tagline)
                     .font(CK.Font.callout)
@@ -118,7 +118,7 @@ struct NewResumeFlow: View {
     private var blankSummary: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
             Text("What happens next")
-                .font(CK.Font.headline(18))
+                .ckHeadlineFont(18)
                 .foregroundStyle(CK.Palette.ink)
             Text("You start with a clean document that has only your personal details and a summary. Next you add the sections you need, choose fonts and margins, and watch the page update as you go.")
                 .font(CK.Font.callout)

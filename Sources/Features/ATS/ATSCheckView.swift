@@ -78,7 +78,7 @@ struct ATSCheckView: View {
         HStack(alignment: .top, spacing: CK.Space.s + 4) {
             Image(systemName: "info.circle")
                 .font(.system(size: 18))
-                .foregroundStyle(CK.Palette.champagne)
+                .foregroundStyle(CK.Palette.forest)
                 .accessibilityHidden(true)
             Text(disclaimerText)
                 .font(CK.Font.callout)

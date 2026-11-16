@@ -1,5 +1,7 @@
 import XCTest
 import UIKit
+import ImageIO
+import UniformTypeIdentifiers
 @testable import CareerKit
 
 final class EditorListEditingTests: XCTestCase {
@@ -163,17 +165,55 @@ final class EditorTextHelperTests: XCTestCase {
 }
 
 final class EditorPhotoTests: XCTestCase {
+    // MARK: Helpers
+
+    /// A solid image of the given pixel size, built with Core Graphics only (no UIImage at full size).
+    private func makeImage(width: Int, height: Int) throws -> CGImage {
+        let space = CGColorSpaceCreateDeviceRGB()
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: space,
+                                              bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue))
+        context.setFillColor(red: 0.2, green: 0.5, blue: 0.4, alpha: 1)
+        context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        context.setFillColor(red: 0.9, green: 0.8, blue: 0.3, alpha: 1)
+        context.fill(CGRect(x: 0, y: 0, width: width / 2, height: height / 3))
+        return try XCTUnwrap(context.makeImage())
+    }
+
+    private func encode(_ image: CGImage, type: UTType, orientation: Int? = nil) throws -> Data {
+        let output = NSMutableData()
+        let destination = try XCTUnwrap(CGImageDestinationCreateWithData(output as CFMutableData,
+                                                                         type.identifier as CFString, 1, nil))
+        var properties: [CFString: Any] = [kCGImageDestinationLossyCompressionQuality: 0.9]
+        if let orientation { properties[kCGImagePropertyOrientation] = orientation }
+        CGImageDestinationAddImage(destination, image, properties as CFDictionary)
+        XCTAssertTrue(CGImageDestinationFinalize(destination))
+        return output as Data
+    }
+
+    private func pixelSize(_ data: Data) throws -> CGSize {
+        let image = try XCTUnwrap(UIImage(data: data))
+        return CGSize(width: image.size.width * image.scale, height: image.size.height * image.scale)
+    }
+
+    // MARK: Size maths
+
     func testTargetSizeNeverUpscales() {
         XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 300, height: 200)), CGSize(width: 300, height: 200))
     }
 
-    func testTargetSizeScalesLongestSideTo600() {
-        XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 1200, height: 800)), CGSize(width: 600, height: 400))
-        XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 900, height: 3000)), CGSize(width: 180, height: 600))
+    func testTargetSizeScalesLongestSideTo800() {
+        XCTAssertEqual(PhotoProcessor.maxDimension, 800)
+        XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 1200, height: 800)), CGSize(width: 800, height: 533))
+        XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 900, height: 3000)), CGSize(width: 240, height: 800))
+        XCTAssertEqual(PhotoProcessor.targetSize(for: CGSize(width: 1200, height: 800), maxDimension: 600),
+                       CGSize(width: 600, height: 400))
         XCTAssertEqual(PhotoProcessor.targetSize(for: .zero), .zero)
     }
 
-    func testDownscaledJPEGIsAtMost600Pixels() throws {
+    // MARK: Decoding
+
+    func testDownscaledJPEGIsAtMost800Pixels() throws {
         let size = CGSize(width: 1200, height: 800)
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
@@ -183,13 +223,94 @@ final class EditorPhotoTests: XCTestCase {
         }
         let png = try XCTUnwrap(source.pngData())
         let jpeg = try XCTUnwrap(PhotoProcessor.downscaledJPEG(from: png))
-        let result = try XCTUnwrap(UIImage(data: jpeg))
-        XCTAssertLessThanOrEqual(max(result.size.width, result.size.height) * result.scale, 600)
-        XCTAssertEqual(result.size.width * result.scale, 600, accuracy: 1)
+        let result = try pixelSize(jpeg)
+        XCTAssertLessThanOrEqual(max(result.width, result.height), 800)
+        XCTAssertEqual(result.width, 800, accuracy: 1)
+    }
+
+    func testLargeCameraSizedImageIsDownscaledWithoutFullDecode() throws {
+        // 48 MP class source (8064 x 6048 would need about 195 MB decoded; this keeps the test light but large).
+        let image = try makeImage(width: 6000, height: 4000)
+        let jpeg = try encode(image, type: .jpeg)
+        XCTAssertEqual(PhotoProcessor.pixelSize(of: jpeg), CGSize(width: 6000, height: 4000))
+
+        let result = PhotoProcessor.process(jpeg)
+        guard case .success(let output) = result else {
+            XCTFail("expected success, got \(result)")
+            return
+        }
+        let size = try pixelSize(output)
+        XCTAssertEqual(max(size.width, size.height), 800, accuracy: 1)
+        XCTAssertEqual(size.width / size.height, 1.5, accuracy: 0.01)
+        XCTAssertLessThan(output.count, 1_000_000, "the stored photo should stay small")
+    }
+
+    func testLargePNGWithTransparencyIsFlattened() throws {
+        let width = 3000
+        let height = 3000
+        let space = CGColorSpaceCreateDeviceRGB()
+        let context = try XCTUnwrap(CGContext(data: nil, width: width, height: height, bitsPerComponent: 8,
+                                              bytesPerRow: 0, space: space,
+                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.clear(CGRect(x: 0, y: 0, width: width, height: height))
+        context.setFillColor(red: 1, green: 0, blue: 0, alpha: 1)
+        context.fillEllipse(in: CGRect(x: 500, y: 500, width: 2000, height: 2000))
+        let png = try encode(try XCTUnwrap(context.makeImage()), type: .png)
+
+        guard case .success(let output) = PhotoProcessor.process(png) else {
+            XCTFail("PNG should process")
+            return
+        }
+        let size = try pixelSize(output)
+        XCTAssertEqual(size.width, 800, accuracy: 1)
+        XCTAssertEqual(size.height, 800, accuracy: 1)
+    }
+
+    func testOrientationIsApplied() throws {
+        // Stored landscape with EXIF orientation 6 (rotate 90 degrees): the result must be portrait.
+        let image = try makeImage(width: 1600, height: 1000)
+        let jpeg = try encode(image, type: .jpeg, orientation: 6)
+        guard case .success(let output) = PhotoProcessor.process(jpeg) else {
+            XCTFail("expected success")
+            return
+        }
+        let size = try pixelSize(output)
+        XCTAssertLessThan(size.width, size.height)
+        XCTAssertEqual(size.height, 800, accuracy: 1)
+    }
+
+    func testSmallImageIsNotUpscaled() throws {
+        let image = try makeImage(width: 320, height: 240)
+        let jpeg = try encode(image, type: .jpeg)
+        guard case .success(let output) = PhotoProcessor.process(jpeg) else {
+            XCTFail("expected success")
+            return
+        }
+        XCTAssertEqual(try pixelSize(output), CGSize(width: 320, height: 240))
+    }
+
+    func testAbsurdInputsAreRefusedWithAPlainError() throws {
+        let image = try makeImage(width: 2000, height: 2000)
+        let jpeg = try encode(image, type: .jpeg)
+        // Pixel limit (lowered for the test so no huge buffer is needed).
+        XCTAssertEqual(PhotoProcessor.process(jpeg, maxSourcePixels: 1_000_000), .failure(.tooLarge))
+        // Byte limit.
+        XCTAssertEqual(PhotoProcessor.process(jpeg, maxInputBytes: 10), .failure(.tooLarge))
+        XCTAssertFalse(PhotoProcessor.Failure.tooLarge.message.isEmpty)
+        XCTAssertFalse(PhotoProcessor.Failure.tooLarge.message.contains("\u{2014}"))
     }
 
     func testBadImageDataReturnsNil() {
         XCTAssertNil(PhotoProcessor.downscaledJPEG(from: Data([0x00, 0x01, 0x02])))
+        XCTAssertEqual(PhotoProcessor.process(Data()), .failure(.unreadable))
+        XCTAssertEqual(PhotoProcessor.process(Data([0xFF, 0xD8, 0xFF, 0x00])), .failure(.unreadable))
+        XCTAssertNil(PhotoProcessor.previewImage(from: Data([0x00, 0x01])))
+    }
+
+    func testPreviewImageIsSmall() throws {
+        let jpeg = try encode(try makeImage(width: 2400, height: 1600), type: .jpeg)
+        let preview = try XCTUnwrap(PhotoProcessor.previewImage(from: jpeg, maxPixels: 192))
+        XCTAssertLessThanOrEqual(max(preview.size.width, preview.size.height) * preview.scale, 192)
     }
 }
 

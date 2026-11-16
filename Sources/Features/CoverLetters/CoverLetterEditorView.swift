@@ -22,6 +22,7 @@ struct CoverLetterEditorView: View {
 
     @EnvironmentObject private var store: DocumentStore
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var draft = AutosaveDraft<CoverLetter>()
     @State private var mode: EditorMode = .edit
     @State private var sheet: LetterSheet?
@@ -38,15 +39,32 @@ struct CoverLetterEditorView: View {
                 editor(letter)
             } else if draft.isLoaded {
                 EdUnavailableView(title: "This letter is no longer available",
-                                  message: "It may have been deleted. Go back to your cover letters to choose another.")
+                                  message: "It may have been deleted. Go back to your cover letters to choose another.",
+                                  backTitle: "Back",
+                                  onBack: { dismiss() })
             } else {
                 CK.Palette.ivory.ignoresSafeArea()
             }
         }
         .onAppear {
             draft.start(initial: store.coverLetter(id: letterID),
-                        persist: { [store] updated in store.upsert(updated) },
+                        persist: { [store] updated in
+                            // Never re-create a letter that was deleted on another screen.
+                            guard store.coverLetter(id: updated.id) != nil else { return false }
+                            store.upsert(updated)
+                            return true
+                        },
                         makeWork: { EditorRender.work(for: $0) })
+        }
+        .onReceive(store.$coverLetters) { list in
+            let stored: CoverLetter? = list.first(where: { $0.id == letterID })
+            draft.reconcile(with: stored) { current, latest in
+                DraftAdoption.adopt(&current, from: latest)
+            }
+        }
+        .onChange(of: draft.isGone) { _, gone in
+            // Close any open panel so nothing keeps editing a letter that no longer exists.
+            if gone { sheet = nil }
         }
         .onDisappear {
             draft.renderer.cancel()
@@ -112,12 +130,15 @@ struct CoverLetterEditorView: View {
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
                 Text(letter.wrappedValue.title.isEmpty ? "Untitled letter" : letter.wrappedValue.title)
-                    .font(CK.Font.headline(16))
+                    .ckHeadlineFont(16)
                     .foregroundStyle(CK.Palette.ink)
                     .lineLimit(1)
                 EdSaveIndicator(state: store.saveState)
             }
+            // The navigation bar has a fixed height, so the two-line title stops growing at the largest standard size.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button("Export") { sheet = .export }
@@ -141,16 +162,10 @@ struct CoverLetterEditorView: View {
     }
 
     private func toolButton(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 2) {
-                Image(systemName: symbol).font(.system(size: 18, weight: .regular))
-                Text(title).font(CK.Font.caption)
-            }
-            .foregroundStyle(CK.Palette.ink)
-            .frame(minWidth: 64, minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .accessibilityLabel(title)
+        let hint: String = title == "Template"
+            ? "Choose another letter template. Your text stays the same."
+            : "Change color, fonts and spacing."
+        return EdToolbarButton(title: title, symbol: symbol, hint: hint, action: action)
     }
 
     private func open(_ item: LetterSheet) {

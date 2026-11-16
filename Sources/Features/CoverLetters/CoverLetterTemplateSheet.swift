@@ -21,7 +21,7 @@ struct CoverLetterTemplateGrid: View {
                             )
                         HStack(spacing: 4) {
                             Text(template.name)
-                                .font(CK.Font.headline(15))
+                                .ckHeadlineFont(15)
                                 .foregroundStyle(CK.Palette.ink)
                                 .lineLimit(1)
                             if isSelected {

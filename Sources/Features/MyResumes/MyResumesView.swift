@@ -16,6 +16,8 @@ struct MyResumesView: View {
     @State private var showCompare = false
     @AppStorage("ck.myResumes.sort") private var sortRaw = CKResumeSort.lastEdited.rawValue
     @AppStorage("ck.myResumes.grid") private var useGrid = false
+    /// One banner for this screen, shared by the list and grid layouts.
+    @StateObject private var bannerSlot = BannerAdSlot()
 
     private var sort: CKResumeSort {
         CKResumeSort(rawValue: sortRaw) ?? .lastEdited
@@ -159,9 +161,9 @@ struct MyResumesView: View {
                     }
             }
 
-            BannerAdView()
-                .frame(maxWidth: .infinity)
-                .padding(.top, CK.Space.m)
+            // End-of-list banner. The screen owns the slot, so row recycling never sends a new request.
+            CKInlineBanner(slot: bannerSlot)
+                .listRowInsets(EdgeInsets(top: 0, leading: CK.Space.m, bottom: 0, trailing: CK.Space.m))
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
         }
@@ -181,9 +183,8 @@ struct MyResumesView: View {
                 }
                 .padding(.horizontal, CK.Space.m)
 
-                BannerAdView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, CK.Space.m)
+                CKInlineBanner(slot: bannerSlot)
+                    .padding(.horizontal, CK.Space.m)
             }
             .padding(.vertical, CK.Space.s)
         }
