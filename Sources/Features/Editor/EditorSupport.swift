@@ -1,0 +1,316 @@
+import Foundation
+import UIKit
+
+// Pure helpers used by the editor screens. No SwiftUI, no store access, so they are unit tested.
+
+// MARK: - Reordering
+
+enum ListEditing {
+    static func canMove(index: Int, count: Int, by offset: Int) -> Bool {
+        let target = index + offset
+        return index >= 0 && index < count && target >= 0 && target < count
+    }
+
+    /// Moves one element up (negative offset) or down (positive offset). Returns false when it cannot move.
+    @discardableResult
+    static func move<T>(_ items: inout [T], index: Int, by offset: Int) -> Bool {
+        guard canMove(index: index, count: items.count, by: offset) else { return false }
+        let item = items.remove(at: index)
+        items.insert(item, at: index + offset)
+        return true
+    }
+
+    /// Same semantics as SwiftUI's `move(fromOffsets:toOffset:)`, kept here so it can be tested without SwiftUI.
+    static func move<T>(_ items: inout [T], fromOffsets source: IndexSet, toOffset destination: Int) {
+        let valid = source.sorted().filter { items.indices.contains($0) }
+        guard !valid.isEmpty else { return }
+        let moving: [T] = valid.map { items[$0] }
+        let before = valid.filter { $0 < destination }.count
+        for index in valid.reversed() { items.remove(at: index) }
+        let insertAt = min(max(destination - before, 0), items.count)
+        items.insert(contentsOf: moving, at: insertAt)
+    }
+
+    @discardableResult
+    static func remove<T>(_ items: inout [T], at index: Int) -> T? {
+        guard items.indices.contains(index) else { return nil }
+        return items.remove(at: index)
+    }
+}
+
+// MARK: - Sections
+
+enum SectionOps {
+    /// "Custom Section", then "Custom Section 2", "Custom Section 3"... so headings stay distinct.
+    static func uniqueTitle(for kind: SectionKind, existing: [ResumeSection]) -> String {
+        let taken = Set(existing.map { $0.title.trimmingCharacters(in: .whitespaces).lowercased() })
+        let base = kind.defaultTitle
+        if !taken.contains(base.lowercased()) { return base }
+        var n = 2
+        while taken.contains("\(base) \(n)".lowercased()) { n += 1 }
+        return "\(base) \(n)"
+    }
+
+    static func newSection(kind: SectionKind, existing: [ResumeSection]) -> ResumeSection {
+        var section = ResumeSection(kind: kind, title: uniqueTitle(for: kind, existing: existing))
+        if kind.shape == .skillGroups { section.skillGroups = [SkillGroup()] }
+        return section
+    }
+
+    /// Replaces blank headings with the default heading for the kind.
+    static func normalized(_ sections: [ResumeSection]) -> [ResumeSection] {
+        sections.map { section in
+            var copy = section
+            if copy.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                copy.title = copy.kind.defaultTitle
+            }
+            return copy
+        }
+    }
+
+    static func duplicated(_ entry: ResumeEntry) -> ResumeEntry {
+        var copy = entry
+        copy.id = UUID()
+        return copy
+    }
+
+    static func duplicateEntry(in section: inout ResumeSection, at index: Int) {
+        guard section.entries.indices.contains(index) else { return }
+        section.entries.insert(duplicated(section.entries[index]), at: index + 1)
+    }
+
+    /// Short status line for a collapsed section card.
+    static func summaryLine(for section: ResumeSection) -> String {
+        let empty = "Nothing added yet"
+        switch section.kind.shape {
+        case .text:
+            let words = section.text.split(whereSeparator: { $0.isWhitespace }).count
+            return words == 0 ? empty : "\(words) words"
+        case .entries:
+            let count = section.entries.filter { !$0.isEmpty }.count
+            if count == 0 { return empty }
+            return count == 1 ? "1 item" : "\(count) items"
+        case .skillGroups:
+            let count = section.skillGroups.reduce(0) { $0 + $1.items.count }
+            if count == 0 { return empty }
+            return count == 1 ? "1 item" : "\(count) items"
+        }
+    }
+}
+
+// MARK: - Dates
+
+enum MonthYearHelper {
+    static let earliestYear = 1960
+
+    static func currentYear(now: Date = Date()) -> Int {
+        Calendar(identifier: .gregorian).component(.year, from: now)
+    }
+
+    /// Newest first. Includes a few future years (expected graduation), and `extra` when it falls outside the range.
+    static func years(now: Date = Date(), including extra: Int? = nil) -> [Int] {
+        let top = currentYear(now: now) + 6
+        var list: [Int] = Array((earliestYear...top).reversed())
+        if let extra, extra > 0, !list.contains(extra) {
+            list.append(extra)
+            list.sort(by: >)
+        }
+        return list
+    }
+
+    static func shortMonthNames(locale: Locale = .current) -> [String] {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        let symbols: [String] = formatter.shortMonthSymbols ?? []
+        if symbols.count == 12 { return symbols }
+        return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    }
+
+    /// nil when `year` is not a real year. An out-of-range month becomes "year only".
+    static func make(year: Int, month: Int?) -> MonthYear? {
+        guard year > 0 else { return nil }
+        var checked = month
+        if let m = checked, !(1...12).contains(m) { checked = nil }
+        return MonthYear(year: year, month: checked)
+    }
+
+    /// True when `end` is not earlier than `start`, or when either is missing.
+    static func isValidRange(start: MonthYear?, end: MonthYear?) -> Bool {
+        guard let s = start, let e = end else { return true }
+        if e.year != s.year { return e.year > s.year }
+        guard let sm = s.month, let em = e.month else { return true }
+        return em >= sm
+    }
+}
+
+// MARK: - Text helpers
+
+enum TokenParsing {
+    /// Splits "Swift, SwiftUI; Core Data" into separate trimmed items.
+    static func split(_ text: String) -> [String] {
+        text.components(separatedBy: CharacterSet(charactersIn: ",;\n"))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// Appends new items, skipping any that already exist (case-insensitive).
+    static func appendUnique(existing: [String], new: [String]) -> [String] {
+        var result = existing
+        var seen = Set(existing.map { $0.lowercased() })
+        for item in new {
+            let key = item.lowercased()
+            if seen.contains(key) { continue }
+            seen.insert(key)
+            result.append(item)
+        }
+        return result
+    }
+}
+
+enum TextInsertion {
+    /// Empty text is replaced, otherwise the addition becomes a new paragraph.
+    static func insert(_ addition: String, into existing: String) -> String {
+        let trimmed = existing.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return addition }
+        return trimmed + "\n\n" + addition
+    }
+}
+
+enum FileNaming {
+    /// File name without extension, safe for Files and the share sheet.
+    static func safeFileName(_ title: String, fallback: String) -> String {
+        let blocked = CharacterSet(charactersIn: "/\\:*?\"<>|").union(.newlines).union(.controlCharacters)
+        let cleaned = title.unicodeScalars
+            .map { blocked.contains($0) ? "-" : String($0) }
+            .joined()
+        let collapsed = cleaned
+            .split(whereSeparator: { $0 == " " })
+            .joined(separator: " ")
+            .trimmingCharacters(in: CharacterSet(charactersIn: " .-"))
+        let limited = String(collapsed.prefix(80))
+        return limited.isEmpty ? fallback : limited
+    }
+}
+
+// MARK: - Entry labels
+
+struct EntryLabels {
+    let heading: String
+    let subheading: String
+    let extra: String
+    let addButton: String
+    let currentToggle: String?
+    let showsDates: Bool
+    let showsBullets: Bool
+    let showsLocation: Bool
+    /// Offers the "Writing examples" sheet for achievement bullets.
+    let offersExamples: Bool
+
+    static func labels(for kind: SectionKind) -> EntryLabels {
+        switch kind {
+        case .experience:
+            return EntryLabels(heading: "Job title", subheading: "Company", extra: "Extra line", addButton: "Add position",
+                               currentToggle: "I currently work here", showsDates: true, showsBullets: true,
+                               showsLocation: true, offersExamples: true)
+        case .internships:
+            return EntryLabels(heading: "Role", subheading: "Organization", extra: "Extra line", addButton: "Add internship",
+                               currentToggle: "I currently work here", showsDates: true, showsBullets: true,
+                               showsLocation: true, offersExamples: true)
+        case .education:
+            return EntryLabels(heading: "Degree or program", subheading: "School", extra: "Grade, honors or GPA",
+                               addButton: "Add education", currentToggle: "I currently study here", showsDates: true,
+                               showsBullets: true, showsLocation: true, offersExamples: false)
+        case .certifications:
+            return EntryLabels(heading: "Certification", subheading: "Issuing organization", extra: "Credential ID or link",
+                               addButton: "Add certification", currentToggle: nil, showsDates: true, showsBullets: false,
+                               showsLocation: false, offersExamples: false)
+        case .projects:
+            return EntryLabels(heading: "Project name", subheading: "Role or organization", extra: "Link",
+                               addButton: "Add project", currentToggle: "This project is ongoing", showsDates: true,
+                               showsBullets: true, showsLocation: false, offersExamples: true)
+        case .awards:
+            return EntryLabels(heading: "Award", subheading: "Presented by", extra: "Extra line", addButton: "Add award",
+                               currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
+                               offersExamples: false)
+        case .publications:
+            return EntryLabels(heading: "Title", subheading: "Publisher or journal", extra: "Link", addButton: "Add publication",
+                               currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
+                               offersExamples: false)
+        case .volunteer:
+            return EntryLabels(heading: "Role", subheading: "Organization", extra: "Extra line", addButton: "Add role",
+                               currentToggle: "I currently volunteer here", showsDates: true, showsBullets: true,
+                               showsLocation: true, offersExamples: true)
+        case .memberships:
+            return EntryLabels(heading: "Membership", subheading: "Organization", extra: "Extra line", addButton: "Add membership",
+                               currentToggle: "This membership is current", showsDates: true, showsBullets: false,
+                               showsLocation: false, offersExamples: false)
+        case .references:
+            return EntryLabels(heading: "Name", subheading: "Title and company", extra: "Email or phone",
+                               addButton: "Add reference", currentToggle: nil, showsDates: false, showsBullets: false,
+                               showsLocation: false, offersExamples: false)
+        case .courses:
+            return EntryLabels(heading: "Course", subheading: "Provider", extra: "Link", addButton: "Add course",
+                               currentToggle: nil, showsDates: true, showsBullets: false, showsLocation: false,
+                               offersExamples: false)
+        case .summary, .skills, .languages, .interests, .custom:
+            return EntryLabels(heading: "Title", subheading: "Subtitle", extra: "Extra line", addButton: "Add item",
+                               currentToggle: nil, showsDates: true, showsBullets: true, showsLocation: true,
+                               offersExamples: false)
+        }
+    }
+}
+
+// MARK: - Style limits (layout safeguards)
+
+struct StyleLimits {
+    let fontScale: ClosedRange<Double>
+    let lineSpacing: ClosedRange<Double>
+    let margin: ClosedRange<Double>
+
+    static let standard = StyleLimits(fontScale: 0.85...1.2, lineSpacing: 0.9...1.4, margin: 20...72)
+    /// The blank builder is stricter so a hand-built layout can never overlap or clip.
+    static let blank = StyleLimits(fontScale: 0.9...1.1, lineSpacing: 0.95...1.3, margin: 28...72)
+
+    func clamped(_ style: StyleOverrides) -> StyleOverrides {
+        var result = style
+        result.fontScale = min(max(style.fontScale, fontScale.lowerBound), fontScale.upperBound)
+        result.lineSpacing = min(max(style.lineSpacing, lineSpacing.lowerBound), lineSpacing.upperBound)
+        if let margin = style.marginPoints {
+            result.marginPoints = min(max(margin, self.margin.lowerBound), self.margin.upperBound)
+        }
+        return result
+    }
+}
+
+// MARK: - Photo
+
+enum PhotoProcessor {
+    static let maxDimension: CGFloat = 600
+
+    /// Fits `size` inside a `maxDimension` square. Never upscales.
+    static func targetSize(for size: CGSize, maxDimension: CGFloat = PhotoProcessor.maxDimension) -> CGSize {
+        guard size.width > 0, size.height > 0, maxDimension > 0 else { return .zero }
+        let longest = max(size.width, size.height)
+        if longest <= maxDimension { return size }
+        let scale = maxDimension / longest
+        return CGSize(width: (size.width * scale).rounded(), height: (size.height * scale).rounded())
+    }
+
+    /// Decodes any image data iOS understands and returns a JPEG no larger than 600 px on its longest side.
+    static func downscaledJPEG(from data: Data, maxDimension: CGFloat = PhotoProcessor.maxDimension,
+                               quality: CGFloat = 0.82) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+        let target = targetSize(for: image.size, maxDimension: maxDimension)
+        guard target.width > 0, target.height > 0 else { return nil }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: target, format: format)
+        let scaled = renderer.image { _ in
+            UIColor.white.setFill()
+            UIRectFill(CGRect(origin: .zero, size: target))
+            image.draw(in: CGRect(origin: .zero, size: target))
+        }
+        return scaled.jpegData(compressionQuality: quality)
+    }
+}

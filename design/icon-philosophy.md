@@ -1,0 +1,13 @@
+# Folded Ascent
+
+A visual philosophy of one gesture made precise.
+
+Folded Ascent holds that a mark earns its place by being the only mark that could stand there. Form is reduced until a single idea remains, and then that idea is cut with the exactness of a draughtsman's blade. The field is deep and nearly silent: a green so considered that it reads as material rather than colour, lit from within by a barely perceptible gradient, the way light settles in a library after dusk. Everything that happens on this field happens once.
+
+Space is the first instrument. The large ivory plane sits slightly above the optical centre, and the margin around it is generous and unequal in the way that only a trained eye can feel. A corner is folded, and in that fold lives the whole drama of the piece: a small triangle of metallic warmth, set at a true forty-five degrees, that turns a flat shape into an object with a back and a front. Nothing is ornamented. The fold is the ornament and the structure at once. This is work that took countless hours of adjusting a single pixel of offset until the geometry stopped looking drawn and started looking inevitable.
+
+Direction is the second instrument. One stroke rises, left to right, from the base of an upright stem toward the very corner that has been folded, so that the eye climbs the form and arrives where the page turns over. The ascent is not decorated with arrows or flourishes. It is a bar with square, honest ends, set in the warmest metal on the palette, and its angle is the angle of the fold, so the two gestures rhyme. Weight is distributed with the discipline of a master typographer: stem, stroke and leg share one thickness, and every gap between them is a measured quantity, never an accident.
+
+Colour is held to four voices. A forest that deepens toward the edges, an ivory that is warm and never white, a champagne that appears only where something rises or turns, and a shadow that is a darker green, never grey. Nothing is gradient for its own sake; each tonal shift is the product of painstaking calibration so that the surface feels finished by hand, as if burnished. Contrast is generous enough to survive a thumbnail, and the silhouette reads in a single glance at the size of a fingertip.
+
+Craft is the final instrument and the reason for restraint. Every edge is anti-aliased at a resolution four times what is shown, every angle is derived from a shared constant, and every proportion has been revised until the composition feels like the quiet culmination of long practice by someone at the very top of their field. The piece contains no letters to read, no tiny details to lose, no effect that depends on a trend. It should look as though it was always going to look this way.
