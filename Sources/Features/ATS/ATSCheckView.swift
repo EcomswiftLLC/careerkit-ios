@@ -43,6 +43,8 @@ struct ATSCheckView: View {
                         case .finished(let result):
                             resultsView(result)
                         }
+                        // Job ad keyword match. The pasted ad stays in memory only.
+                        JobMatchSection(resumeID: resumeID)
                     }
                     .padding(CK.Space.m)
                     .padding(.bottom, CK.Space.xl)

@@ -14,6 +14,7 @@ struct MyResumesView: View {
     @State private var scope: Scope = .active
     @State private var showBlank = false
     @State private var showCompare = false
+    @State private var showImport = false
     @AppStorage("ck.myResumes.sort") private var sortRaw = CKResumeSort.lastEdited.rawValue
     @AppStorage("ck.myResumes.grid") private var useGrid = false
     /// One banner for this screen, shared by the list and grid layouts.
@@ -62,6 +63,9 @@ struct MyResumesView: View {
             .ckBlankResumeSheet(isPresented: $showBlank) { newID in
                 path.append(.editor(newID))
             }
+            .ckImportResumeSheet(isPresented: $showImport) { newID in
+                path.append(.editor(newID))
+            }
             .sheet(isPresented: $showCompare) {
                 CKCompareVersionsView(candidates: store.resumes.sorted { $0.updatedAt > $1.updatedAt })
             }
@@ -103,6 +107,11 @@ struct MyResumesView: View {
                     showBlank = true
                 } label: {
                     Label("Blank resume", systemImage: "doc")
+                }
+                Button {
+                    showImport = true
+                } label: {
+                    Label("Import resume", systemImage: "square.and.arrow.down")
                 }
             } label: {
                 Label("New resume", systemImage: "plus")

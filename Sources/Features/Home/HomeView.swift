@@ -8,6 +8,7 @@ struct HomeView: View {
 
     @State private var path: [AppRoute] = []
     @State private var showBlank = false
+    @State private var showImport = false
     @State private var showATSPicker = false
     @State private var previewTemplate: TemplateSpec?
     @State private var heroSpread = false
@@ -31,6 +32,9 @@ struct HomeView: View {
             .ckScreen()
             .appRouteDestinations()
             .ckBlankResumeSheet(isPresented: $showBlank) { newID in
+                path.append(.editor(newID))
+            }
+            .ckImportResumeSheet(isPresented: $showImport) { newID in
                 path.append(.editor(newID))
             }
             .templatePreviewSheet($previewTemplate) { newID in
@@ -189,6 +193,13 @@ struct HomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             createButtons
+            Button {
+                showImport = true
+            } label: {
+                Label("Import an existing resume", systemImage: "square.and.arrow.down")
+            }
+            .buttonStyle(.ckSecondary)
+            .accessibilityHint("Reads a PDF or pasted text on this device")
         }
         .frame(maxWidth: 460)
         .frame(maxWidth: .infinity)

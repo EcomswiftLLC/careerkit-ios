@@ -125,8 +125,8 @@ struct EdStyleControls: View {
     private var overview: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
             Text(defaults.isLetter
-                 ? "Changes show in the preview and in the exported PDF."
-                 : "Changes show in the preview and in the exported PDF. A champagne dot marks the template's own choice.")
+                 ? "Changes show in the preview and in the exported file."
+                 : "Changes show in the preview and in the exported file. A champagne dot marks the template's own choice.")
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
