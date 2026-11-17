@@ -66,7 +66,9 @@ def create(work: Path) -> None:
     (work / "cert.der").write_bytes(base64.b64decode(cert["attributes"]["certificateContent"]))
     run("openssl", "x509", "-inform", "DER", "-in", str(work / "cert.der"), "-out", str(work / "cert.pem"))
     run("openssl", "pkcs12", "-export", "-inkey", str(key), "-in", str(work / "cert.pem"),
-        "-out", str(work / "cert.p12"), "-passout", "pass:" + os.environ["P12_PASSWORD"])
+        "-out", str(work / "cert.p12"), "-passout", "pass:" + os.environ["P12_PASSWORD"],
+        # macOS `security import` cannot read the AES-based default of OpenSSL 3.
+        "-certpbe", "PBE-SHA1-3DES", "-keypbe", "PBE-SHA1-3DES", "-macalg", "sha1")
 
     ident = os.environ["BUNDLE_ID"]
     bundles = call("GET", "/v1/bundleIds?filter%5Bidentifier%5D=" + ident + "&limit=200")["data"]
