@@ -5,11 +5,13 @@ Bundle id `com.ecomswift.careerkit`, iOS 17+, Swift 5.10, SwiftUI, XcodeGen (`pr
 
 ## Owner decisions that override anything else in the original brief
 
-1. **The app is 100% free. There is NO StoreKit, NO subscription, NO in-app purchase, NO paywall, NO "Premium".**
-   Do not import StoreKit anywhere. Do not mention prices, "premium", "pro", "unlock forever".
-2. **AdMob is the only monetisation.** Two placements only:
+1. **Export gate (owner order 2026-11-17).** The app is free to use. Editing, previewing, drafts and the ATS check are free. Taking a file out (Share, Save to Files, Print, in any format) uses one export. See `docs/EXPORT-GATE-IOS.md`. StoreKit 2 code lives only in `Sources/Purchases`.
+   - `export_pack_3`: consumable, 3 exports. `premium_unlimited`: non-consumable, unlimited exports. Prices are shown from StoreKit, never hardcoded.
+   - A rewarded video still gives one export of one document (24 hours). If a video or the store is not available, nothing is unlocked.
+   - An export is used up only after the system reports the file was really shared, saved or printed.
+2. **AdMob stays.** Two placements only:
    - Adaptive banner on browse screens (Home, My Resumes, Templates, Cover Letters, Profile). Never on the editor, never on the preview/export screens, never next to a primary button.
-   - Rewarded video: exporting a finished document (PDF, Word, Rich Text, plain text or web page, to Files, Share sheet or Print for PDF) needs one completed rewarded video. One reward = one export of that document. Everything else (create, edit, preview, drafts, cover letters, ATS check) is free with no ad.
+   - Rewarded video: one opt-in video unlocks one export of that document. Everything else (create, edit, preview, drafts, cover letters, ATS check) is free with no ad.
 3. No interstitials, no app-open ads. User must opt in to the rewarded ad. Reward only in the official earned-reward callback.
 4. Development uses Google test ad unit IDs through `Config/*.xcconfig` -> Info.plist keys `GADApplicationIdentifier`, `CKBannerAdUnitID`, `CKRewardedAdUnitID`. Never hardcode ids in Swift.
 5. No paid AI API. No network is needed for core use. No account. Documents stay on device.
