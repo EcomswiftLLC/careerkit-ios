@@ -25,6 +25,8 @@ jobs:
       - name: Print manifests
         run: |
           APP=build/CareerKit.xcarchive/Products/Applications/CareerKit.app
-          for f in "$APP/Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy" "$APP/Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy"; do
-            echo "##### $f"; plutil -convert xml1 -o - "$f" | grep -v -E "^\s*$" | head -150
-          done
+          f="$APP/Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy"
+          echo "##### UMP raw PlistBuddy:"; /usr/libexec/PlistBuddy -c "Print" "$f" || true
+          echo "##### UMP tracking keys:"; plutil -convert xml1 -o - "$f" | grep -n -A6 -E "Tracking" || true
+          echo "##### GMA tracking keys:"; plutil -convert xml1 -o - "$APP/Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy" | grep -n -A6 -E "TrackingDomains|<key>NSPrivacyTracking<" || true
+          echo "##### root file head:"; head -c 300 "$APP/PrivacyInfo.xcprivacy" | cat -v | head -8
