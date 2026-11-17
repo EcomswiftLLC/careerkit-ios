@@ -1,7 +1,7 @@
 import XCTest
 @testable import CareerKit
 
-/// The export must never dead-end: whenever no video can be provided, a free export is offered.
+/// A video that cannot be provided never unlocks an export. The person is pointed to the other ways to export.
 final class AdsExportFallbackPolicyTests: XCTestCase {
     private let allReasons: [RewardedUnavailableReason] = [
         .notConfigured, .noConsent, .loadFailed, .timedOut, .couldNotPresent
@@ -15,20 +15,19 @@ final class AdsExportFallbackPolicyTests: XCTestCase {
         XCTAssertEqual(ExportFallbackPolicy.decision(for: .closedEarly), .offerWatchAgain)
     }
 
-    func testEveryUnavailableReasonOffersExportWithoutVideo() {
+    func testEveryUnavailableReasonReportsNoVideoAndNeverUnlocks() {
         for reason in allReasons {
-            XCTAssertEqual(
-                ExportFallbackPolicy.decision(for: .unavailable(reason)),
-                .offerExportWithoutVideo(reason),
-                "No video (\(reason)) must never leave the person without a way to export"
-            )
+            let decision = ExportFallbackPolicy.decision(for: .unavailable(reason))
+            XCTAssertEqual(decision, .videoUnavailable(reason))
+            XCTAssertNotEqual(decision, .unlock, "No video (\(reason)) must never unlock an export")
         }
     }
 
-    func testFallbackIsNotRateLimited() {
-        // The policy has no memory: the tenth failure for the same document still offers the free export.
-        for _ in 0..<10 {
-            XCTAssertEqual(ExportFallbackPolicy.decision(for: .unavailable(.loadFailed)), .offerExportWithoutVideo(.loadFailed))
+    func testOnlyAnEarnedRewardUnlocks() {
+        XCTAssertEqual(ExportFallbackPolicy.decision(for: .earned), .unlock)
+        XCTAssertNotEqual(ExportFallbackPolicy.decision(for: .closedEarly), .unlock)
+        for reason in allReasons {
+            XCTAssertNotEqual(ExportFallbackPolicy.decision(for: .unavailable(reason)), .unlock)
         }
     }
 
@@ -55,7 +54,8 @@ final class AdsExportFallbackPolicyTests: XCTestCase {
     func testMessagesArePlainAndNeverCallItAReward() {
         for reason in allReasons {
             let text = reason.exportMessage.lowercased()
-            XCTAssertTrue(text.contains("this export is free"), "\(reason): \(text)")
+            XCTAssertFalse(text.contains("this export is free"), "\(reason): \(text)")
+            XCTAssertFalse(text.isEmpty)
             XCTAssertFalse(text.contains("reward"), "\(reason): \(text)")
             XCTAssertFalse(text.contains("internet connection"), "Do not guess at the cause: \(text)")
             XCTAssertFalse(text.contains("\u{2014}"), "No em dashes")
@@ -63,7 +63,7 @@ final class AdsExportFallbackPolicyTests: XCTestCase {
     }
 }
 
-/// The free path uses the same gate as a video: one grant, one export, 24 hours (as the sheet discloses).
+/// A video grant: one grant, one export, 24 hours (as the sheet discloses).
 final class AdsExportGateFallbackTests: XCTestCase {
     private let t0 = Date(timeIntervalSinceReferenceDate: 800_000_000)
 
@@ -71,10 +71,10 @@ final class AdsExportGateFallbackTests: XCTestCase {
         XCTAssertEqual(ExportGateLogic.lifetime, 24 * 60 * 60)
     }
 
-    func testFreeExportGrantIsOneExportOnly() {
+    func testVideoGrantIsOneExportOnly() {
         var logic = ExportGateLogic()
         let doc = UUID()
-        logic.grant(for: doc, now: t0)   // "Export without video"
+        logic.grant(for: doc, now: t0)   // completed rewarded video
         XCTAssertTrue(logic.hasGrant(for: doc, now: t0.addingTimeInterval(60)))
         XCTAssertTrue(logic.consume(for: doc, now: t0.addingTimeInterval(120)))
         XCTAssertFalse(logic.hasGrant(for: doc, now: t0.addingTimeInterval(121)))

@@ -13,19 +13,19 @@ enum RewardedUnavailableReason: Equatable {
     /// A video was loaded but could not be shown, or never started.
     case couldNotPresent
 
-    /// Plain text for the export sheet. Never calls the free export an ad reward.
+    /// Plain text for the export sheet. Never calls an export an ad reward.
     var exportMessage: String {
         switch self {
         case .notConfigured:
-            return String(localized: "Videos are not available in this version of the app, so this export is free.")
+            return String(localized: "Videos are not available in this version of the app.")
         case .noConsent:
-            return String(localized: "Videos cannot play with your current ad privacy choices, so this export is free.")
+            return String(localized: "Videos cannot play with your current ad privacy choices.")
         case .loadFailed:
-            return String(localized: "No video is available right now, so this export is free.")
+            return String(localized: "No video is available right now.")
         case .timedOut:
-            return String(localized: "The video did not load in time, so this export is free.")
+            return String(localized: "The video did not load in time.")
         case .couldNotPresent:
-            return String(localized: "The video could not start, so this export is free.")
+            return String(localized: "The video could not start.")
         }
     }
 }
@@ -44,24 +44,21 @@ enum ExportVideoOutcome: Equatable {
 enum ExportFlowDecision: Equatable {
     /// Grant one export and go to Share / Save to Files / Print.
     case unlock
-    /// Offer "Export without video" (grants this one export), plus "Try the video again" and "Not now".
-    case offerExportWithoutVideo(RewardedUnavailableReason)
+    /// Say why no video can play and point to the other ways to export (export pack or Premium).
+    /// A missing video never unlocks an export by itself.
+    case videoUnavailable(RewardedUnavailableReason)
     /// Offer "Watch again" and "Not now". The export stays locked.
     case offerWatchAgain
 }
 
 /// Export fallback rules.
 ///
-/// Decision (App Review safety): whenever a video cannot be provided, the person can always finish the export
-/// without one. There is no rate limit, because any limit (for example once per document per day) would bring back
-/// a dead end for a reviewer who tests the same document twice on a device with no fill. The video stays the first
-/// choice on the first screen; the free path is offered only after the person asked for a video and none could play.
-/// Closing a video early is a choice, so it does not unlock the export, but "Watch again" is always offered, and if
-/// that second request has no video, the free path appears.
+/// Decision (export gate, 2026-11-17): a video that cannot be provided never unlocks an export. The person is told
+/// why and can try again, or use an export pack or Premium. Closing a video early does not unlock the export either.
 enum ExportFallbackPolicy {
-    /// Load attempts made by the sheet for one tap before it offers the free export (first try plus one retry).
+    /// Load attempts made by the sheet for one tap before it reports that no video is available (first try plus one retry).
     static let loadAttemptsBeforeFallback = 2
-    /// How long the sheet waits for a video after the tap before offering the free export.
+    /// How long the sheet waits for a video after the tap before reporting that no video is available.
     static let adWaitTimeout: TimeInterval = 20
 
     static func decision(for outcome: ExportVideoOutcome) -> ExportFlowDecision {
@@ -71,7 +68,7 @@ enum ExportFallbackPolicy {
         case .closedEarly:
             return .offerWatchAgain
         case .unavailable(let reason):
-            return .offerExportWithoutVideo(reason)
+            return .videoUnavailable(reason)
         }
     }
 

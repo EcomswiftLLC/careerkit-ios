@@ -7,6 +7,7 @@ struct ProfileView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var ads: AdsManager
     @EnvironmentObject private var exportGate: ExportGate
+    @EnvironmentObject private var exportStore: ExportStore
     @Environment(\.openURL) private var openURL
 
     @State private var path: [AppRoute] = []
@@ -58,7 +59,7 @@ struct ProfileView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved export passes.")
+                Text("This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved video unlocks. Purchases are kept.")
             }
             .alert("Delete everything permanently?", isPresented: $showDeleteFinal) {
                 Button("Delete everything", role: .destructive) { deleteEverything() }
@@ -232,6 +233,19 @@ struct ProfileView: View {
 
     private var adsAndExportsSection: some View {
         Section {
+            CKSettingsRow(systemImage: "doc.on.doc", title: String(localized: "Your exports"), detail: exportsDetail)
+                .accessibilityElement(children: .combine)
+                .listRowBackground(CK.Palette.surface)
+
+            Button {
+                restorePurchases()
+            } label: {
+                CKSettingsRow(systemImage: "arrow.clockwise", title: String(localized: "Restore purchases"), showsChevron: !exportStore.isRestoring, isBusy: exportStore.isRestoring)
+            }
+            .disabled(exportStore.isBusy)
+            .accessibilityHint(Text("Checks the App Store for a Premium purchase on this Apple Account"))
+            .listRowBackground(CK.Palette.surface)
+
             NavigationLink(value: AppRoute.howExportsWork) {
                 CKSettingsRow(systemImage: "arrow.down.doc", title: String(localized: "How exports work"))
             }
@@ -255,6 +269,32 @@ struct ProfileView: View {
             .listRowBackground(CK.Palette.surface)
         } header: {
             sectionHeader("Ads and exports")
+        }
+    }
+
+    /// What the "Your exports" row says: Premium, or how many exports are left from packs.
+    private var exportsDetail: String {
+        if exportStore.isPremium {
+            return String(localized: "Premium is active. Exports have no limit.")
+        }
+        let count: Int = exportStore.credits
+        if count > 0 {
+            return String(localized: "\(count) exports left from export packs")
+        }
+        return String(localized: "No exports left. Each export asks for a pack, Premium or a short video.")
+    }
+
+    private func restorePurchases() {
+        Task {
+            let outcome = await exportStore.restore()
+            switch outcome {
+            case .premiumActive:
+                toast = String(localized: "Premium is active again.")
+            case .nothingFound:
+                toast = String(localized: "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored.")
+            case .failed:
+                toast = String(localized: "Purchases could not be restored right now. Check your connection and try again.")
+            }
         }
     }
 

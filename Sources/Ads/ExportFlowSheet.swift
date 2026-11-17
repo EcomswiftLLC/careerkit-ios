@@ -28,12 +28,13 @@ private struct ExportedFile {
     let data: Data
 }
 
-/// The whole export experience for one document: file type, explanation, one opt-in video,
-/// then Share, Save to Files or Print (Print for PDF only).
-/// When no video can be provided after the person asked for one, the export continues without a video
-/// (see `ExportFallbackPolicy`), so there is never a dead end.
-/// The gate is per document, not per format: one unlock covers one completed export in any format.
-/// Needs `ExportGate` in the environment (injected at the app root).
+/// The whole export experience for one document: file type, the export gate, then Share, Save to Files
+/// or Print (Print for PDF only).
+/// The gate: Premium, a purchased export, or one opt-in video unlocks the export. With none of them, the sheet shows
+/// the choices. A missing video or an unreachable store never unlocks anything.
+/// An export is used up only after the system reports that the file was really shared, saved or printed.
+/// The video grant is per document, not per format: one unlock covers one completed export in any format.
+/// Needs `ExportGate` and `ExportStore` in the environment (injected at the app root).
 @MainActor
 struct ExportFlowSheet: View {
     let documentID: UUID
@@ -59,7 +60,7 @@ struct ExportFlowSheet: View {
     }
 
     private enum Phase: Equatable {
-        case explanation
+        case paywall
         case loadingAd
         case noVideo(RewardedUnavailableReason)
         case notFinished
@@ -79,6 +80,7 @@ struct ExportFlowSheet: View {
     }
 
     @EnvironmentObject private var gate: ExportGate
+    @EnvironmentObject private var exportStore: ExportStore
     @ObservedObject private var ads = AdsManager.shared
     @StateObject private var rewarded = RewardedAdController(preload: false)
     @StateObject private var runner = ExportActionRunner()
@@ -86,12 +88,17 @@ struct ExportFlowSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var phase: Phase = .explanation
+    @State private var phase: Phase = .paywall
     @State private var fileState: FileState = .preparing
     @State private var notice: String?
     @State private var destinationBusy = false
     @State private var didAppear = false
-    @State private var unlockedWithoutVideo = false
+    /// How this export was unlocked, for the wording on the destination and the finished screens.
+    @State private var unlockedBy: ExportAccess = .adGrant
+    /// A short result of the last purchase or restore, shown on the paywall.
+    @State private var paywallStatus: String?
+    /// What the finished screen says about what is left.
+    @State private var finishedMessage: String = ""
     @State private var detent: PresentationDetent = .large
     /// The format picked last time, remembered on this device.
     @AppStorage(DocumentExportFormat.storageKey) private var storedFormat: String = DocumentExportFormat.defaultFormat.rawValue
@@ -110,7 +117,7 @@ struct ExportFlowSheet: View {
     private var showsFormatPicker: Bool {
         guard availableFormats.count > 1 else { return false }
         switch phase {
-        case .explanation, .noVideo, .notFinished, .destination:
+        case .paywall, .noVideo, .notFinished, .destination:
             return true
         case .loadingAd, .finished:
             return false
@@ -239,8 +246,8 @@ struct ExportFlowSheet: View {
     @ViewBuilder
     private var content: some View {
         switch phase {
-        case .explanation:
-            explanationContent
+        case .paywall:
+            paywallContent
         case .loadingAd:
             loadingContent
         case .noVideo(let reason):
@@ -254,32 +261,18 @@ struct ExportFlowSheet: View {
         }
     }
 
-    // MARK: (a) Explanation
+    // MARK: (a) The choices
 
-    private var explanationContent: some View {
-        VStack(alignment: .leading, spacing: CK.Space.l) {
-            Text("Watch one short video to export this document once. After the video, the export stays unlocked for 24 hours, so you can finish later. Creating, editing and previewing stay free.")
-                .font(CK.Font.body)
-                .foregroundStyle(CK.Palette.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(spacing: CK.Space.s) {
-                Button(action: startAdFlow) {
-                    Text("Watch an ad to export").multilineTextAlignment(.center)
-                }
-                .buttonStyle(.ckPrimary)
-
-                Button { dismiss() } label: {
-                    Text("Not now")
-                }
-                .buttonStyle(.ckSecondary)
-            }
-
-            Text("The video only starts after you tap the button above.")
-                .font(CK.Font.caption)
-                .foregroundStyle(CK.Palette.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+    private var paywallContent: some View {
+        ExportPaywallContent(
+            store: exportStore,
+            offersVideo: AdsConfiguration.rewardedUnitID != nil,
+            status: paywallStatus,
+            onBuy: { productID in buy(productID) },
+            onWatchVideo: startAdFlow,
+            onRestore: restorePurchases,
+            onNotNow: { dismiss() }
+        )
     }
 
     // MARK: (b) Loading
@@ -302,15 +295,18 @@ struct ExportFlowSheet: View {
         }
     }
 
-    // MARK: (c) No video could be provided: export without one
+    // MARK: (c) No video could be provided
 
     private func noVideoContent(_ reason: RewardedUnavailableReason) -> some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
-            messageCard(title: String(localized: "No video right now"), message: reason.exportMessage)
+            messageCard(
+                title: String(localized: "No video right now"),
+                message: reason.exportMessage + " " + String(localized: "You can try again, or use an export pack or Premium.")
+            )
 
             VStack(spacing: CK.Space.s) {
-                Button(action: exportWithoutVideo) {
-                    Text("Export without video").multilineTextAlignment(.center)
+                Button { showPaywall() } label: {
+                    Text("See export options").multilineTextAlignment(.center)
                 }
                 .buttonStyle(.ckPrimary)
 
@@ -340,6 +336,8 @@ struct ExportFlowSheet: View {
             VStack(spacing: CK.Space.s) {
                 Button(action: startAdFlow) { Text("Watch again") }
                     .buttonStyle(.ckPrimary)
+                Button { showPaywall() } label: { Text("See export options") }
+                    .buttonStyle(.ckSecondary)
                 Button { dismiss() } label: { Text("Not now") }
                     .buttonStyle(.ckSecondary)
             }
@@ -364,7 +362,20 @@ struct ExportFlowSheet: View {
     // MARK: (e) Unlocked, choose destination
 
     private var unlockedTitle: String {
-        unlockedWithoutVideo ? String(localized: "Ready to export") : String(localized: "Export unlocked")
+        unlockedBy == .adGrant ? String(localized: "Export unlocked") : String(localized: "Ready to export")
+    }
+
+    /// One line under the title that says what this export uses.
+    private var unlockedDetail: String? {
+        switch unlockedBy {
+        case .premium:
+            return String(localized: "Premium has no limit on exports.")
+        case .credit:
+            let count: Int = exportStore.credits
+            return String(localized: "You have \(count) exports. This one uses 1.")
+        case .adGrant, .locked:
+            return nil
+        }
     }
 
     private var destinationContent: some View {
@@ -374,9 +385,17 @@ struct ExportFlowSheet: View {
                     .font(.title3)
                     .foregroundStyle(CK.Palette.forest)
                     .accessibilityHidden(true)
-                Text(unlockedTitle)
-                    .font(CK.Font.label)
-                    .foregroundStyle(CK.Palette.ink)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(unlockedTitle)
+                        .font(CK.Font.label)
+                        .foregroundStyle(CK.Palette.ink)
+                    if let detail = unlockedDetail {
+                        Text(detail)
+                            .font(CK.Font.caption)
+                            .foregroundStyle(CK.Palette.graphite)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
                 Spacer(minLength: 0)
             }
             .ckCard()
@@ -452,7 +471,7 @@ struct ExportFlowSheet: View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
             messageCard(
                 title: String(localized: "Your export is done"),
-                message: String(localized: "To export this document again, tap Export. Each new export starts with one short video when one is available.")
+                message: finishedMessage
             )
 
             Button { dismiss() } label: { Text("Done") }
@@ -473,8 +492,11 @@ struct ExportFlowSheet: View {
     private func handleAppear() {
         guard !didAppear else { return }
         didAppear = true
-        // A valid grant from earlier (for example a cancelled share) skips straight to the destination step.
-        if gate.hasGrant(for: documentID) {
+        // Premium, an export from a pack, or a valid video grant from earlier (for example a cancelled share)
+        // skips straight to the destination step.
+        let access = exportStore.access(for: documentID, gate: gate)
+        if access.isOpen {
+            unlockedBy = access
             enterDestination()
         } else {
             // Load in the background so the video is ready when the person taps. Nothing plays without that tap.
@@ -492,7 +514,67 @@ struct ExportFlowSheet: View {
     private func cancelAdFlow() {
         session.adTask?.cancel()
         session.adTask = nil
-        go(.explanation)
+        go(.paywall)
+    }
+
+    private func showPaywall() {
+        session.adTask?.cancel()
+        session.adTask = nil
+        notice = nil
+        go(.paywall)
+    }
+
+    // MARK: Buying
+
+    private func buy(_ productID: String) {
+        guard !exportStore.isBusy else { return }
+        paywallStatus = nil
+        Task {
+            let outcome = await exportStore.purchase(productID)
+            switch outcome {
+            case .purchased:
+                let access = exportStore.access(for: documentID, gate: gate)
+                if access.isOpen {
+                    unlockedBy = access
+                    enterDestination()
+                } else {
+                    setStatus(String(localized: "The purchase went through, but it could not be added yet. Tap Restore purchases in a moment."))
+                }
+            case .pending:
+                setStatus(String(localized: "Your purchase is waiting for approval. The export will be available once it is approved."))
+            case .cancelled:
+                break
+            case .unverified:
+                setStatus(String(localized: "The App Store could not confirm this purchase, so nothing was added. Nothing was charged."))
+            case .failed:
+                setStatus(String(localized: "The purchase did not go through. Check your connection and try again."))
+            }
+        }
+    }
+
+    private func restorePurchases() {
+        guard !exportStore.isBusy else { return }
+        paywallStatus = nil
+        Task {
+            let outcome = await exportStore.restore()
+            switch outcome {
+            case .premiumActive:
+                let access = exportStore.access(for: documentID, gate: gate)
+                if access.isOpen {
+                    unlockedBy = access
+                    enterDestination()
+                }
+            case .nothingFound:
+                setStatus(String(localized: "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored."))
+            case .failed:
+                setStatus(String(localized: "Purchases could not be restored right now. Check your connection and try again."))
+            }
+        }
+    }
+
+    private func setStatus(_ message: String) {
+        paywallStatus = message
+        AccessibilityNotification.Announcement(message).post()
     }
 
     private func runAdFlow() async {
@@ -506,9 +588,9 @@ struct ExportFlowSheet: View {
         switch ExportFallbackPolicy.decision(for: outcome) {
         case .unlock:
             gate.grant(for: documentID)
-            unlockedWithoutVideo = false
+            unlockedBy = exportStore.access(for: documentID, gate: gate)
             enterDestination()
-        case .offerExportWithoutVideo(let reason):
+        case .videoUnavailable(let reason):
             go(.noVideo(reason))
             AccessibilityNotification.Announcement(reason.exportMessage).post()
         case .offerWatchAgain:
@@ -565,15 +647,6 @@ struct ExportFlowSheet: View {
             try? await Task.sleep(nanoseconds: 150_000_000)
         }
         return .unavailable(.timedOut)
-    }
-
-    /// The fallback: no video could be provided after the person asked for one, so this one export is granted.
-    private func exportWithoutVideo() {
-        session.adTask?.cancel()
-        session.adTask = nil
-        gate.grant(for: documentID)
-        unlockedWithoutVideo = true
-        enterDestination()
     }
 
     private func enterDestination() {
@@ -643,14 +716,29 @@ struct ExportFlowSheet: View {
         ReviewPromptCenter.shared.exportFinished(outcome)
         switch outcome {
         case .completed:
-            // The grant is used up only now that the system reported a finished export.
-            gate.consume(for: documentID)
+            // The export is used up only now that the system reported a finished export.
+            let spent = exportStore.settle(outcome, for: documentID, gate: gate)
+            finishedMessage = finishedText(after: spent)
             go(.finished)
         case .cancelled:
             show(notice: String(localized: "Nothing was exported. Your export is still available."))
         case .failed:
             show(notice: String(localized: "Something went wrong, so nothing was exported. Your export is still available. Please try again."))
         }
+    }
+
+    private func finishedText(after spent: ExportSpend) -> String {
+        if exportStore.isPremium {
+            return String(localized: "To export again, tap Export. Premium has no limit.")
+        }
+        if spent == .credit {
+            let count: Int = exportStore.credits
+            if count > 0 {
+                return String(localized: "You have \(count) exports left.")
+            }
+            return String(localized: "That was your last export. You can get more the next time you export.")
+        }
+        return String(localized: "To export this document again, tap Export.")
     }
 
     private func show(notice message: String) {

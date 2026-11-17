@@ -185,6 +185,7 @@ final class ScreenshotTests: XCTestCase {
         guard tap(app.buttons["Export"].firstMatch, wait: 4) else {
             throw XCTSkip("Export button not found")
         }
+        shot("70-export-paywall")
         let wordRow: XCUIElement = element("export.format.docx")
         guard wordRow.waitForExistence(timeout: 5), scrollUntilHittable(wordRow, attempts: 2) else {
             throw XCTSkip("Word row not found in the export sheet")

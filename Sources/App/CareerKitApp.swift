@@ -5,6 +5,7 @@ struct CareerKitApp: App {
     @StateObject private var store = DocumentStore()
     @StateObject private var appState = AppState()
     @StateObject private var exportGate = ExportGate()
+    @StateObject private var exportStore = ExportStore.makeForLaunch()
     @StateObject private var ads = AdsManager.shared
 
     init() {
@@ -17,6 +18,7 @@ struct CareerKitApp: App {
                 .environmentObject(store)
                 .environmentObject(appState)
                 .environmentObject(exportGate)
+                .environmentObject(exportStore)
                 .environmentObject(ads)
                 .preferredColorScheme(appState.appearance.colorScheme)
                 .tint(CK.Palette.forest)
@@ -30,6 +32,7 @@ struct CKRootContainer: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var ads: AdsManager
     @EnvironmentObject private var store: DocumentStore
+    @EnvironmentObject private var exportStore: ExportStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @State private var adsStarted = false
@@ -51,6 +54,10 @@ struct CKRootContainer: View {
             #if DEBUG
             CKScreenshotSupport.seedIfRequested(store: store, appState: appState)
             #endif
+        }
+        .task {
+            // Purchased exports and Premium: listen for store updates, refresh purchases and prices.
+            exportStore.start()
         }
         .task {
             // Exported PDFs and backups left in tmp by an earlier session (older than one hour).

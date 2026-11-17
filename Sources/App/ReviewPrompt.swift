@@ -1,5 +1,5 @@
 import SwiftUI
-// The only StoreKit use in the app: the system review prompt. No purchases.
+// StoreKit use outside Sources/Purchases: the system review prompt only.
 import StoreKit
 
 /// Key-value storage for the review prompt. `UserDefaults` conforms; tests use an in-memory fake.
