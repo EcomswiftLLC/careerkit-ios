@@ -289,6 +289,7 @@ def build_index():
           <div><dt>Start from 30 resume templates</dt><dd>Six groups: Professional, Modern, Creative, Academic, Entry Level and Technical. Each template is a complete design with its own layout, fonts and heading style.</dd></div>
           <div><dt>Or start from a blank page</dt><dd>Choose your own structure. Begin with a blank resume and add only the sections you need.</dd></div>
           <div><dt>Change every detail</dt><dd>Add, hide and reorder sections. Change the accent colour, fonts, text size, line spacing and margins. Add a photo when the kind of application you are making expects one.</dd></div>
+          <div><dt>In your language</dt><dd>CareerKit is available in English, Spanish, French, German and Simplified Chinese. A resume can also be written in a different language from the app, and its headings and dates follow that language in every export.</dd></div>
           <div><dt>Cover letters that match</dt><dd>Ten cover letter templates share the design of a matching resume, so the two documents look like a set.</dd></div>
           <div><dt>Check the layout</dt><dd>The ATS check reads your resume and points out common formatting problems. It is general guidance and not a score from any employer system.</dd></div>
           <div><dt>Keep several resumes</dt><dd>Keep one version for each kind of job. Duplicate, rename or archive them from My Resumes, and compare two versions side by side. Pick A4 or US Letter.</dd></div>

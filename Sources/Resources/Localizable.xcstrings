@@ -10773,13 +10773,13 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tamaño de papel predeterminado"
+            "value": "Tamaño de papel"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Format de papier par défaut"
+            "value": "Format du papier"
           }
         },
         "zh-Hans": {

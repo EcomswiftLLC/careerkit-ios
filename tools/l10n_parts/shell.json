@@ -819,8 +819,8 @@
   "_comment": "Cover letter document content. Default cover letter greeting. Written into the letter."
  },
  "Default paper size": {
-  "es": "Tamaño de papel predeterminado",
-  "fr": "Format de papier par défaut",
+  "es": "Tamaño de papel",
+  "fr": "Format du papier",
   "de": "Standard-Papierformat",
   "zh-Hans": "默认纸张尺寸",
   "_comment": "Profile"
