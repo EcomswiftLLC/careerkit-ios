@@ -2,9 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- CareerKit itself has no accounts and no analytics. The only tracking is through Google AdMob.
-	     No NSPrivacyTrackingDomains here on purpose: iOS blocks declared tracking domains for people who deny ATT,
-	     and the Google Mobile Ads SDK ships its own privacy manifest. Do not add domains from memory. -->
 	<key>NSPrivacyTracking</key>
 	<true/>
 	<key>NSPrivacyCollectedDataTypes</key>
