@@ -25,7 +25,7 @@ CAPTIONS = [
     "Build a polished resume",
     "30 templates to choose from",
     "Change every detail",
-    "Start from a blank page",
+    "Arrange every section",
     "Cover letters that match",
     "Check your layout",
     "Keep one resume per job",

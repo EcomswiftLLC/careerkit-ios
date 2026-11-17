@@ -197,7 +197,7 @@ Rules for every screenshot:
 | 1 | Create a professional resume | Build a polished resume | The editor with the live preview showing a filled single-column template | Hero shot. Caption top, preview fills the lower 78 percent and bleeds off the bottom edge. |
 | 2 | Explore templates | 30 templates to choose from | The Templates grid with the category chips visible | Show three rows of thumbnails. Keep the banner area collapsed. |
 | 3 | Customize every detail | Change every detail | Style panel open (accent colour, fonts, spacing) beside the resume | Pick a template with a clear accent colour so the change is visible. |
-| 4 | Build from scratch | Start from a blank page | The Blank resume path or a mostly empty resume with the section list | Show the "add section" list so the control is the story. |
+| 4 | Build from scratch | Arrange every section | The Blank resume path or a mostly empty resume with the section list | Show the "add section" list so the control is the story. |
 | 5 | Matching cover letters | Cover letters that match | A cover letter preview next to its matching resume look (same accent and fonts) | Use the cover letter editor with the preview, same accent colour as shot 1. |
 | 6 | ATS check | Check your layout | The ATS check results list with a mix of good and warning findings | The general guidance disclaimer line should be visible in the capture. |
 | 7 | Manage multiple resumes | Keep one resume per job | My Resumes list with three or four documents, one with a progress ring | Titles such as "Product Designer" and "Teaching Roles" are fine. |
