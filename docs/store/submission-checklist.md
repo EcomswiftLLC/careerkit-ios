@@ -18,8 +18,8 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 
 | # | Step | Status |
 |---|---|---|
-| 2.1 | Project generates from `project.yml` with XcodeGen. Assets catalog, AppIcon, AccentColor and LaunchBackground exist. | Done (not compiled on this PC) |
-| 2.2 | First real compile on macOS (CI workflow `.github/workflows/ios.yml` or a Mac). Fix any compile errors reported by CI. | Mac/CI |
+| 2.1 | Project generates from `project.yml` with XcodeGen. Assets catalog, AppIcon, AccentColor and LaunchBackground exist. | Done |
+| 2.2 | Compiles and tests on macOS in CI (`.github/workflows/ios.yml`, Xcode 26): 496 unit tests, Release build check with the production AdMob ids, UI screenshots in 5 languages. | Done (CI green 2026-11-16) |
 | 2.3 | `Config/Release.xcconfig` already holds the three production AdMob ids (app "Resume & CV Maker: CareerKit", created 2026-11-16). `Config/Debug.xcconfig` keeps Google's test ids. Before archiving, confirm the archive uses the Release configuration. | Done, confirm on archive |
 | 2.4 | Bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml` when needed (now 1.0.0 build 1). | Done |
 | 2.5 | Archive in Xcode (Product > Archive, Any iOS Device) with automatic signing. Upload through the Organizer, or export and upload with Transporter. | Mac |
@@ -36,7 +36,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 | 3.4 | The three ids are in `Config/Release.xcconfig` (`ADMOB_APP_ID`, `ADMOB_BANNER_UNIT_ID`, `ADMOB_REWARDED_UNIT_ID`, publisher `pub-8621573128492952`). The Debug config stays on Google test ids. | Done |
 | 3.5 | Privacy and messaging: create and publish the **GDPR** message (consent form) and, if wanted, the US state regulations message and an IDFA explainer. The app already calls the UMP SDK. A message that is not published means no consent form is shown. | Owner |
 | 3.6 | Block sensitive ad categories in Blocking controls (gambling, dating, political, weight loss and similar) so the 4+ rating and a job-seeker audience stay consistent. | Owner |
-| 3.7 | `app-ads.txt` with exactly this line: `google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0`. It must be served at the **root of the host used in the Marketing URL** (`https://<host>/app-ads.txt`). Problem: the planned Marketing URL `https://ecomswiftllc.github.io/careerkit/` is a GitHub project page, and its host root is not controllable from the project repo. Fix: use `https://www.ecomswiftllc.com` as the Marketing URL if the owner controls that domain and serve `https://www.ecomswiftllc.com/app-ads.txt`; otherwise create the user-site repo `EcomswiftLLC/ecomswiftllc.github.io` with `app-ads.txt` at its root. Then check AdMob > Apps > app-ads.txt shows the file as found. | Owner |
+| 3.7 | `app-ads.txt` with exactly this line: `google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0`. It must be served at the **root of the host used in the Marketing URL** (`https://<host>/app-ads.txt`). The user-site repo `EcomswiftLLC/ecomswiftllc.github.io` serves it at `https://ecomswiftllc.github.io/app-ads.txt` (free GitHub Pages), the root of the host in the Marketing URL `https://ecomswiftllc.github.io/careerkit/`. Check AdMob > Apps > app-ads.txt shows the file as found (can take up to 24 hours). | Done, owner confirms in AdMob |
 | 3.8 | `SKAdNetworkItems` in Info.plist holds Google's list of 50 ids (ads owner, fetched 2026-11-16). Re-check against Google's current list shortly before release. | Done, re-check |
 | 3.9 | New ad units can have limited fill for a few days, and Apple's reviewers may not get a rewarded video. Handled in the app: when no video can be shown, the export sheet offers Export without video (see section 7). | Done |
 | 3.10 | Ads are limited to general-audience content in code (`maxAdContentRating = .general`), matching the 4+ rating. Child-directed tags are not set. | Done |
@@ -46,7 +46,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 | # | Step | Status |
 |---|---|---|
 | 4.1 | Static site in `website/careerkit/` (home, privacy, terms, support, sitemap, robots). | Done |
-| 4.2 | Deploy so these return 200: `/careerkit/`, `/careerkit/privacy/`, `/careerkit/terms/`, `/careerkit/support/` on `www.ecomswiftllc.com`. The way to host a static folder under that domain is not decided (see handoff). | Owner |
+| 4.2 | Live and returning 200 on the free GitHub Pages host `ecomswiftllc.github.io`: `/careerkit/`, `/careerkit/privacy/`, `/careerkit/terms/`, `/careerkit/support/`. These are the URLs used in the listing and in the app. | Done |
 | 4.3 | Lawyer review of `docs/legal/privacy-policy.md` and `terms-of-use.md`, then re-generate the pages with `python website/build_legal.py`. | Owner |
 | 4.4 | `support@ecomswiftllc.com` receives mail and someone answers it. | Owner |
 | 4.5 | After the app is approved: add the real App Store link to the site (remove the coming-soon state), and add the Smart App Banner meta tag with the numeric Apple id. | Owner |
@@ -62,7 +62,7 @@ Banking and tax forms in App Store Connect are **not needed**. The app is free w
 | 5.4 | Copyright `2026 Ecom Swift LLC`. | Owner |
 | 5.5 | Age rating questionnaire (expect 4+). Not Made for Kids. | Owner |
 | 5.6 | App Privacy: answer from `app-privacy.md`; the privacy policy URL is required. | Owner |
-| 5.7 | Screenshots: 8 for 6.9-inch iPhone, 8 for 13-inch iPad, 8 for 6.5-inch only if asked. Captured from the running app, framed with `design/make_store_screenshots.py`. **Not made yet**, the app has not been run. | Mac, then Owner |
+| 5.7 | Screenshots: 8 for 6.9-inch iPhone, 8 for 13-inch iPad, 8 for 6.5-inch only if asked. Captured from the running app, framed with `design/make_store_screenshots.py`. Raw simulator screens already exist as CI artifacts (`screenshots`, `screenshots-ipad-dark`, `screenshots-l10n`); they only need framing and a check of the pixel sizes. | Mac, then Owner |
 | 5.8 | Optional app preview video from the storyboard. | Mac, optional |
 | 5.9 | App Review information: contact name, phone and email, no sign-in required, review notes from `metadata.md`. | Owner |
 | 5.10 | Accessibility nutrition labels (optional in App Store Connect). Fill in only what has been tested with VoiceOver, Dynamic Type and Reduce Motion. | Open, optional |

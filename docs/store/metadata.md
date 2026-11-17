@@ -21,7 +21,7 @@ Templates & Cover Letters
 ```
 
 ## Keywords
-Limit 100 bytes. No spaces after commas. Words already in the name or subtitle (resume, builder, careerkit, cv, maker, job, applications) are left out because Apple indexes them already. No competitor or third-party trademarks. Apple combines single words into phrases, so "cover letter" and "curriculum vitae" are stored as two-word phrases the user can still search either way.
+Limit 100 bytes. No spaces after commas. Words already in the name or subtitle (resume, cv, maker, careerkit, templates, cover, letters) are left out because Apple indexes them already. No competitor or third-party trademarks. Apple combines single words into phrases, so "cover letter" and "curriculum vitae" are stored as two-word phrases the user can still search either way.
 
 ```
 builder,pdf,docx,ats,keywords,curriculum vitae,student,fresher,import,job,application,interview
