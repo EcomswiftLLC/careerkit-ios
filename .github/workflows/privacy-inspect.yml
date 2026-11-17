@@ -25,11 +25,6 @@ jobs:
       - name: Print manifests
         run: |
           APP=build/CareerKit.xcarchive/Products/Applications/CareerKit.app
-          echo "--- Frameworks:"; ls "$APP/Frameworks" 2>&1 | head
-          echo "--- all privacy-ish files:"; find build/CareerKit.xcarchive -iname "*privacy*" | head -30
-          echo "--- root manifest as XML:"; plutil -convert xml1 -o - "$APP/PrivacyInfo.xcprivacy" | head -60
-          find "$APP" -name "PrivacyInfo.xcprivacy" | while read -r f; do
-            echo "=== ${f#$APP/}"
-            echo -n "NSPrivacyTracking: "; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTracking" "$f" 2>&1
-            echo "NSPrivacyTrackingDomains:"; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTrackingDomains" "$f" 2>&1 || true || true
+          for f in "$APP/Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy" "$APP/Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy"; do
+            echo "##### $f"; plutil -convert xml1 -o - "$f" | grep -v -E "^\s*$" | head -150
           done
