@@ -40,7 +40,7 @@ Every other data type is **Not collected**: Contact Info, Health and Fitness, Fi
 
 ## Privacy manifest notes
 
-- `NSPrivacyTracking` is `true`. The collected data types match the table above.
+- `NSPrivacyTracking` is `false` (ITMS-91064: `true` requires declared tracking domains, which we deliberately omit). ATT still runs. The collected data types match the table above.
 - `NSPrivacyTrackingDomains` is **not declared**. iOS blocks requests to declared tracking domains for people who deny ATT, and the earlier entries were written from memory, not taken from the SDK. The Google Mobile Ads SDK ships its own privacy manifest. After the first archive, open Xcode's privacy report (Organizer > Archive > Generate Privacy Report) to see the merged result. Do not add domains by hand.
 - Required-reason APIs declared by the app: UserDefaults `CA92.1`, file timestamp `C617.1`.
 

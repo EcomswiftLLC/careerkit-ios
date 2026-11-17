@@ -41,20 +41,19 @@ jobs:
           mkdir -p build
           xcodebuild archive             -project CareerKit.xcodeproj             -scheme CareerKit             -configuration Release             -destination "generic/platform=iOS"             -archivePath build/CareerKit.xcarchive             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             CODE_SIGN_IDENTITY=""             CURRENT_PROJECT_VERSION=${{ github.run_number }}             | tee build/archive.log | tail -n 40
 
-      - name: Fix SDK privacy manifests (ITMS-91064)
+      - name: Validate privacy manifests (ITMS-91064)
         run: |
-          # Google's GoogleMobileAds manifest declares tracking data (Device ID) but leaves NSPrivacyTracking unset,
-          # which App Store Connect rejects. The app does track through AdMob after the person allows it in the ATT
-          # prompt, so true is the accurate value. Any manifest that declares tracking data must say so.
+          # App Store Connect rejects any manifest with NSPrivacyTracking=true and no NSPrivacyTrackingDomains.
+          # We declare no tracking domains (iOS would block them for people who deny ATT), so every manifest must be false/absent.
           PB=/usr/libexec/PlistBuddy
-          find build/CareerKit.xcarchive/Products/Applications/CareerKit.app/Frameworks -name PrivacyInfo.xcprivacy | while read -r f; do
-            declares=$(plutil -convert xml1 -o - "$f" | grep -A1 'NSPrivacyCollectedDataTypeTracking' | grep -c '<true/>' || true)
+          APP=build/CareerKit.xcarchive/Products/Applications/CareerKit.app
+          find "$APP" -name PrivacyInfo.xcprivacy | while read -r f; do
             tracking=$($PB -c "Print :NSPrivacyTracking" "$f" 2>/dev/null || echo missing)
-            echo "$f: tracking data entries=$declares NSPrivacyTracking=$tracking"
-            if [ "$declares" -gt 0 ] && [ "$tracking" != "true" ]; then
-              $PB -c "Delete :NSPrivacyTracking" "$f" 2>/dev/null || true
-              $PB -c "Add :NSPrivacyTracking bool true" "$f"
-              echo "  -> NSPrivacyTracking set to true"
+            domains=$($PB -c "Print :NSPrivacyTrackingDomains" "$f" 2>/dev/null | grep -c . || true)
+            echo "$f: NSPrivacyTracking=$tracking domains-lines=$domains"
+            if [ "$tracking" = "true" ] && [ "$domains" -le 2 ]; then
+              $PB -c "Set :NSPrivacyTracking false" "$f"
+              echo "  -> set NSPrivacyTracking false (no tracking domains declared)"
             fi
           done
 

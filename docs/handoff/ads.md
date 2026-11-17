@@ -71,7 +71,7 @@ Grant semantics are unchanged: one grant per document, one export, valid 24 hour
 
 ## Privacy manifest
 
-`NSPrivacyTrackingDomains` was removed. iOS blocks declared tracking domains for people who deny ATT, and the old entries came from memory, not from the SDK. `NSPrivacyTracking` stays `true`. Collected data types match `docs/store/app-privacy.md` exactly (Device ID: linked, tracking, Third-Party Advertising and Analytics; Advertising Data: linked, tracking; Product Interaction: linked, not tracking; Coarse Location: not linked; Performance Data: linked; Crash Data: not linked). After the first archive, check Xcode's privacy report.
+`NSPrivacyTrackingDomains` was removed. iOS blocks declared tracking domains for people who deny ATT, and the old entries came from memory, not from the SDK. `NSPrivacyTracking` is `false`: App Store Connect (ITMS-91064) rejects `true` without tracking domains, and domains are deliberately not declared. The ATT prompt and consent flow are unaffected. Collected data types match `docs/store/app-privacy.md` exactly (Device ID: linked, tracking, Third-Party Advertising and Analytics; Advertising Data: linked, tracking; Product Interaction: linked, not tracking; Coarse Location: not linked; Performance Data: linked; Crash Data: not linked). After the first archive, check Xcode's privacy report.
 
 ## AdMob console steps
 
