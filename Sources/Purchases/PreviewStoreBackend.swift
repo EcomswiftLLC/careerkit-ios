@@ -24,7 +24,12 @@ final class PreviewStoreBackend: StoreBackend {
         ]
     }
 
-    func purchase(_ productID: String) async throws -> StorePurchaseResult { .cancelled }
+    /// Pretends the pack was bought, so screenshots can show the unlocked export screen.
+    func purchase(_ productID: String) async throws -> StorePurchaseResult {
+        guard productID == ExportProduct.pack3 else { return .cancelled }
+        let id = UInt64(Date().timeIntervalSince1970 * 1000)
+        return .purchased(StoreTransaction(id: id, productID: productID, isRevoked: false, finish: {}))
+    }
     func entitledProductIDs() async -> Set<String> { [] }
     func unfinishedTransactions() async -> [StoreTransaction] { [] }
     func updates() -> AsyncStream<StoreTransaction> { AsyncStream { $0.finish() } }

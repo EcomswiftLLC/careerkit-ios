@@ -117,9 +117,9 @@ struct ExportFlowSheet: View {
     private var showsFormatPicker: Bool {
         guard availableFormats.count > 1 else { return false }
         switch phase {
-        case .paywall, .noVideo, .notFinished, .destination:
+        case .noVideo, .notFinished, .destination:
             return true
-        case .loadingAd, .finished:
+        case .paywall, .loadingAd, .finished:
             return false
         }
     }

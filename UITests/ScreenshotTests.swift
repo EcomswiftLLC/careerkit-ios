@@ -186,6 +186,11 @@ final class ScreenshotTests: XCTestCase {
             throw XCTSkip("Export button not found")
         }
         shot("70-export-paywall")
+        // Debug screenshot runs pretend the pack was bought, which unlocks the export screen.
+        let buyPack: XCUIElement = element("export.paywall.buy.export_pack_3")
+        if buyPack.waitForExistence(timeout: 5) { buyPack.tap() }
+        Thread.sleep(forTimeInterval: 1.0)
+        shot("70b-export-unlocked")
         let wordRow: XCUIElement = element("export.format.docx")
         guard wordRow.waitForExistence(timeout: 5), scrollUntilHittable(wordRow, attempts: 2) else {
             throw XCTSkip("Word row not found in the export sheet")
