@@ -41,6 +41,22 @@ jobs:
           mkdir -p build
           xcodebuild archive             -project CareerKit.xcodeproj             -scheme CareerKit             -configuration Release             -destination "generic/platform=iOS"             -archivePath build/CareerKit.xcarchive             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             CODE_SIGN_IDENTITY=""             CURRENT_PROJECT_VERSION=${{ github.run_number }}             | tee build/archive.log | tail -n 40
 
+      - name: Fix SDK privacy manifests (ITMS-91064)
+        run: |
+          # Google's SDK manifests list tracking domains but leave NSPrivacyTracking unset, which App Store Connect rejects.
+          # The app does track through AdMob after the person allows it in the ATT prompt, so true is the accurate value.
+          PB=/usr/libexec/PlistBuddy
+          find build/CareerKit.xcarchive/Products/Applications/CareerKit.app/Frameworks -name PrivacyInfo.xcprivacy | while read -r f; do
+            domains=$($PB -c "Print :NSPrivacyTrackingDomains" "$f" 2>/dev/null | grep -c '[A-Za-z]' || true)
+            tracking=$($PB -c "Print :NSPrivacyTracking" "$f" 2>/dev/null || echo missing)
+            echo "$f: domains=$domains tracking=$tracking"
+            if [ "$domains" -gt 0 ] && [ "$tracking" != "true" ]; then
+              $PB -c "Delete :NSPrivacyTracking" "$f" 2>/dev/null || true
+              $PB -c "Add :NSPrivacyTracking bool true" "$f"
+              echo "  -> NSPrivacyTracking set to true"
+            fi
+          done
+
       - name: Check production ad ids in the archive
         run: |
           APP=build/CareerKit.xcarchive/Products/Applications/CareerKit.app
