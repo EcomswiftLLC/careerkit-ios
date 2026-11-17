@@ -1,0 +1,32 @@
+name: Inspect privacy manifests
+
+# Manual diagnostic: builds the Release archive unsigned and prints every PrivacyInfo.xcprivacy inside it,
+# with the tracking flag and the tracking domains, so App Store Connect's ITMS-91064 can be traced to a file.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          sudo xcode-select -s "$XC"
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - name: Archive (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild archive -project CareerKit.xcodeproj -scheme CareerKit -configuration Release -destination "generic/platform=iOS" -archivePath build/CareerKit.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | tail -n 5
+      - name: Print manifests
+        run: |
+          APP=build/CareerKit.xcarchive/Products/Applications/CareerKit.app
+          find "$APP" -name "PrivacyInfo.xcprivacy" | while read -r f; do
+            echo "=== ${f#$APP/}"
+            echo -n "NSPrivacyTracking: "; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTracking" "$f" 2>&1
+            echo "NSPrivacyTrackingDomains:"; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTrackingDomains" "$f" 2>&1
+          done
