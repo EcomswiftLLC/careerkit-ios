@@ -1689,6 +1689,89 @@
         }
       }
     },
+    "%lld exports left from export packs": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Export übrig aus Export-Paketen"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Exporte übrig aus Export-Paketen"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld export left from export packs"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld exports left from export packs"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld exportación restante de los paquetes"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld exportaciones restantes de los paquetes"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld export restant dans vos packs"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld exports restants dans vos packs"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出包中还剩 %lld 次导出"
+          }
+        }
+      }
+    },
     "%lld items": {
       "comment": "Status line of a collapsed section card. Tests expect English '1 item'.",
       "extractionState": "manual",
@@ -2682,6 +2765,64 @@
         }
       }
     },
+    "3 exports": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Exporte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 exportaciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 exports"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 次导出"
+          }
+        }
+      }
+    },
+    "3 exports, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Exporte, %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 exportaciones, %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 exports, %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 次导出，%@"
+          }
+        }
+      }
+    },
     "30 designs, all free": {
       "comment": "Home",
       "extractionState": "manual",
@@ -2737,6 +2878,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "文字可选中的 PDF，最大 10 MB、10 页。"
+          }
+        }
+      }
+    },
+    "A one-time purchase. Each file you save, share or print uses one.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein einmaliger Kauf. Jede Datei, die du speicherst, teilst oder druckst, verbraucht einen Export."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compra única. Cada archivo que guardes, compartas o imprimas usa una."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un achat unique. Chaque fichier enregistré, partagé ou imprimé en utilise un."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次性购买。每保存、共享或打印一个文件，会用掉一次。"
           }
         }
       }
@@ -4823,6 +4993,64 @@
         }
       }
     },
+    "An export is used up only after the file was really saved, shared or printed. If you close the share sheet or something goes wrong, nothing is used. One export covers one file in any type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Export wird erst verbraucht, wenn die Datei wirklich gespeichert, geteilt oder gedruckt wurde. Wenn du das Teilen-Blatt schließt oder etwas schiefgeht, wird nichts verbraucht. Ein Export gilt für eine Datei in beliebigem Typ."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una exportación solo se usa cuando el archivo se ha guardado, compartido o impreso de verdad. Si cierras la hoja de compartir o algo falla, no se usa nada. Una exportación cubre un archivo de cualquier tipo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un export n’est utilisé qu’une fois le fichier réellement enregistré, partagé ou imprimé. Si vous fermez la feuille de partage ou si un problème survient, rien n’est utilisé. Un export couvre un fichier de n’importe quel type."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只有在文件确实已保存、共享或打印之后，才会用掉一次导出。如果你关闭共享面板或出现问题，不会扣除任何次数。一次导出对应一个任意类型的文件。"
+          }
+        }
+      }
+    },
+    "An export pack gives you 3 exports for one purchase. Premium is one purchase with no limit and no subscription. Or you can watch one short video to export one document once. Prices are shown by the App Store before you buy.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Export-Paket gibt dir 3 Exporte für einen Kauf. Premium ist ein einmaliger Kauf ohne Limit und ohne Abo. Oder du siehst dir ein kurzes Video an, um ein Dokument einmal zu exportieren. Die Preise zeigt der App Store vor dem Kauf an."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un paquete de exportaciones te da 3 exportaciones con una compra. Premium es una compra única sin límite y sin suscripción. O puedes ver un vídeo corto para exportar un documento una vez. La App Store muestra los precios antes de comprar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un pack d’exports vous donne 3 exports pour un achat. Premium est un achat unique, sans limite ni abonnement. Vous pouvez aussi regarder une courte vidéo pour exporter un document une fois. L’App Store affiche les prix avant l’achat."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个导出包一次购买可获得 3 次导出。Premium 为一次性购买，不限次数，无需订阅。你也可以观看一段短视频，将一份文档导出一次。价格会在购买前由 App Store 显示。"
+          }
+        }
+      }
+    },
     "Any": {
       "comment": "Template cards and filters. Filter menu option meaning no filter.",
       "extractionState": "manual",
@@ -6611,6 +6839,64 @@
         }
       }
     },
+    "CareerKit is free to use. Saving, sharing or printing a finished document uses one export, which you can buy or earn by watching a short video.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit ist kostenlos nutzbar. Ein fertiges Dokument zu speichern, zu teilen oder zu drucken verbraucht einen Export, den du kaufen oder durch ein kurzes Video erhalten kannst."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit es gratis. Guardar, compartir o imprimir un documento terminado usa una exportación, que puedes comprar u obtener viendo un vídeo corto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit est gratuit. Enregistrer, partager ou imprimer un document terminé utilise un export, que vous pouvez acheter ou obtenir en regardant une courte vidéo."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit 可免费使用。保存、共享或打印完成的文档会用掉一次导出，你可以购买，也可以观看短视频获得。"
+          }
+        }
+      }
+    },
+    "CareerKit is free to use. This is the full picture of what is free, what uses an export, and where ads appear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit ist kostenlos nutzbar. Hier steht alles: was kostenlos ist, was einen Export verbraucht und wo Werbung erscheint."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit es gratis. Aquí tienes todo claro: qué es gratis, qué usa una exportación y dónde aparecen los anuncios."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit est gratuit. Voici le tableau complet : ce qui est gratuit, ce qui utilise un export et où apparaissent les publicités."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CareerKit 可免费使用。下面完整说明哪些功能免费、哪些会用掉一次导出，以及广告出现的位置。"
+          }
+        }
+      }
+    },
     "CareerKit is free. Exporting a finished document needs one short rewarded video. Everything else has no ad wall.": {
       "comment": "Onboarding",
       "extractionState": "manual",
@@ -7289,6 +7575,35 @@
         }
       }
     },
+    "Checking prices": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preise werden geprüft"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobando precios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification des prix"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在获取价格"
+          }
+        }
+      }
+    },
     "Checking your resume": {
       "extractionState": "manual",
       "localizations": {
@@ -7343,6 +7658,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "检查招聘管理系统（ATS）读取这份简历的效果。"
+          }
+        }
+      }
+    },
+    "Checks the App Store for a Premium purchase on this Apple Account": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht im App Store nach einem Premium-Kauf für diese Apple-ID"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca en la App Store una compra de Premium en este ID de Apple"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche un achat Premium sur ce compte Apple dans l’App Store"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 App Store 中查找此 Apple 账户的 Premium 购买记录"
           }
         }
       }
@@ -12040,6 +12384,35 @@
         }
       }
     },
+    "Editing and previewing are free. Saving, sharing or printing a file uses one export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten und Ansehen sind kostenlos. Eine Datei zu speichern, zu teilen oder zu drucken verbraucht einen Export."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar y previsualizar es gratis. Guardar, compartir o imprimir un archivo usa una exportación."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier et prévisualiser est gratuit. Enregistrer, partager ou imprimer un fichier utilise un export."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑和预览免费。保存、共享或打印文件会用掉一次导出。"
+          }
+        }
+      }
+    },
     "Editor mode": {
       "extractionState": "manual",
       "localizations": {
@@ -12838,6 +13211,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "导出备份"
+          }
+        }
+      }
+    },
+    "Export packs are used up one export at a time. Premium is a single purchase with no limit, and Restore purchases brings it back on a new device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export-Pakete werden Export für Export verbraucht. Premium ist ein einmaliger Kauf ohne Limit, und mit Käufe wiederherstellen bekommst du es auf einem neuen Gerät zurück."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los paquetes de exportaciones se gastan de una en una. Premium es una compra única sin límite, y Restaurar compras la recupera en un dispositivo nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les packs d’exports se consomment un export à la fois. Premium est un achat unique sans limite, et Restaurer les achats le retrouve sur un nouvel appareil."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出包按每次导出逐次用完。Premium 为一次性购买，不限次数，换新设备后可通过“恢复购买”找回。"
           }
         }
       }
@@ -15779,6 +16181,35 @@
         }
       }
     },
+    "If a video or the App Store is not available": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn kein Video oder der App Store nicht verfügbar ist"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si no hay vídeo o la App Store no está disponible"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si une vidéo ou l’App Store est indisponible"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "视频或 App Store 不可用时"
+          }
+        }
+      }
+    },
     "If no video can be shown, for example when you are offline or no ad is available, the app says so and lets you export without a video. Your document is never lost or locked.": {
       "comment": "Profile > How exports work",
       "extractionState": "manual",
@@ -15805,6 +16236,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "如果无法播放视频（例如你处于离线状态或没有可用广告），App 会告知你，并允许你不看视频直接导出。你的文档绝不会丢失或被锁定。"
+          }
+        }
+      }
+    },
+    "If no video can be shown, or the App Store cannot be reached, the app says so and nothing is unlocked or charged. Your documents are never lost or locked, and you can still edit and preview them.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn kein Video angezeigt werden kann oder der App Store nicht erreichbar ist, sagt dir die App das, und es wird nichts freigeschaltet oder berechnet. Deine Dokumente gehen nie verloren und werden nie gesperrt, und du kannst sie weiter bearbeiten und ansehen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si no se puede mostrar ningún vídeo o no hay conexión con la App Store, la app te lo indica y no se desbloquea ni se cobra nada. Tus documentos nunca se pierden ni se bloquean, y puedes seguir editándolos y previsualizándolos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si aucune vidéo ne peut être affichée ou si l’App Store est inaccessible, l’app vous le dit, et rien n’est débloqué ni débité. Vos documents ne sont jamais perdus ni verrouillés, et vous pouvez toujours les modifier et les prévisualiser."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果无法播放视频，或无法连接 App Store，应用会告知你，且不会解锁或扣费。你的文档不会丢失或被锁定，仍可编辑和预览。"
           }
         }
       }
@@ -19932,6 +20392,35 @@
         }
       }
     },
+    "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diese Apple-ID wurde kein Premium-Kauf gefunden. Export-Pakete werden verbraucht und können nicht wiederhergestellt werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró ninguna compra de Premium en este ID de Apple. Los paquetes de exportaciones se gastan y no se pueden restaurar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun achat Premium n’a été trouvé pour ce compte Apple. Les packs d’exports se consomment et ne peuvent pas être restaurés."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Apple 账户下未找到 Premium 购买记录。导出包用完后无法恢复。"
+          }
+        }
+      }
+    },
     "No changes to suggest": {
       "extractionState": "manual",
       "localizations": {
@@ -20074,6 +20563,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "没有工作经历板块"
+          }
+        }
+      }
+    },
+    "No exports left. Each export asks for a pack, Premium or a short video.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Exporte übrig. Jeder Export braucht ein Paket, Premium oder ein kurzes Video."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No quedan exportaciones. Cada exportación requiere un paquete, Premium o un vídeo corto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus d’exports. Chaque export demande un pack, Premium ou une courte vidéo."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已无剩余导出次数。每次导出需要导出包、Premium 或观看短视频。"
           }
         }
       }
@@ -20632,6 +21150,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "目前没有可播放的视频，因此本次导出免费。"
+          }
+        }
+      }
+    },
+    "No video is available right now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Moment ist kein Video verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay ningún vídeo disponible ahora mismo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune vidéo n’est disponible pour le moment."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前没有可播放的视频。"
           }
         }
       }
@@ -21229,6 +21776,35 @@
         }
       }
     },
+    "One completed video covers one export of that document, in any file type, and stays valid for 24 hours. It is used up once the export finishes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein vollständig angesehenes Video gilt für einen Export dieses Dokuments in beliebigem Dateityp und bleibt 24 Stunden gültig. Es ist verbraucht, sobald der Export abgeschlossen ist."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un vídeo completo cubre una exportación de ese documento, en cualquier tipo de archivo, y sigue siendo válido durante 24 horas. Se usa cuando termina la exportación."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une vidéo regardée en entier couvre un export de ce document, dans n’importe quel type de fichier, et reste valable 24 heures. Elle est utilisée à la fin de l’export."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "看完一段视频，可将该文档以任意文件类型导出一次，并在 24 小时内有效。导出完成后即被用掉。"
+          }
+        }
+      }
+    },
     "One example from my recent work: I found a recurring problem, proposed a simple fix and followed it through until the results were visible. I would take the same practical approach in the {role} position.": {
       "comment": "Cover letter suggestion. Letter content: formal register. Placeholders {company} {manager} {position} are replaced by the app; translations use {position} (a full noun phrase) instead of {role}.",
       "extractionState": "manual",
@@ -21461,6 +22037,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "打开移动或移除选项"
+          }
+        }
+      }
+    },
+    "Opens the App Store purchase sheet": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das Kaufblatt des App Store"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre la hoja de compra de la App Store"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre la fenêtre d’achat de l’App Store"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开 App Store 购买页面"
           }
         }
       }
@@ -23316,6 +23921,180 @@
         }
       }
     },
+    "Premium": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium"
+          }
+        }
+      }
+    },
+    "Premium can be restored on a new device with Restore purchases in Profile. Export packs are used up as you export, so they cannot be restored.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium lässt sich auf einem neuen Gerät mit Käufe wiederherstellen im Profil zurückholen. Export-Pakete werden beim Exportieren verbraucht und können deshalb nicht wiederhergestellt werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium se puede recuperar en un dispositivo nuevo con Restaurar compras en Perfil. Los paquetes de exportaciones se gastan al exportar, por lo que no se pueden restaurar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium peut être retrouvé sur un nouvel appareil avec Restaurer les achats dans Profil. Les packs d’exports se consomment au fil des exports et ne peuvent donc pas être restaurés."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "换新设备后，可在“个人资料”中通过“恢复购买”找回 Premium。导出包会随导出用完，因此无法恢复。"
+          }
+        }
+      }
+    },
+    "Premium has no limit on exports.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Premium gibt es kein Export-Limit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium no tiene límite de exportaciones."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium n’a aucune limite d’exports."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium 不限制导出次数。"
+          }
+        }
+      }
+    },
+    "Premium is active again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium ist wieder aktiv."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium vuelve a estar activo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium est de nouveau actif."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium 已重新生效。"
+          }
+        }
+      }
+    },
+    "Premium is active. Exports have no limit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium ist aktiv. Exporte sind unbegrenzt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium está activo. Las exportaciones no tienen límite."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium est actif. Les exports n’ont aucune limite."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium 已生效，导出不限次数。"
+          }
+        }
+      }
+    },
+    "Premium, unlimited exports, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium, unbegrenzte Exporte, %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium, exportaciones ilimitadas, %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium, exports illimités, %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premium，不限次数导出，%@"
+          }
+        }
+      }
+    },
     "Prepared clear proposals and pricing sheets that shortened the average sales cycle by two weeks.": {
       "comment": "Writing examples library (resume example text the person can insert). Fictional, generic.",
       "extractionState": "manual",
@@ -23609,6 +24388,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "上一页"
+          }
+        }
+      }
+    },
+    "Prices are not available": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preise sind nicht verfügbar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los precios no están disponibles"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les prix ne sont pas disponibles"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时无法显示价格"
           }
         }
       }
@@ -24321,6 +25129,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "出版方或期刊"
+          }
+        }
+      }
+    },
+    "Purchases could not be restored right now. Check your connection and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Käufe konnten gerade nicht wiederhergestellt werden. Prüfe deine Verbindung und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron restaurar las compras ahora mismo. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les achats n’ont pas pu être restaurés pour le moment. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前无法恢复购买。请检查网络后重试。"
           }
         }
       }
@@ -25570,6 +26407,35 @@
         }
       }
     },
+    "Restore purchases": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe wiederherstellen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer les achats"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复购买"
+          }
+        }
+      }
+    },
     "Restored %@, skipped %lld.": {
       "comment": "Backup and restore. 1: '3 documents' (already plural-aware), 2: number of skipped documents.",
       "extractionState": "manual",
@@ -25596,6 +26462,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "已恢复%@，已跳过%lld份。"
+          }
+        }
+      }
+    },
+    "Restoring purchases": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe wiederherstellen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer les achats"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复购买"
           }
         }
       }
@@ -27105,6 +28000,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "查看全部"
+          }
+        }
+      }
+    },
+    "See export options": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export-Optionen ansehen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver opciones de exportación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir les options d’export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看导出选项"
           }
         }
       }
@@ -31242,6 +32166,93 @@
         }
       }
     },
+    "That was your last export. You can get more the next time you export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das war dein letzter Export. Beim nächsten Export kannst du weitere erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esa era tu última exportación. Podrás conseguir más la próxima vez que exportes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’était votre dernier export. Vous pourrez en obtenir d’autres au prochain export."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是你的最后一次导出。下次导出时可以获取更多。"
+          }
+        }
+      }
+    },
+    "The App Store could not be reached. Check your connection and try again. Nothing was charged.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der App Store ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut. Es wurde nichts berechnet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo conectar con la App Store. Comprueba tu conexión e inténtalo de nuevo. No se ha cobrado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’App Store est inaccessible. Vérifiez votre connexion et réessayez. Rien n’a été débité."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法连接 App Store。请检查网络后重试。未产生任何扣费。"
+          }
+        }
+      }
+    },
+    "The App Store could not confirm this purchase, so nothing was added. Nothing was charged.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der App Store konnte diesen Kauf nicht bestätigen, deshalb wurde nichts hinzugefügt. Es wurde nichts berechnet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La App Store no pudo confirmar esta compra, así que no se añadió nada. No se ha cobrado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’App Store n’a pas pu confirmer cet achat, rien n’a donc été ajouté. Rien n’a été débité."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store 无法确认此次购买，因此未添加任何内容。未产生任何扣费。"
+          }
+        }
+      }
+    },
     "The PDF could not be opened.": {
       "extractionState": "manual",
       "localizations": {
@@ -31877,6 +32888,64 @@
         }
       }
     },
+    "The purchase did not go through. Check your connection and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Kauf wurde nicht abgeschlossen. Prüfe deine Verbindung und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compra no se completó. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’achat n’a pas abouti. Vérifiez votre connexion et réessayez."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "购买未能完成。请检查网络后重试。"
+          }
+        }
+      }
+    },
+    "The purchase went through, but it could not be added yet. Tap Restore purchases in a moment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Kauf wurde abgeschlossen, konnte aber noch nicht hinzugefügt werden. Tippe in einem Moment auf Käufe wiederherstellen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La compra se realizó, pero aún no se pudo añadir. Toca Restaurar compras dentro de un momento."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’achat a abouti, mais il n’a pas pu être ajouté pour l’instant. Touchez Restaurer les achats dans un instant."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "购买已完成，但暂时无法添加。请稍后点按“恢复购买”。"
+          }
+        }
+      }
+    },
     "The section and everything in it will be removed.": {
       "extractionState": "manual",
       "localizations": {
@@ -32053,6 +33122,35 @@
         }
       }
     },
+    "The video could not start.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Video konnte nicht gestartet werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo iniciar el vídeo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La vidéo n’a pas pu démarrer."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "视频无法开始播放。"
+          }
+        }
+      }
+    },
     "The video did not load in time, so this export is free.": {
       "comment": "Export sheet, no video available",
       "extractionState": "manual",
@@ -32079,6 +33177,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "视频未能及时加载，因此本次导出免费。"
+          }
+        }
+      }
+    },
+    "The video did not load in time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Video wurde nicht rechtzeitig geladen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El vídeo no se cargó a tiempo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La vidéo ne s’est pas chargée à temps."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "视频未能及时加载。"
           }
         }
       }
@@ -33054,6 +34181,35 @@
         }
       }
     },
+    "This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved video unlocks. Purchases are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dadurch werden alle in CareerKit auf diesem Gerät gespeicherten Lebensläufe und Anschreiben gelöscht, einschließlich nicht lesbarer Dateien und gespeicherter Video-Freischaltungen. Deine Käufe bleiben erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se eliminarán todos los currículums y cartas de presentación guardados en CareerKit en este dispositivo, incluidos los archivos ilegibles y los desbloqueos por vídeo guardados. Tus compras se conservan."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela supprime tous les CV et lettres de motivation enregistrés dans CareerKit sur cet appareil, y compris les fichiers illisibles et les déblocages par vidéo enregistrés. Vos achats sont conservés."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将删除此设备上 CareerKit 中存储的所有简历和求职信，包括无法读取的文件和已保存的视频解锁记录。你的购买记录会保留。"
+          }
+        }
+      }
+    },
     "This resume is no longer available": {
       "comment": "Resume preview",
       "extractionState": "manual",
@@ -33373,6 +34529,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "职位和公司"
+          }
+        }
+      }
+    },
+    "To export again, tap Export. Premium has no limit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe zum erneuten Exportieren auf Exportieren. Premium hat kein Limit."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para exportar de nuevo, toca Exportar. Premium no tiene límite."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour exporter à nouveau, touchez Exporter. Premium n’a aucune limite."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如需再次导出，请点按“导出”。Premium 不限次数。"
+          }
+        }
+      }
+    },
+    "To export this document again, tap Export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf Exportieren, um dieses Dokument erneut zu exportieren."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para exportar este documento de nuevo, toca Exportar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour exporter à nouveau ce document, touchez Exporter."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如需再次导出此文档，请点按“导出”。"
           }
         }
       }
@@ -33821,6 +35035,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "将完成的文档生成为文件会使其离开 App，包括存储到“文件”、共享或打印。每项操作开始前都会提供一段可选的简短视频。"
+          }
+        }
+      }
+    },
+    "Turning a finished document into a file leaves the app: saving it to Files, sharing it, or printing it. Each of those uses one export. Your backup and the text you copy from the ATS check do not.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein fertiges Dokument als Datei zu erzeugen, verlässt die App: in Dateien sichern, teilen oder drucken. Jede dieser Aktionen verbraucht einen Export. Dein Backup und der Text, den du aus dem ATS-Check kopierst, nicht."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convertir un documento terminado en un archivo lo saca de la app: guardarlo en Archivos, compartirlo o imprimirlo. Cada una de esas acciones usa una exportación. La copia de seguridad y el texto que copias de la comprobación ATS no la usan."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transformer un document terminé en fichier le fait sortir de l’app : l’enregistrer dans Fichiers, le partager ou l’imprimer. Chacune de ces actions utilise un export. Votre sauvegarde et le texte copié depuis la vérification ATS n’en utilisent pas."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把完成的文档变成文件意味着它离开应用：存储到“文件”、共享或打印。每一项都会用掉一次导出。备份以及从 ATS 检查中复制的文本不会。"
           }
         }
       }
@@ -34294,6 +35537,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "大学助教兼研究人员，具有批改作业、指导学生和研讨会报告经验。文字表达清晰，能深入浅出地讲解复杂概念。"
+          }
+        }
+      }
+    },
+    "Unlimited exports in every file type. One purchase, no subscription.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbegrenzte Exporte in jedem Dateityp. Ein Kauf, kein Abo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportaciones ilimitadas en todos los tipos de archivo. Una sola compra, sin suscripción."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exports illimités dans tous les types de fichier. Un seul achat, sans abonnement."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所有文件类型均可不限次数导出。一次购买，无需订阅。"
           }
         }
       }
@@ -34862,6 +36134,35 @@
         }
       }
     },
+    "Videos are not available in this version of the app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videos sind in dieser Version der App nicht verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los vídeos no están disponibles en esta versión de la app."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les vidéos ne sont pas disponibles dans cette version de l’app."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本的应用暂不提供视频。"
+          }
+        }
+      }
+    },
     "Videos cannot play with your current ad privacy choices, so this export is free.": {
       "comment": "Export sheet, no video available",
       "extractionState": "manual",
@@ -34888,6 +36189,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "根据你当前的广告隐私选项，视频无法播放，因此本次导出免费。"
+          }
+        }
+      }
+    },
+    "Videos cannot play with your current ad privacy choices.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videos können mit deinen aktuellen Datenschutzeinstellungen für Werbung nicht abgespielt werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los vídeos no pueden reproducirse con tus opciones actuales de privacidad de anuncios."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les vidéos ne peuvent pas être lues avec vos choix actuels de confidentialité des publicités."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按你当前的广告隐私选择，无法播放视频。"
           }
         }
       }
@@ -35042,6 +36372,35 @@
         }
       }
     },
+    "Watch a short video to export once": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurzes Video ansehen und einmal exportieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver un vídeo corto para exportar una vez"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regarder une courte vidéo pour exporter une fois"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "观看短视频以导出一次"
+          }
+        }
+      }
+    },
     "Watch again": {
       "comment": "Export sheet",
       "extractionState": "manual",
@@ -35128,6 +36487,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "观看一段简短视频即可导出此文档一次。看完视频后，导出将在24小时内保持解锁，你可以稍后再完成。创建、编辑和预览始终免费。"
+          }
+        }
+      }
+    },
+    "Ways to get exports": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "So bekommst du Exporte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo conseguir exportaciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment obtenir des exports"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取导出次数的方式"
           }
         }
       }
@@ -35396,6 +36784,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "一段视频的作用范围"
+          }
+        }
+      }
+    },
+    "What uses an export": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was einen Export verbraucht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qué usa una exportación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qui utilise un export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "哪些操作会用掉一次导出"
+          }
+        }
+      }
+    },
+    "When an export is used up": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wann ein Export verbraucht wird"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuándo se usa una exportación"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand un export est utilisé"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "何时会用掉一次导出"
           }
         }
       }
@@ -36227,6 +37673,35 @@
         }
       }
     },
+    "Writing, editing, previewing and the ATS check are free. Saving, sharing or printing a finished document uses one export. You can buy a pack of 3 exports or Premium for unlimited exports, or watch one short video to export once. Banner ads appear at the end of browse screens, and never in the editor.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreiben, Bearbeiten, die Vorschau und der ATS-Check sind kostenlos. Ein fertiges Dokument zu speichern, zu teilen oder zu drucken verbraucht einen Export. Du kannst ein Paket mit 3 Exporten oder Premium für unbegrenzte Exporte kaufen oder ein kurzes Video ansehen, um einmal zu exportieren. Bannerwerbung erscheint am Ende der Übersichtsseiten, nie im Editor."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribir, editar, previsualizar y la comprobación ATS son gratis. Guardar, compartir o imprimir un documento terminado usa una exportación. Puedes comprar un paquete de 3 exportaciones o Premium para exportar sin límite, o ver un vídeo corto para exportar una vez. Los anuncios de banner aparecen al final de las pantallas de exploración y nunca en el editor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rédiger, modifier, prévisualiser et la vérification ATS sont gratuits. Enregistrer, partager ou imprimer un document terminé utilise un export. Vous pouvez acheter un pack de 3 exports ou Premium pour exporter sans limite, ou regarder une courte vidéo pour exporter une fois. Les bannières publicitaires apparaissent à la fin des écrans de navigation, jamais dans l’éditeur."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撰写、编辑、预览和 ATS 检查均免费。保存、共享或打印完成的文档会用掉一次导出。你可以购买 3 次导出包或不限次数的 Premium，也可以观看一段短视频导出一次。横幅广告只出现在浏览页面的末尾，绝不出现在编辑器中。"
+          }
+        }
+      }
+    },
     "Wrote 15 help articles for the most common questions, reducing repeat contacts by about a fifth.": {
       "comment": "Writing examples library (resume example text the person can insert). Fictional, generic.",
       "extractionState": "manual",
@@ -36434,6 +37909,35 @@
         }
       }
     },
+    "You can try again, or use an export pack or Premium.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst es erneut versuchen oder ein Export-Paket oder Premium nutzen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puedes intentarlo de nuevo o usar un paquete de exportaciones o Premium."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous pouvez réessayer, ou utiliser un pack d’exports ou Premium."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你可以重试，或使用导出包或 Premium。"
+          }
+        }
+      }
+    },
     "You can undo this right after": {
       "extractionState": "manual",
       "localizations": {
@@ -36518,6 +38022,172 @@
           "stringUnit": {
             "state": "translated",
             "value": "你覆盖了这条职位描述中 %lld/%lld 个关键词。"
+          }
+        }
+      }
+    },
+    "You have %lld exports left.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Du hast noch %lld Export."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Du hast noch %lld Exporte."
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You have %lld export left."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You have %lld exports left."
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Te queda %lld exportación."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Te quedan %lld exportaciones."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Il vous reste %lld export."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Il vous reste %lld exports."
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你还剩 %lld 次导出。"
+          }
+        }
+      }
+    },
+    "You have %lld exports. This one uses 1.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Du hast %lld Export. Dieser verbraucht ihn."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Du hast %lld Exporte. Dieser verbraucht 1."
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You have %lld export. This one uses it."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "You have %lld exports. This one uses 1."
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Tienes %lld exportación. Esta la usa."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Tienes %lld exportaciones. Esta usa 1."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Vous avez %lld export. Celui-ci l’utilise."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Vous avez %lld exports. Celui-ci en utilise 1."
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你有 %lld 次导出。本次将使用 1 次。"
           }
         }
       }
@@ -36780,6 +38450,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "导出已完成"
+          }
+        }
+      }
+    },
+    "Your exports": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Exporte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus exportaciones"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos exports"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的导出"
           }
         }
       }
@@ -37134,6 +38833,35 @@
           "stringUnit": {
             "state": "translated",
             "value": "你的职位头衔"
+          }
+        }
+      }
+    },
+    "Your purchase is waiting for approval. The export will be available once it is approved.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Kauf wartet auf Genehmigung. Der Export ist verfügbar, sobald er genehmigt wurde."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu compra está pendiente de aprobación. La exportación estará disponible cuando se apruebe."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre achat attend une approbation. L’export sera disponible dès qu’il sera approuvé."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的购买正在等待批准。批准后即可导出。"
           }
         }
       }

@@ -163,7 +163,7 @@ private struct CKOnboardingPageView: View {
     /// Plain statement of how the app is paid for, shown on the last page.
     private var modelNote: some View {
         VStack(alignment: .leading, spacing: CK.Space.s) {
-            Text("CareerKit is free. Exporting a finished document needs one short rewarded video. Everything else has no ad wall.")
+            Text("CareerKit is free to use. Saving, sharing or printing a finished document uses one export, which you can buy or earn by watching a short video.")
                 .font(CK.Font.label)
                 .foregroundStyle(CK.Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)

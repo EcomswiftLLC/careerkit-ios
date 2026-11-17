@@ -82,7 +82,7 @@ struct CKFreeModelCard: View {
             Text("How CareerKit stays free")
                 .ckHeadline(19)
                 .accessibilityAddTraits(.isHeader)
-            Text("There is no subscription and no paywall. Banner ads appear at the bottom of browse screens, and never in the editor. Exporting a finished document needs one short rewarded video that you choose to watch. Writing, editing, previewing and the ATS check never show an ad.")
+            Text("Writing, editing, previewing and the ATS check are free. Saving, sharing or printing a finished document uses one export. You can buy a pack of 3 exports or Premium for unlimited exports, or watch one short video to export once. Banner ads appear at the end of browse screens, and never in the editor.")
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
