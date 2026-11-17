@@ -117,8 +117,7 @@ jobs:
           mkdir -p build/ipa && cd build/ipa && unzip -q ../export-local/*.ipa
           find . -iname "*.xcprivacy" | while read -r f; do
             echo "=== $f"
-            echo "head: $(head -c 120 "$f" | tr '
-' ' ')"
+            echo "head:"; head -c 160 "$f" | cat -v | head -4
             echo -n "tracking: "; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTracking" "$f" 2>&1 || true
             echo "domains:"; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTrackingDomains" "$f" 2>&1 || true
           done
