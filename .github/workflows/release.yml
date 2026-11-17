@@ -92,6 +92,38 @@ jobs:
           cp "$RUNNER_TEMP/signing/profile.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
           python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['profile_name'])" "$RUNNER_TEMP/signing/state.json" > "$RUNNER_TEMP/signing/profile_name.txt"
 
+      - name: Inspect the signed IPA (privacy manifests)
+        env:
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          PROFILE_NAME="$(cat "$RUNNER_TEMP/signing/profile_name.txt")"
+          cat > build/ExportLocal.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>N84NGN3KSH</string>
+            <key>destination</key><string>export</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict><key>com.ecomswift.careerkit</key><string>${PROFILE_NAME}</string></dict>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath build/CareerKit.xcarchive -exportOptionsPlist build/ExportLocal.plist -exportPath build/export-local 2>&1 | tail -n 5
+          mkdir -p build/ipa && cd build/ipa && unzip -q ../export-local/*.ipa
+          find . -iname "*.xcprivacy" | while read -r f; do
+            echo "=== $f"
+            echo "head: $(head -c 120 "$f" | tr '
+' ' ')"
+            echo -n "tracking: "; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTracking" "$f" 2>&1 || true
+            echo "domains:"; /usr/libexec/PlistBuddy -c "Print :NSPrivacyTrackingDomains" "$f" 2>&1 || true
+          done
+          echo "--- bundle contents (top level):"; ls Payload/CareerKit.app | head -40
+
       - name: Export and upload
         env:
           KEY_ID: ${{ secrets.ASC_KEY_ID }}
