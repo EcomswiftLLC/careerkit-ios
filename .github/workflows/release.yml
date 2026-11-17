@@ -35,27 +35,11 @@ jobs:
           echo "$KEY_B64" | base64 --decode > "$RUNNER_TEMP/keys/AuthKey.p8"
           chmod 600 "$RUNNER_TEMP/keys/AuthKey.p8"
 
-      - name: Archive
-        env:
-          KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      - name: Archive (unsigned; the export step signs it)
         run: |
           set -o pipefail
           mkdir -p build
-          xcodebuild archive \
-            -project CareerKit.xcodeproj \
-            -scheme CareerKit \
-            -configuration Release \
-            -destination "generic/platform=iOS" \
-            -archivePath build/CareerKit.xcarchive \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey.p8" \
-            -authenticationKeyID "$KEY_ID" \
-            -authenticationKeyIssuerID "$ISSUER_ID" \
-            DEVELOPMENT_TEAM=N84NGN3KSH \
-            CODE_SIGN_STYLE=Automatic \
-            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
-            | tee build/archive.log | tail -n 40
+          xcodebuild archive             -project CareerKit.xcodeproj             -scheme CareerKit             -configuration Release             -destination "generic/platform=iOS"             -archivePath build/CareerKit.xcarchive             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             CODE_SIGN_IDENTITY=""             CURRENT_PROJECT_VERSION=${{ github.run_number }}             | tee build/archive.log | tail -n 40
 
       - name: Check production ad ids in the archive
         run: |
