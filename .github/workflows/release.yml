@@ -43,14 +43,15 @@ jobs:
 
       - name: Fix SDK privacy manifests (ITMS-91064)
         run: |
-          # Google's SDK manifests list tracking domains but leave NSPrivacyTracking unset, which App Store Connect rejects.
-          # The app does track through AdMob after the person allows it in the ATT prompt, so true is the accurate value.
+          # Google's GoogleMobileAds manifest declares tracking data (Device ID) but leaves NSPrivacyTracking unset,
+          # which App Store Connect rejects. The app does track through AdMob after the person allows it in the ATT
+          # prompt, so true is the accurate value. Any manifest that declares tracking data must say so.
           PB=/usr/libexec/PlistBuddy
           find build/CareerKit.xcarchive/Products/Applications/CareerKit.app/Frameworks -name PrivacyInfo.xcprivacy | while read -r f; do
-            domains=$($PB -c "Print :NSPrivacyTrackingDomains" "$f" 2>/dev/null | grep -c '[A-Za-z]' || true)
+            declares=$(plutil -convert xml1 -o - "$f" | grep -A1 'NSPrivacyCollectedDataTypeTracking' | grep -c '<true/>' || true)
             tracking=$($PB -c "Print :NSPrivacyTracking" "$f" 2>/dev/null || echo missing)
-            echo "$f: domains=$domains tracking=$tracking"
-            if [ "$domains" -gt 0 ] && [ "$tracking" != "true" ]; then
+            echo "$f: tracking data entries=$declares NSPrivacyTracking=$tracking"
+            if [ "$declares" -gt 0 ] && [ "$tracking" != "true" ]; then
               $PB -c "Delete :NSPrivacyTracking" "$f" 2>/dev/null || true
               $PB -c "Add :NSPrivacyTracking bool true" "$f"
               echo "  -> NSPrivacyTracking set to true"
