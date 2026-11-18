@@ -76,13 +76,16 @@ struct CKCoverLetterShortcut: View {
 /// States the business model in plain words, with a link to the longer explanation.
 struct CKFreeModelCard: View {
     let learnMore: () -> Void
+    @EnvironmentObject private var exportStore: ExportStore
 
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.s + 2) {
             Text("How CareerKit stays free")
                 .ckHeadline(19)
                 .accessibilityAddTraits(.isHeader)
-            Text("Writing, editing, previewing and the ATS check are free. Saving, sharing or printing a finished document uses one export. You can buy a pack of 3 exports or Premium for unlimited exports, or watch one short video to export once. Banner ads appear at the end of browse screens, and never in the editor.")
+            Text(exportStore.offersPurchases
+                 ? String(localized: "Writing, editing, previewing and the ATS check are free. Saving, sharing or printing a finished document uses one export. You can buy a pack of 3 exports or Premium for unlimited exports, or watch one short video to export once. Banner ads appear at the end of browse screens, and never in the editor.")
+                 : String(localized: "There is no subscription and no paywall. Banner ads appear at the bottom of browse screens, and never in the editor. Exporting a finished document needs one short rewarded video that you choose to watch. Writing, editing, previewing and the ATS check never show an ad."))
                 .font(CK.Font.callout)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)

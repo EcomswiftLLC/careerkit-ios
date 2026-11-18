@@ -188,6 +188,23 @@ final class PersistenceStoreRestoreTests: XCTestCase {
         XCTAssertEqual(target.resumes.count, 2)
     }
 
+    func testBackupMadeInTheBackgroundRestoresThroughTheDecodedPayload() async throws {
+        let source = DocumentStore(directory: folder)
+        source.upsert(Resume(title: "One", templateID: TemplateLibrary.defaultTemplateID, sections: []))
+        source.upsert(CoverLetter(title: "Letter", templateID: "x"))
+        let url: URL = try await source.makeBackupFileInBackground()
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        // The app decodes off the main thread and merges on the main actor.
+        let data: Data = try Data(contentsOf: url)
+        let payload: CKBackupPayload = try await Task.detached { try CKBackupParser.parse(data) }.value
+        let target = DocumentStore(directory: otherFolder())
+        let summary: CKRestoreSummary = try target.restoreBackup(payload: payload)
+        XCTAssertEqual(summary.restored, 2)
+        XCTAssertEqual(target.resumes.count, 1)
+        XCTAssertEqual(target.coverLetters.count, 1)
+    }
+
     func testRestoreKeepsANewerLocalEdit() throws {
         let store = DocumentStore(directory: folder)
         store.upsert(Resume(title: "CV", templateID: TemplateLibrary.defaultTemplateID, sections: []))

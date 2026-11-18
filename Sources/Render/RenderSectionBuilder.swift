@@ -304,6 +304,25 @@ final class RenderSectionBuilder {
         return min(max(widest + 16, floorWidth), ceiling)
     }
 
+    /// A copy of `item` that is `extra` points taller. It keeps its split rule and its minimum split height, so a long
+    /// paragraph can still break across pages. When it splits, the padding stays with the tail.
+    private static func padded(_ item: RenderFlowItem, by extra: CGFloat) -> RenderFlowItem {
+        var wrappedSplit: ((CGFloat, Bool) -> (RenderFlowItem, RenderFlowItem)?)? = nil
+        if let original = item.splitBlock {
+            wrappedSplit = { maxHeight, relaxed in
+                guard let parts = original(maxHeight, relaxed) else { return nil }
+                return (parts.0, RenderSectionBuilder.padded(parts.1, by: extra))
+            }
+        }
+        return RenderFlowItem(height: item.height + extra,
+                              spaceBefore: item.spaceBefore,
+                              keepWithNext: item.keepWithNext,
+                              xOffset: item.xOffset,
+                              minSplitHeight: item.minSplitHeight,
+                              draw: item.drawBlock,
+                              split: wrappedSplit)
+    }
+
     /// Editorial layout: the label sits in a left gutter beside the first block of the section.
     private func sideLabelSection(_ section: ResumeSection, label: String) -> [RenderFlowItem] {
         let gutter: CGFloat = sideLabelGutter
@@ -342,11 +361,7 @@ final class RenderSectionBuilder {
         if labelBottom > bodyHeight {
             // Pad the last block (never a separate empty item, which could end up alone on a page).
             let last: RenderFlowItem = body[body.count - 1]
-            body[body.count - 1] = RenderFlowItem(height: last.height + ceil(labelBottom - bodyHeight),
-                                                  spaceBefore: last.spaceBefore,
-                                                  keepWithNext: last.keepWithNext,
-                                                  xOffset: last.xOffset,
-                                                  draw: last.drawBlock)
+            body[body.count - 1] = Self.padded(last, by: ceil(labelBottom - bodyHeight))
         }
 
         body[0] = body[0].withOverlay { origin, columnLeft in

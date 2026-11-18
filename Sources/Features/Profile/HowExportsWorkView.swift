@@ -1,14 +1,55 @@
 import SwiftUI
 
-/// Plain explanation of the one place an ad is required.
+/// Plain explanation of what is free, what uses an export and where ads appear.
+/// When the App Store has no products to sell (`ExportStore.offersPurchases` is false) the page describes only the
+/// video, as in version 1.0, and never mentions packs, Premium or Restore purchases.
 struct CKHowExportsWorkView: View {
+    @EnvironmentObject private var exportStore: ExportStore
+
     private struct Block: Identifiable {
         let id = UUID()
         let title: LocalizedStringKey
         let text: LocalizedStringKey
     }
 
-    private let blocks: [Block] = [
+    private var blocks: [Block] {
+        exportStore.offersPurchases ? Self.purchaseBlocks : Self.videoOnlyBlocks
+    }
+
+    /// Version 1.0 text: no purchases exist, an export needs one short video.
+    private static let videoOnlyBlocks: [Block] = [
+        Block(
+            title: "What is free",
+            text: "Creating resumes and cover letters, editing, changing templates, previewing, the ATS check and saving drafts are all free, with no ad and no limit."
+        ),
+        Block(
+            title: "What needs a short video",
+            text: "Turning a finished document into a file leaves the app: saving it to Files, sharing it, or printing it. Each of those starts with one optional short video."
+        ),
+        Block(
+            title: "File types you can export",
+            text: "PDF keeps your design exactly and is the best choice for most applications. Word (.docx) and Rich Text open as editable documents in Word, Pages or Google Docs. Plain text is for pasting into online application forms. A web page opens in any browser. Printing is available for PDF."
+        ),
+        Block(
+            title: "What one video covers",
+            text: "One completed video covers one export of that document, in any file type, and stays valid for 24 hours. It is used up once the export finishes, so the next export asks again."
+        ),
+        Block(
+            title: "If a video is not available",
+            text: "If no video can be shown, for example when you are offline or no ad is available, the app says so and lets you export without a video. Your document is never lost or locked."
+        ),
+        Block(
+            title: "Banner ads",
+            text: "A small labelled banner appears at the end of the lists on Home, My Resumes, Templates, Cover Letters and Profile. It never appears in the editor, the preview or the export screen. You can report an ad from Profile."
+        ),
+        Block(
+            title: "Your documents and your choices",
+            text: "Resumes and cover letters stay on this device, and there is no account. Ads are provided by Google AdMob and follow the consent choices you make. If your region requires it, Profile shows an Ad privacy choices row where you can change them."
+        )
+    ]
+
+    /// Version 1.1 text: export packs and Premium exist.
+    private static let purchaseBlocks: [Block] = [
         Block(
             title: "What is free",
             text: "Creating resumes and cover letters, editing, changing templates, previewing, the ATS check and saving drafts are all free, with no ad and no limit."
@@ -54,7 +95,9 @@ struct CKHowExportsWorkView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CK.Space.l) {
-                Text("CareerKit is free to use. This is the full picture of what is free, what uses an export, and where ads appear.")
+                Text(exportStore.offersPurchases
+                     ? String(localized: "CareerKit is free to use. This is the full picture of what is free, what uses an export, and where ads appear.")
+                     : String(localized: "CareerKit has no subscription and no paywall. This is the full picture of where ads appear and why."))
                     .font(CK.Font.body)
                     .foregroundStyle(CK.Palette.graphite)
                     .fixedSize(horizontal: false, vertical: true)

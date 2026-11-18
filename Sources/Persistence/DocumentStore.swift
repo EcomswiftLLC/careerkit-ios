@@ -39,6 +39,13 @@ final class DocumentStore: ObservableObject {
 
     private let fileManager: FileManager = FileManager.default
     private let debounceNanoseconds: UInt64
+    /// First wait before a failed write is tried again. It doubles after each failure, up to a minute.
+    private let retryBaseNanoseconds: UInt64
+    /// Failed write rounds in a row. Reset by a round that wrote everything.
+    private var failedFlushStreak: Int = 0
+    /// Automatic retries stop after this many failed rounds in a row. Any edit, and every move to the background,
+    /// still tries again.
+    static let maxAutomaticRetries: Int = 8
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     private var dirtyResumeIDs: Set<UUID> = []
@@ -48,7 +55,8 @@ final class DocumentStore: ObservableObject {
     /// - Parameters:
     ///   - directory: root folder. nil uses Application Support/CareerKit. Tests pass a temporary folder.
     ///   - debounceInterval: delay before an edit is written to disk.
-    init(directory: URL? = nil, debounceInterval: TimeInterval = 0.6) {
+    ///   - retryInterval: first wait before a failed write is tried again (doubles each time, at most one minute).
+    init(directory: URL? = nil, debounceInterval: TimeInterval = 0.6, retryInterval: TimeInterval = 5) {
         let root: URL
         if let directory = directory {
             root = directory
@@ -65,6 +73,7 @@ final class DocumentStore: ObservableObject {
         self.lettersDirectory = documents.appendingPathComponent("CoverLetters", isDirectory: true)
         self.quarantineDirectory = root.appendingPathComponent("Quarantine", isDirectory: true)
         self.debounceNanoseconds = UInt64(max(0, debounceInterval) * 1_000_000_000)
+        self.retryBaseNanoseconds = UInt64(max(0.01, retryInterval) * 1_000_000_000)
 
         self.encoder = CKJSON.encoder()
         self.decoder = CKJSON.decoder()
@@ -212,8 +221,29 @@ final class DocumentStore: ObservableObject {
 
         if let message = firstError {
             saveState = .failed(message)
+            scheduleRetryAfterFailure()
         } else {
+            failedFlushStreak = 0
             saveState = .saved(Date())
+        }
+    }
+
+    /// A write failed (for example the disk was full for a moment): the changes stay marked as unsaved, so try again
+    /// after a growing wait instead of leaving them only in memory until the next edit.
+    private func scheduleRetryAfterFailure() {
+        failedFlushStreak += 1
+        guard failedFlushStreak <= Self.maxAutomaticRetries else { return }
+        let step: UInt64 = retryBaseNanoseconds << UInt64(min(failedFlushStreak - 1, 6))
+        let nanos: UInt64 = min(step, 60 * 1_000_000_000)
+        saveTask?.cancel()
+        saveTask = Task { [weak self] in
+            do {
+                try await Task.sleep(nanoseconds: nanos)
+            } catch {
+                return
+            }
+            guard let self = self, !Task.isCancelled else { return }
+            self.flushNow()
         }
     }
 
@@ -254,17 +284,38 @@ final class DocumentStore: ObservableObject {
     /// One JSON file holding every document, written to a temporary location for the share sheet.
     /// The caller removes it when the share sheet closes; stale ones are cleaned at launch.
     func makeBackupFile() throws -> URL {
+        return try Self.writeBackup(snapshotForBackup())
+    }
+
+    /// Same file as `makeBackupFile`, but the encoding and the write run off the main thread, so a large library
+    /// (up to 150 MB) never freezes the screen. The snapshot of the documents is taken on the main actor first.
+    func makeBackupFileInBackground() async throws -> URL {
+        let box = BackupSnapshot(payload: snapshotForBackup())
+        return try await Task.detached(priority: .userInitiated) {
+            try DocumentStore.writeBackup(box.payload)
+        }.value
+    }
+
+    private func snapshotForBackup() -> CKBackupPayload {
         flushNow()
-        let payload = CKBackupPayload(schemaVersion: DocumentStore.currentSchemaVersion,
-                                      createdAt: Date(),
-                                      resumes: resumes,
-                                      coverLetters: coverLetters)
-        let data: Data = try encoder.encode(payload)
+        return CKBackupPayload(schemaVersion: DocumentStore.currentSchemaVersion,
+                               createdAt: Date(),
+                               resumes: resumes,
+                               coverLetters: coverLetters)
+    }
+
+    private struct BackupSnapshot: @unchecked Sendable {
+        let payload: CKBackupPayload
+    }
+
+    /// Encodes and writes the backup file. Touches no store state, so it can run on any thread.
+    nonisolated private static func writeBackup(_ payload: CKBackupPayload) throws -> URL {
+        let data: Data = try CKJSON.encoder().encode(payload)
         let stamp = DateFormatter()
         stamp.locale = Locale(identifier: "en_US_POSIX")
         stamp.dateFormat = "yyyy-MM-dd"
         let name: String = "CareerKit-Backup-" + stamp.string(from: Date()) + ".json"
-        let url: URL = fileManager.temporaryDirectory.appendingPathComponent(name)
+        let url: URL = FileManager.default.temporaryDirectory.appendingPathComponent(name)
         try data.write(to: url, options: [.atomic])
         return url
     }
@@ -273,6 +324,12 @@ final class DocumentStore: ObservableObject {
     /// Never overwrites a document that is newer on this device (see `CKBackupMerge`).
     func restoreBackup(from data: Data) throws -> CKRestoreSummary {
         let payload: CKBackupPayload = try CKBackupParser.parse(data, currentSchemaVersion: DocumentStore.currentSchemaVersion)
+        return try restoreBackup(payload: payload)
+    }
+
+    /// Merges an already decoded backup. The app decodes the file off the main thread (`CKBackupParser.parse`) and
+    /// calls this on the main actor for the merge only.
+    func restoreBackup(payload: CKBackupPayload) throws -> CKRestoreSummary {
         flushNow()
 
         let incomingResumes: [Resume] = payload.resumes.map { CKSchemaMigration.migrate($0) }

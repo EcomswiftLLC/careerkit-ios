@@ -11,14 +11,20 @@ Owner order 2026-11-17: everything a person takes out of CareerKit (Share, Save 
 | Exports left from an export pack | Export goes ahead, one export is used up. |
 | None of the above | The export sheet shows the choices: 3 exports, Premium, watch a short video, Restore purchases. |
 | No video can play | The sheet says why. Nothing is unlocked. The person can try again or use a pack or Premium. |
-| App Store not reachable | The sheet says prices are not available and offers Try again. Nothing is unlocked, nothing is charged. |
+| App Store not reachable (error, or no answer within 15 seconds) | The sheet says prices are not available and offers Try again. Nothing is unlocked, nothing is charged. |
+| **App Store reachable but has none of our products** (`CatalogState.noProducts`: products not created, not Ready to Submit, or not sold in this region) | The sheet says "Purchases are not available right now" and offers Try again. It shows no pack, no Premium and no Restore purchases, and the Home, onboarding, Profile and "How exports work" texts stop mentioning purchases. The video option stays. If no video can play (or no video is configured), **Export without video** is offered for that one export, as in version 1.0. |
 
+- **Why the free path exists, and only here.** With no products there is nothing to buy, so a video that cannot play would leave the person with no way to export (a dead end for App Review, where new ad units often have no fill). `ExportStore.allowsExportWithoutVideo` is true only for `.noProducts`. An unreachable store, a timeout or an empty/loading state never opens it, so a person with a bad connection cannot skip the gate. The decision is `ExportStore.catalogState`, covered by `ExportStoreTests`.
+- Prices are fetched again every time the export sheet opens without prices, and a price request that does not answer within 15 seconds becomes "not reachable" (a late answer is still used, a newer request is never overwritten by an older one).
+- A video that starts after the 6 second "did not start" watchdog already answered is still counted: when it is watched to the end, `RewardedAdController.lateRewardCount` goes up and the sheet grants the export.
 - An export is used up only after the system reports that the file was really shared, saved to Files or printed. Closing the share sheet, cancelling Files or a print error use nothing (`ExportStore.settle`).
 - Order of use: Premium, then the video unlock, then a pack export.
 - A purchase adds exports only after StoreKit verified it. Pending (Ask to Buy), cancelled, failed and unverified purchases add nothing. The transaction is saved before it is finished, and each transaction id is applied once. A refund takes the 3 exports back once, never below zero.
 - Exports from packs are kept in the Keychain (with a UserDefaults copy), so they survive deleting and reinstalling the app. "Delete all local data" in Profile does not remove purchases.
 - Premium comes from `Transaction.currentEntitlements` and is refreshed at launch, after a purchase and on Restore purchases (sheet and Profile). Used-up packs cannot be restored (consumables).
+- Restore purchases when nothing is found says "Export packs are used up and cannot be restored" only when no exports are left; otherwise it says the remaining exports are kept on the device.
 - Price text always comes from StoreKit (`displayPrice`). There is no price in code.
+- Local testing on a Mac: `Config/StoreKit/Configuration.storekit` defines the two products. In Xcode choose Product > Scheme > Edit Scheme > Run > Options > StoreKit Configuration and pick it. It is **not** referenced by the project, the Release scheme or any bundle, and was written by hand without Xcode (open it once in Xcode to confirm it loads). There is no `SKTestSession` unit test because it could not be run here and a failing or hanging test would block CI; add one on a Mac.
 - Code: `Sources/Purchases` (StoreKit 2, pure logic, storage, paywall view), `Sources/Ads/ExportFlowSheet.swift` (the sheet), Profile row "Your exports" and "Restore purchases". Unit tests: `Tests/ExportEntitlementTests.swift`.
 
 ### Paths that are gated
@@ -87,9 +93,9 @@ Localizations:
 
 1. **Paid Apps Agreement, bank account and tax forms.** The earlier checklist said these were not needed because the app was free. With in-app purchases they are required before products can be sold or reviewed. (Tax answers: see the open W-8BEN question in the CareerKit notes.)
 2. Create the two products above and attach them to the next app version.
-3. **Version.** CareerKit 1.0.0 (build 11) is in review without StoreKit. The gate ships as a new version (for example 1.1.0) with a new build from `release.yml`. Do not wait for 1.0.0 to finish to start; products can be created now.
+3. **Version.** CareerKit 1.0.0 (build 11) is in review without StoreKit. `project.yml` is already at `MARKETING_VERSION` 1.1.0, so the gate ships as 1.1.0 with a new build from `release.yml`. Do not wait for 1.0.0 to finish to start; products can be created now. Until the products exist and are attached to the version, the app behaves as described in the "no products" row above.
 4. Test with a sandbox Apple Account on TestFlight: buy 3 exports, cancel a share sheet (count must stay), finish an export (count drops by 1), buy Premium, delete and reinstall, tap Restore purchases, test Ask to Buy and a refund if possible. None of this could be run here (no Mac, no device); CI only compiles and runs unit tests.
-5. **Copy outside the app that now says "no purchases" and must be updated before submission:**
+5. **Copy outside the app that says "no purchases".** The 1.1 wording is now written in the repository (nothing is published): `docs/store/metadata.md`, `docs/store/metadata-localized.md`, `docs/store/submission-checklist.md`, `docs/store/app-privacy.md`, `docs/legal/next-1.1/` (terms and privacy policy), `README.md`, `docs/handoff/ads.md`, and the website draft (`CAREERKIT_EDITION=1.1 python website/build_site.py` writes `website/draft-1.1/careerkit/`, the live `website/careerkit/` stays on the 1.0 text). The 1.0 listing text is kept in `docs/store/v1.0-in-review/`. Paste and publish them only when 1.1 is released. Where each item used to live:
    - `docs/store/metadata.md` and `docs/store/metadata-localized.md` (description, App Review notes: "There are no purchases and no StoreKit", "Export without video").
    - `docs/store/submission-checklist.md` (banking and tax "not needed", review risk 3.9 about the free export without a video).
    - `docs/store/app-privacy.md` (check the purchase answers: Apple's "Purchases" data type is only collected if you keep purchase history yourself, which the app does not).

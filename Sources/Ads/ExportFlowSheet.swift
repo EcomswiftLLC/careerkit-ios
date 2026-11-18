@@ -32,6 +32,8 @@ private struct ExportedFile {
 /// or Print (Print for PDF only).
 /// The gate: Premium, a purchased export, or one opt-in video unlocks the export. With none of them, the sheet shows
 /// the choices. A missing video or an unreachable store never unlocks anything.
+/// One exception, for App Review safety: when the store answered but has no products to sell (`ExportStore.noProducts`),
+/// a video that cannot play offers "Export without video" for this one export, so there is never a dead end.
 /// An export is used up only after the system reports that the file was really shared, saved or printed.
 /// The video grant is per document, not per format: one unlock covers one completed export in any format.
 /// Needs `ExportGate` and `ExportStore` in the environment (injected at the app root).
@@ -146,6 +148,7 @@ struct ExportFlowSheet: View {
         .presentationCornerRadius(CK.Radius.sheet)
         .interactiveDismissDisabled(phase == .loadingAd)
         .onAppear(perform: handleAppear)
+        .onChange(of: rewarded.lateRewardCount) { _, _ in lateRewardArrived() }
         .onDisappear { rewarded.cancelRetries() }
     }
 
@@ -270,6 +273,7 @@ struct ExportFlowSheet: View {
             status: paywallStatus,
             onBuy: { productID in buy(productID) },
             onWatchVideo: startAdFlow,
+            onExportWithoutVideo: exportWithoutVideo,
             onRestore: restorePurchases,
             onNotNow: { dismiss() }
         )
@@ -298,17 +302,29 @@ struct ExportFlowSheet: View {
     // MARK: (c) No video could be provided
 
     private func noVideoContent(_ reason: RewardedUnavailableReason) -> some View {
-        VStack(alignment: .leading, spacing: CK.Space.l) {
+        // The store has no products to sell: the free path is the way out of a video that cannot play.
+        let freeExport: Bool = exportStore.allowsExportWithoutVideo
+        return VStack(alignment: .leading, spacing: CK.Space.l) {
             messageCard(
                 title: String(localized: "No video right now"),
-                message: reason.exportMessage + " " + String(localized: "You can try again, or use an export pack or Premium.")
+                message: freeExport
+                    ? reason.freeExportMessage
+                    : reason.exportMessage + " " + String(localized: "You can try again, or use an export pack or Premium.")
             )
 
             VStack(spacing: CK.Space.s) {
-                Button { showPaywall() } label: {
-                    Text("See export options").multilineTextAlignment(.center)
+                if freeExport {
+                    Button(action: exportWithoutVideo) {
+                        Text("Export without video").multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.ckPrimary)
+                    .accessibilityIdentifier("export.novideo.free")
+                } else {
+                    Button { showPaywall() } label: {
+                        Text("See export options").multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.ckPrimary)
                 }
-                .buttonStyle(.ckPrimary)
 
                 if reason != .notConfigured {
                     Button(action: startAdFlow) { Text("Try the video again") }
@@ -501,7 +517,23 @@ struct ExportFlowSheet: View {
         } else {
             // Load in the background so the video is ready when the person taps. Nothing plays without that tap.
             rewarded.preload()
+            // Prices: fetch again whenever the sheet opens without them (the first request can fail, time out or
+            // run before the store is ready).
+            if exportStore.catalogState != .ready {
+                Task { await exportStore.loadProducts() }
+            }
         }
+    }
+
+    /// A video that started playing after the 6 second watchdog had already answered was watched to the end:
+    /// the export it promised is granted anyway.
+    private func lateRewardArrived() {
+        gate.grant(for: documentID)
+        guard phase != .destination, phase != .finished else { return }
+        session.adTask?.cancel()
+        session.adTask = nil
+        unlockedBy = exportStore.access(for: documentID, gate: gate)
+        enterDestination()
     }
 
     private func startAdFlow() {
@@ -565,7 +597,7 @@ struct ExportFlowSheet: View {
                     enterDestination()
                 }
             case .nothingFound:
-                setStatus(String(localized: "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored."))
+                setStatus(ExportStore.nothingToRestoreMessage(credits: exportStore.credits))
             case .failed:
                 setStatus(String(localized: "Purchases could not be restored right now. Check your connection and try again."))
             }
@@ -647,6 +679,17 @@ struct ExportFlowSheet: View {
             try? await Task.sleep(nanoseconds: 150_000_000)
         }
         return .unavailable(.timedOut)
+    }
+
+    /// The fallback for a store with no products: the person asked for a video, none could play, and there is nothing
+    /// to buy, so this one export is granted. Refused in every other catalog state (for example an unreachable store).
+    private func exportWithoutVideo() {
+        guard exportStore.allowsExportWithoutVideo else { return }
+        session.adTask?.cancel()
+        session.adTask = nil
+        gate.grant(for: documentID)
+        unlockedBy = exportStore.access(for: documentID, gate: gate)
+        enterDestination()
     }
 
     private func enterDestination() {

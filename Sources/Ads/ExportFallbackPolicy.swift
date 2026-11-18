@@ -28,6 +28,23 @@ enum RewardedUnavailableReason: Equatable {
             return String(localized: "The video could not start.")
         }
     }
+
+    /// Same reasons, for the one case where a missing video leads to a free export: the store has no products to sell
+    /// (see `ExportStore.allowsExportWithoutVideo`). These are the strings build 1.0 shipped with.
+    var freeExportMessage: String {
+        switch self {
+        case .notConfigured:
+            return String(localized: "Videos are not available in this version of the app, so this export is free.")
+        case .noConsent:
+            return String(localized: "Videos cannot play with your current ad privacy choices, so this export is free.")
+        case .loadFailed:
+            return String(localized: "No video is available right now, so this export is free.")
+        case .timedOut:
+            return String(localized: "The video did not load in time, so this export is free.")
+        case .couldNotPresent:
+            return String(localized: "The video could not start, so this export is free.")
+        }
+    }
 }
 
 /// What happened after the person tapped "Watch an ad to export".
@@ -55,6 +72,9 @@ enum ExportFlowDecision: Equatable {
 ///
 /// Decision (export gate, 2026-11-17): a video that cannot be provided never unlocks an export. The person is told
 /// why and can try again, or use an export pack or Premium. Closing a video early does not unlock the export either.
+/// Exception (2026-11-18): when the App Store answers but has no products to sell, there is nothing to buy, so after a
+/// video that cannot play the sheet offers "Export without video" for this one export (`ExportStore.noProducts`).
+/// That keeps App Review safe (no dead end) and is documented in docs/EXPORT-GATE-IOS.md.
 enum ExportFallbackPolicy {
     /// Load attempts made by the sheet for one tap before it reports that no video is available (first try plus one retry).
     static let loadAttemptsBeforeFallback = 2

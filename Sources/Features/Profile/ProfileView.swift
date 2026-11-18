@@ -16,6 +16,7 @@ struct ProfileView: View {
     @State private var showDeleteFinal = false
     @State private var showImporter = false
     @State private var isRestoring = false
+    @State private var isBackingUp = false
     @State private var showQuarantineOptions = false
     @State private var showQuarantineDelete = false
     @State private var showResult = false
@@ -59,7 +60,9 @@ struct ProfileView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved video unlocks. Purchases are kept.")
+                Text(exportStore.offersPurchases
+                     ? String(localized: "This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved video unlocks. Purchases are kept.")
+                     : String(localized: "This removes every resume and cover letter stored in CareerKit on this device, including unreadable files and saved export passes."))
             }
             .alert("Delete everything permanently?", isPresented: $showDeleteFinal) {
                 Button("Delete everything", role: .destructive) { deleteEverything() }
@@ -151,8 +154,9 @@ struct ProfileView: View {
             Button {
                 exportBackup()
             } label: {
-                CKSettingsRow(systemImage: "square.and.arrow.up", title: String(localized: "Export backup"), detail: String(localized: "Save a copy of everything"), showsChevron: true)
+                CKSettingsRow(systemImage: "square.and.arrow.up", title: String(localized: "Export backup"), detail: String(localized: "Save a copy of everything"), showsChevron: true, isBusy: isBackingUp)
             }
+            .disabled(isBackingUp)
             .accessibilityHint(Text("Creates one backup file and opens the share sheet"))
             .listRowBackground(CK.Palette.surface)
 
@@ -233,18 +237,24 @@ struct ProfileView: View {
 
     private var adsAndExportsSection: some View {
         Section {
-            CKSettingsRow(systemImage: "doc.on.doc", title: String(localized: "Your exports"), detail: exportsDetail)
-                .accessibilityElement(children: .combine)
-                .listRowBackground(CK.Palette.surface)
-
-            Button {
-                restorePurchases()
-            } label: {
-                CKSettingsRow(systemImage: "arrow.clockwise", title: String(localized: "Restore purchases"), showsChevron: !exportStore.isRestoring, isBusy: exportStore.isRestoring)
+            // With no products in the store, there is nothing to buy or restore, so these rows stay hidden
+            // unless the person already holds Premium or exports from an earlier purchase.
+            if exportStore.offersPurchases || exportStore.isPremium || exportStore.credits > 0 {
+                CKSettingsRow(systemImage: "doc.on.doc", title: String(localized: "Your exports"), detail: exportsDetail)
+                    .accessibilityElement(children: .combine)
+                    .listRowBackground(CK.Palette.surface)
             }
-            .disabled(exportStore.isBusy)
-            .accessibilityHint(Text("Checks the App Store for a Premium purchase on this Apple Account"))
-            .listRowBackground(CK.Palette.surface)
+
+            if exportStore.offersPurchases {
+                Button {
+                    restorePurchases()
+                } label: {
+                    CKSettingsRow(systemImage: "arrow.clockwise", title: String(localized: "Restore purchases"), showsChevron: !exportStore.isRestoring, isBusy: exportStore.isRestoring)
+                }
+                .disabled(exportStore.isBusy)
+                .accessibilityHint(Text("Checks the App Store for a Premium purchase on this Apple Account"))
+                .listRowBackground(CK.Palette.surface)
+            }
 
             NavigationLink(value: AppRoute.howExportsWork) {
                 CKSettingsRow(systemImage: "arrow.down.doc", title: String(localized: "How exports work"))
@@ -291,7 +301,7 @@ struct ProfileView: View {
             case .premiumActive:
                 toast = String(localized: "Premium is active again.")
             case .nothingFound:
-                toast = String(localized: "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored.")
+                toast = ExportStore.nothingToRestoreMessage(credits: exportStore.credits)
             case .failed:
                 toast = String(localized: "Purchases could not be restored right now. Check your connection and try again.")
             }
@@ -420,15 +430,21 @@ struct ProfileView: View {
     }
 
     private func exportBackup() {
-        do {
-            let url = try store.makeBackupFile()
-            // A moment's delay lets a closing dialog finish before the share sheet opens.
-            CKDeferred.afterDismiss {
-                pendingCleanup = [url]
-                shareItem = ProfileShareItem(urls: [url], removeAfterSharing: true)
+        guard !isBackingUp else { return }
+        isBackingUp = true
+        Task { @MainActor in
+            defer { isBackingUp = false }
+            do {
+                // The encoding and the file write run off the main thread (a backup can be very large).
+                let url = try await store.makeBackupFileInBackground()
+                // A short delay lets a closing dialog finish before the share sheet opens.
+                CKDeferred.afterDismiss {
+                    pendingCleanup = [url]
+                    shareItem = ProfileShareItem(urls: [url], removeAfterSharing: true)
+                }
+            } catch {
+                toast = String(localized: "The backup could not be created. Free up some space and try again.")
             }
-        } catch {
-            toast = String(localized: "The backup could not be created. Free up some space and try again.")
         }
     }
 
@@ -466,17 +482,20 @@ struct ProfileView: View {
             guard let url = urls.first else { return }
             isRestoring = true
             Task { @MainActor in
-                let read: Result<Data, Error> = await Task.detached(priority: .userInitiated) { () -> Result<Data, Error> in
+                // Reading and decoding (up to 150 MB) happen off the main thread; only the merge runs here.
+                let read: Result<ParsedBackup, Error> = await Task.detached(priority: .userInitiated) { () -> Result<ParsedBackup, Error> in
                     do {
-                        return .success(try CKBackupParser.readFile(at: url))
+                        let data = try CKBackupParser.readFile(at: url)
+                        let payload = try CKBackupParser.parse(data, currentSchemaVersion: CKSchema.current)
+                        return .success(ParsedBackup(payload: payload))
                     } catch {
                         return .failure(error)
                     }
                 }.value
                 isRestoring = false
                 switch read {
-                case .success(let data):
-                    restore(data)
+                case .success(let parsed):
+                    restore(parsed.payload)
                 case .failure(let error):
                     let message: String = (error as? CKBackupError)?.message ?? CKBackupError.cannotOpenFile.message
                     presentResult(title: String(localized: "Backup not restored"), message: message)
@@ -485,9 +504,9 @@ struct ProfileView: View {
         }
     }
 
-    private func restore(_ data: Data) {
+    private func restore(_ payload: CKBackupPayload) {
         do {
-            let summary: CKRestoreSummary = try store.restoreBackup(from: data)
+            let summary: CKRestoreSummary = try store.restoreBackup(payload: payload)
             if summary.replacedExisting > 0 {
                 // An editor left open in another tab must not write the older version back.
                 appState.resetNavigation()
@@ -511,6 +530,11 @@ struct ProfileView: View {
             toast = String(localized: "Some data could not be deleted. Restart the app and try again.")
         }
     }
+}
+
+/// A decoded backup, handed from the background task back to the main actor.
+private struct ParsedBackup: @unchecked Sendable {
+    let payload: CKBackupPayload
 }
 
 /// One or more files for the share sheet. Backups are temporary and removed when the sheet closes.

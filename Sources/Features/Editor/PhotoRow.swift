@@ -205,7 +205,15 @@ struct PhotoRow: View {
             defer {
                 if scoped { url.stopAccessingSecurityScopedResource() }
             }
-            guard let data = try? Data(contentsOf: url, options: .mappedIfSafe) else {
+            // Refuse an oversized file before it is read into memory (the file is no longer mapped lazily).
+            if let values = try? url.resourceValues(forKeys: [.fileSizeKey]),
+               let size = values.fileSize, size > PhotoProcessor.maxInputBytes {
+                errorText = PhotoProcessor.Failure.tooLarge.message
+                return
+            }
+            // Not memory mapped: access to the file ends when this function returns, while the photo is still
+            // being processed on another thread (same rule as the PDF importer).
+            guard let data = try? Data(contentsOf: url) else {
                 errorText = String(localized: "That file could not be opened. Try another one.")
                 return
             }

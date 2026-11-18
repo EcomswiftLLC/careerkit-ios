@@ -1,0 +1,48 @@
+{
+  "identifier" : "6F2D0B7A",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "3A1F0C52-8D0E-4B52-9C1B-5E7A0D4C1001",
+      "localizations" : [
+        {
+          "description" : "Save, share or print 3 documents",
+          "displayName" : "3 Exports",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "export_pack_3",
+      "referenceName" : "Export Pack 3",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "3A1F0C52-8D0E-4B52-9C1B-5E7A0D4C1002",
+      "localizations" : [
+        {
+          "description" : "Unlimited exports, one purchase",
+          "displayName" : "Premium",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "premium_unlimited",
+      "referenceName" : "Premium Unlimited Exports",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

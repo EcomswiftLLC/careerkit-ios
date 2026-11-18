@@ -31,6 +31,12 @@ enum RewardedPresentationTiming {
     static func earned(rewardEarned: Bool, failedToPresent: Bool, cancelled: Bool) -> Bool {
         rewardEarned && !failedToPresent && !cancelled
     }
+
+    /// A reward earned after the caller was already answered (the watchdog fired, or the caller was cancelled, and the
+    /// video then played anyway) must still count: the person watched the whole video.
+    static func isLateReward(earned: Bool, callerAlreadyAnswered: Bool) -> Bool {
+        earned && callerAlreadyAnswered
+    }
 }
 
 /// Loads and shows one rewarded video at a time.
@@ -55,6 +61,11 @@ final class RewardedAdController: NSObject, ObservableObject, FullScreenContentD
 
     /// True when the last `present()` returned false because the ad could not be shown (not because the user closed it).
     private(set) var lastPresentationFailed = false
+
+    /// Goes up by one when a video was watched to the end after `present()` had already returned false (the 6 second
+    /// watchdog answered first and the video started later). The export sheet watches it and grants the export.
+    /// A counter, not a closure, so the sheet and the controller never hold each other.
+    @Published private(set) var lateRewardCount = 0
 
     // Loaded ad and bookkeeping.
     private var ad: RewardedAd?
@@ -333,6 +344,10 @@ final class RewardedAdController: NSObject, ObservableObject, FullScreenContentD
             continuation = nil
             lastPresentationFailed = failedToPresent
             cont.resume(returning: earned)
+        } else if RewardedPresentationTiming.isLateReward(earned: earned, callerAlreadyAnswered: true) {
+            // The caller was answered earlier (watchdog or cancel), but the video played and was earned: do not lose it.
+            AdsLog.logger.info("Rewarded video finished after the watchdog; counting the reward")
+            lateRewardCount += 1
         }
         load()   // reload after each use
     }

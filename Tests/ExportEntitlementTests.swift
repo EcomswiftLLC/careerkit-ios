@@ -118,6 +118,8 @@ private final class FakeStoreBackend: StoreBackend {
         StoreProduct(id: ExportProduct.premium, displayName: "Premium", displayPrice: "$9.99")
     ]
     var productsError: Error?
+    /// Seconds the product request takes to answer (to test the loading timeout).
+    var productsDelay: TimeInterval = 0
     var purchaseResult: StorePurchaseResult = .cancelled
     var purchaseError: Error?
     var entitled: Set<String> = []
@@ -128,8 +130,14 @@ private final class FakeStoreBackend: StoreBackend {
     struct Offline: Error {}
 
     func products(for ids: [String]) async throws -> [StoreProduct] {
-        if let error = productsError { throw error }
-        return productList
+        // The answer is decided when the request starts, as a real store would, so a slow one can be stale.
+        let answer = productList
+        let failure = productsError
+        if productsDelay > 0 {
+            try await Task.sleep(nanoseconds: UInt64(productsDelay * 1_000_000_000))
+        }
+        if let error = failure { throw error }
+        return answer
     }
 
     func purchase(_ productID: String) async throws -> StorePurchaseResult {
@@ -163,8 +171,8 @@ final class ExportStoreTests: XCTestCase {
         gate = ExportGate(defaults: defaults, storageKey: "test.grants")
     }
 
-    private func makeStore() -> ExportStore {
-        ExportStore(backend: backend, storage: storage)
+    private func makeStore(loadTimeout: TimeInterval = ExportStore.defaultLoadTimeout) -> ExportStore {
+        ExportStore(backend: backend, storage: storage, loadTimeout: loadTimeout)
     }
 
     private func packTransaction(id: UInt64, revoked: Bool = false, onFinish: (() -> Void)? = nil) -> StoreTransaction {
@@ -220,12 +228,85 @@ final class ExportStoreTests: XCTestCase {
         XCTAssertEqual(store.credits, 0)
     }
 
-    func testNoProductsMeansUnavailableNotFree() async {
+    /// An empty catalog is its own state (not "could not be reached"). It never unlocks an export by itself and it
+    /// stops the app from promising purchases, but it opens the free "Export without video" path.
+    func testNoProductsIsItsOwnStateAndNeverUnlocksByItself() async {
         let store = makeStore()
         backend.productList = []
         await store.loadProducts()
+        XCTAssertEqual(store.catalogState, .noProducts)
+        XCTAssertNil(store.pack)
+        XCTAssertNil(store.premium)
+        XCTAssertFalse(store.offersPurchases)
+        XCTAssertTrue(store.allowsExportWithoutVideo)
+        XCTAssertEqual(store.access(for: doc, gate: gate), .locked, "no products never opens an export on its own")
+        XCTAssertEqual(store.settle(.completed, for: doc, gate: gate), .nothing)
+    }
+
+    func testAnUnreachableStoreOffersPurchasesButNotTheFreeExport() async {
+        let store = makeStore()
+        backend.productsError = FakeStoreBackend.Offline()
+        await store.loadProducts()
         XCTAssertEqual(store.catalogState, .unavailable)
-        XCTAssertEqual(store.access(for: doc, gate: gate), .locked)
+        XCTAssertTrue(store.offersPurchases)
+        XCTAssertFalse(store.allowsExportWithoutVideo, "an unreachable store never opens the free export")
+    }
+
+    func testBeforeTheFirstAnswerThePaywallStillTalksAboutPurchases() {
+        let store = makeStore()
+        XCTAssertEqual(store.catalogState, .idle)
+        XCTAssertTrue(store.offersPurchases)
+        XCTAssertFalse(store.allowsExportWithoutVideo)
+    }
+
+    func testProductsThatAppearLaterReplaceTheNoProductsState() async {
+        let store = makeStore()
+        backend.productList = []
+        await store.loadProducts()
+        XCTAssertEqual(store.catalogState, .noProducts)
+        backend.productList = [StoreProduct(id: ExportProduct.pack3, displayName: "Export pack", displayPrice: "$0.99")]
+        await store.loadProducts()
+        XCTAssertEqual(store.catalogState, .ready)
+        XCTAssertTrue(store.offersPurchases)
+        XCTAssertFalse(store.allowsExportWithoutVideo)
+    }
+
+    func testPriceRequestThatNeverAnswersTimesOutInsteadOfLoadingForever() async throws {
+        let store = makeStore(loadTimeout: 0.15)
+        backend.productsDelay = 0.6
+        let request = Task { await store.loadProducts() }
+        try await Task.sleep(nanoseconds: 60_000_000)
+        XCTAssertEqual(store.catalogState, .loading)
+        try await Task.sleep(nanoseconds: 250_000_000)
+        XCTAssertEqual(store.catalogState, .unavailable, "after the timeout the paywall must offer a retry")
+        XCTAssertFalse(store.allowsExportWithoutVideo)
+        // A slow answer that still arrives is used.
+        await request.value
+        XCTAssertEqual(store.catalogState, .ready)
+    }
+
+    func testRetryAfterATimeoutIgnoresTheStaleAnswer() async throws {
+        let store = makeStore(loadTimeout: 0.1)
+        backend.productsDelay = 0.4
+        let first = Task { await store.loadProducts() }
+        try await Task.sleep(nanoseconds: 250_000_000)
+        XCTAssertEqual(store.catalogState, .unavailable)
+        backend.productsDelay = 0
+        backend.productList = []
+        await store.loadProducts()
+        XCTAssertEqual(store.catalogState, .noProducts)
+        // The first request finishes now with the old list and must not overwrite the newer answer.
+        await first.value
+        XCTAssertEqual(store.catalogState, .noProducts)
+    }
+
+    func testRestoreMessageIsAccurateWhileExportsAreLeft() {
+        let none = ExportStore.nothingToRestoreMessage(credits: 0)
+        let some = ExportStore.nothingToRestoreMessage(credits: 2)
+        XCTAssertNotEqual(none, some)
+        XCTAssertTrue(none.contains("used up"))
+        XCTAssertFalse(some.contains("used up"), "exports that are still left are not used up")
+        XCTAssertTrue(some.contains("kept on this device"))
     }
 
     func testPricesComeFromTheStore() async {

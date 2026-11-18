@@ -13,7 +13,10 @@ final class ExportStore: ObservableObject {
         case idle
         case loading
         case ready
-        /// The store could not be reached, or the products are not available.
+        /// The store answered, but none of our products exist (not set up in App Store Connect yet, not approved yet,
+        /// or not sold in this region). Purchases are not offered and the free export path stays open.
+        case noProducts
+        /// The store could not be reached, or did not answer in time. Nothing is unlocked; the person can retry.
         case unavailable
     }
 
@@ -41,14 +44,23 @@ final class ExportStore: ObservableObject {
     @Published private(set) var busyProductID: String?
     @Published private(set) var isRestoring = false
 
+    /// How long one price request may take before the paywall stops waiting and offers a retry.
+    static let defaultLoadTimeout: TimeInterval = 15
+
     private let backend: StoreBackend
     private let storage: ExportEntitlementStorage
+    private let loadTimeout: TimeInterval
     private var listener: Task<Void, Never>?
     private var started = false
+    /// Counts price requests, so a late answer to an old request never overwrites a newer one.
+    private var loadGeneration = 0
 
-    init(backend: StoreBackend = StoreKitBackend(), storage: ExportEntitlementStorage = MirroredExportStorage.standard()) {
+    init(backend: StoreBackend = StoreKitBackend(),
+         storage: ExportEntitlementStorage = MirroredExportStorage.standard(),
+         loadTimeout: TimeInterval = ExportStore.defaultLoadTimeout) {
         self.backend = backend
         self.storage = storage
+        self.loadTimeout = loadTimeout
         self.logic = ExportEntitlementLogic.decoded(from: storage.load())
     }
 
@@ -57,6 +69,22 @@ final class ExportStore: ObservableObject {
     var pack: StoreProduct? { products[ExportProduct.pack3] }
     var premium: StoreProduct? { products[ExportProduct.premium] }
     var isBusy: Bool { busyProductID != nil || isRestoring }
+
+    /// False only when the store answered and has none of our products. Copy that promises purchases (pack, Premium,
+    /// Restore purchases) is shown unless this is false. Unknown states (loading, unreachable) count as "offered".
+    var offersPurchases: Bool { catalogState != .noProducts }
+
+    /// The free "Export without video" path is allowed only when the store has no products to sell, so a video that
+    /// cannot play never leaves the person with no way to export. An unreachable store does not open it.
+    var allowsExportWithoutVideo: Bool { catalogState == .noProducts }
+
+    /// The message after Restore purchases found no Premium. Accurate when exports from a pack are still left.
+    static func nothingToRestoreMessage(credits: Int) -> String {
+        if credits > 0 {
+            return String(localized: "No Premium purchase was found for this Apple Account. Your remaining exports are kept on this device.")
+        }
+        return String(localized: "No Premium purchase was found for this Apple Account. Export packs are used up and cannot be restored.")
+    }
 
     // MARK: Start
 
@@ -80,18 +108,36 @@ final class ExportStore: ObservableObject {
 
     // MARK: Prices
 
+    /// Loads prices. An empty answer is `.noProducts` (the store works but has nothing to sell), a failure or a
+    /// request that takes longer than `loadTimeout` is `.unavailable`. It never stays in `.loading` for good.
     func loadProducts() async {
         guard catalogState != .loading else { return }
         catalogState = .loading
+        loadGeneration += 1
+        let generation = loadGeneration
+        let seconds = loadTimeout
+        let watchdog = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(max(0, seconds) * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            self?.loadTimedOut(generation: generation)
+        }
+        defer { watchdog.cancel() }
         do {
             let list = try await backend.products(for: ExportProduct.all)
+            guard generation == loadGeneration else { return }
             var map: [String: StoreProduct] = [:]
             for product in list { map[product.id] = product }
             products = map
-            catalogState = list.isEmpty ? .unavailable : .ready
+            catalogState = list.isEmpty ? .noProducts : .ready
         } catch {
+            guard generation == loadGeneration else { return }
             catalogState = .unavailable
         }
+    }
+
+    private func loadTimedOut(generation: Int) {
+        guard generation == loadGeneration, catalogState == .loading else { return }
+        catalogState = .unavailable
     }
 
     // MARK: Access and spending

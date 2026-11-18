@@ -63,6 +63,25 @@ final class AdsExportFallbackPolicyTests: XCTestCase {
     }
 }
 
+/// The free "Export without video" wording and the late reward rule.
+final class AdsFreeExportAndLateRewardTests: XCTestCase {
+    func testFreeExportMessagesNameTheReasonAndSayTheExportIsFree() {
+        let reasons: [RewardedUnavailableReason] = [.notConfigured, .noConsent, .loadFailed, .timedOut, .couldNotPresent]
+        for reason in reasons {
+            let text = reason.freeExportMessage
+            XCTAssertTrue(text.contains("so this export is free"), "\(reason): \(text)")
+            XCTAssertNotEqual(text, reason.exportMessage)
+            XCTAssertFalse(text.lowercased().contains("reward"))
+        }
+    }
+
+    func testARewardEarnedAfterTheCallerWasAnsweredStillCounts() {
+        XCTAssertTrue(RewardedPresentationTiming.isLateReward(earned: true, callerAlreadyAnswered: true))
+        XCTAssertFalse(RewardedPresentationTiming.isLateReward(earned: false, callerAlreadyAnswered: true), "a video closed early earns nothing")
+        XCTAssertFalse(RewardedPresentationTiming.isLateReward(earned: true, callerAlreadyAnswered: false), "the waiting caller gets it directly")
+    }
+}
+
 /// A video grant: one grant, one export, 24 hours (as the sheet discloses).
 final class AdsExportGateFallbackTests: XCTestCase {
     private let t0 = Date(timeIntervalSinceReferenceDate: 800_000_000)

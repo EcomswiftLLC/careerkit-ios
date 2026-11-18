@@ -101,6 +101,29 @@ final class EngineStoreTests: XCTestCase {
         XCTAssertTrue(store.coverLetters.isEmpty)
     }
 
+    func testAFailedWriteIsRetriedWithoutAnotherEdit() async throws {
+        let store = DocumentStore(directory: folder, debounceInterval: 0.05, retryInterval: 0.1)
+        let resume = sampleResume()
+        let directory: URL = store.resumesDirectory
+        // Writes fail while the Resumes folder is read-only.
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: directory.path)
+        addTeardownBlock { try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path) }
+        store.upsert(resume)
+        store.flushNow()
+        guard case .failed = store.saveState else {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path)
+            throw XCTSkip("This environment can write to a read-only folder, so a failed write cannot be simulated.")
+        }
+        XCTAssertFalse(FileManager.default.fileExists(atPath: resumeFile(store, resume.id).path))
+
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path)
+        for _ in 0..<60 where !FileManager.default.fileExists(atPath: resumeFile(store, resume.id).path) {
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: resumeFile(store, resume.id).path), "the retry wrote the document")
+        if case .saved = store.saveState {} else { XCTFail("the state should be saved after the retry, got \(store.saveState)") }
+    }
+
     func testDeletedDocumentIsNotWrittenByAPendingSave() async throws {
         let store = DocumentStore(directory: folder, debounceInterval: 0.2)
         let resume = sampleResume()

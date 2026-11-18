@@ -1,0 +1,38 @@
+{
+ "_comment": "Export gate hardening for 1.1.0: store with no products, accurate restore message, Home subtitle. Price text is inserted by the App Store, never translated.",
+ "Editing and previewing are free. You can still save, share or print without buying anything.": {
+  "es": "Editar y ver la vista previa es gratis. Aun así puedes guardar, compartir o imprimir sin comprar nada.",
+  "fr": "Modifier et prévisualiser est gratuit. Vous pouvez quand même enregistrer, partager ou imprimer sans rien acheter.",
+  "de": "Bearbeiten und die Vorschau sind kostenlos. Du kannst trotzdem speichern, teilen oder drucken, ohne etwas zu kaufen.",
+  "zh-Hans": "编辑和预览均免费。无需购买，你仍然可以保存、分享或打印。",
+  "_comment": "Export sheet, shown only when the App Store has no products to sell"
+ },
+ "Purchases are not available right now": {
+  "es": "Las compras no están disponibles en este momento",
+  "fr": "Les achats ne sont pas disponibles pour le moment",
+  "de": "Käufe sind gerade nicht verfügbar",
+  "zh-Hans": "目前无法购买",
+  "_comment": "Export sheet card title, shown only when the App Store has no products to sell"
+ },
+ "You can try again later. Nothing was charged.": {
+  "es": "Puedes volver a intentarlo más tarde. No se ha cobrado nada.",
+  "fr": "Vous pourrez réessayer plus tard. Rien n’a été débité.",
+  "de": "Du kannst es später noch einmal versuchen. Es wurde nichts berechnet.",
+  "zh-Hans": "你可以稍后再试。没有产生任何扣款。",
+  "_comment": "Export sheet card text under Purchases are not available right now"
+ },
+ "No Premium purchase was found for this Apple Account. Your remaining exports are kept on this device.": {
+  "es": "No se encontró ninguna compra de Premium en este ID de Apple. Las exportaciones que te quedan se conservan en este dispositivo.",
+  "fr": "Aucun achat Premium n’a été trouvé pour ce compte Apple. Vos exports restants sont conservés sur cet appareil.",
+  "de": "Für diese Apple-ID wurde kein Premium-Kauf gefunden. Deine verbleibenden Exporte bleiben auf diesem Gerät gespeichert.",
+  "zh-Hans": "此 Apple 账户下未找到 Premium 购买记录。你剩余的导出次数保存在这台设备上。",
+  "_comment": "Restore purchases result while exports from a pack are still left"
+ },
+ "30 designs, free to browse": {
+  "es": "30 diseños, gratis para explorar",
+  "fr": "30 designs, à parcourir gratuitement",
+  "de": "30 Designs, kostenlos zum Ansehen",
+  "zh-Hans": "30款设计，可免费浏览",
+  "_comment": "Home, Templates section subtitle"
+ }
+}

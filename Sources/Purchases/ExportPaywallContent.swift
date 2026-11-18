@@ -2,6 +2,9 @@ import SwiftUI
 
 /// The choices shown when an export needs an export pack, Premium or a video.
 /// Prices come from the store. Nothing here can unlock an export by itself: it only reports taps.
+/// When the store has no products to sell (`catalogState == .noProducts`) it does not talk about buying at all: no
+/// pack, no Premium, no Restore purchases. It says so plainly and keeps the video, and the free export when no video
+/// is configured.
 struct ExportPaywallContent: View {
     @ObservedObject var store: ExportStore
     /// Whether the "watch a video" choice is shown.
@@ -10,12 +13,16 @@ struct ExportPaywallContent: View {
     let status: String?
     let onBuy: (String) -> Void
     let onWatchVideo: () -> Void
+    /// The free export for a store with no products. Only shown when no video can be offered at all.
+    let onExportWithoutVideo: () -> Void
     let onRestore: () -> Void
     let onNotNow: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: CK.Space.l) {
-            Text("Editing and previewing are free. Saving, sharing or printing a file uses one export.")
+            Text(store.offersPurchases
+                 ? String(localized: "Editing and previewing are free. Saving, sharing or printing a file uses one export.")
+                 : String(localized: "Editing and previewing are free. You can still save, share or print without buying anything."))
                 .font(CK.Font.body)
                 .foregroundStyle(CK.Palette.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -41,21 +48,29 @@ struct ExportPaywallContent: View {
                     .buttonStyle(.ckSecondary)
                     .disabled(store.isBusy)
                     .accessibilityIdentifier("export.paywall.video")
+                } else if store.allowsExportWithoutVideo {
+                    Button(action: onExportWithoutVideo) {
+                        Text("Export without video").multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.ckPrimary)
+                    .accessibilityIdentifier("export.paywall.free")
                 }
 
-                Button(action: onRestore) {
-                    HStack(spacing: CK.Space.s) {
-                        if store.isRestoring { ProgressView() }
-                        Text("Restore purchases")
+                if store.offersPurchases {
+                    Button(action: onRestore) {
+                        HStack(spacing: CK.Space.s) {
+                            if store.isRestoring { ProgressView() }
+                            Text("Restore purchases")
+                        }
+                        .font(CK.Font.label)
+                        .foregroundStyle(CK.Palette.forest)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .contentShape(Rectangle())
                     }
-                    .font(CK.Font.label)
-                    .foregroundStyle(CK.Palette.forest)
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .disabled(store.isBusy)
+                    .accessibilityIdentifier("export.paywall.restore")
                 }
-                .buttonStyle(.plain)
-                .disabled(store.isBusy)
-                .accessibilityIdentifier("export.paywall.restore")
 
                 Button(action: onNotNow) {
                     Text("Not now")
@@ -68,10 +83,12 @@ struct ExportPaywallContent: View {
                 .accessibilityIdentifier("export.paywall.notnow")
             }
 
-            Text("Export packs are used up one export at a time. Premium is a single purchase with no limit, and Restore purchases brings it back on a new device.")
-                .font(CK.Font.caption)
-                .foregroundStyle(CK.Palette.graphite)
-                .fixedSize(horizontal: false, vertical: true)
+            if store.offersPurchases {
+                Text("Export packs are used up one export at a time. Premium is a single purchase with no limit, and Restore purchases brings it back on a new device.")
+                    .font(CK.Font.caption)
+                    .foregroundStyle(CK.Palette.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
@@ -91,11 +108,34 @@ struct ExportPaywallContent: View {
             .ckCard()
             .accessibilityElement(children: .combine)
 
+        case .noProducts:
+            VStack(alignment: .leading, spacing: CK.Space.m) {
+                Text("Purchases are not available right now")
+                    .ckHeadlineFont(19)
+                    .foregroundStyle(CK.Palette.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+                Text("You can try again later. Nothing was charged.")
+                    .font(CK.Font.body)
+                    .foregroundStyle(CK.Palette.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button {
+                    Task { await store.loadProducts() }
+                } label: {
+                    Text("Try again")
+                }
+                .buttonStyle(.ckSecondary)
+                .accessibilityIdentifier("export.paywall.retry")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .ckCard()
+
         case .unavailable:
             VStack(alignment: .leading, spacing: CK.Space.m) {
                 Text("Prices are not available")
-                    .font(CK.Font.headline())
+                    .ckHeadlineFont(19)
                     .foregroundStyle(CK.Palette.ink)
+                    .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
                 Text("The App Store could not be reached. Check your connection and try again. Nothing was charged.")
                     .font(CK.Font.body)
@@ -155,7 +195,7 @@ struct ExportPaywallContent: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(CK.Font.headline(18))
+                        .ckHeadlineFont(18)
                         .foregroundStyle(CK.Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
                     Text(detail)
@@ -169,14 +209,20 @@ struct ExportPaywallContent: View {
                 if busyHere {
                     ProgressView()
                 } else {
+                    // The price may wrap at large text sizes or in long currency formats, so it is never cut off.
                     Text(verbatim: product.displayPrice)
                         .font(CK.Font.label)
                         .foregroundStyle(emphasised ? CK.Palette.onForest : CK.Palette.ink)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, CK.Space.m)
+                        .padding(.vertical, CK.Space.s - 2)
                         .frame(minHeight: 36)
                         .background(
-                            Capsule().fill(emphasised ? CK.Palette.forest : CK.Palette.stone)
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(emphasised ? CK.Palette.forest : CK.Palette.stone)
                         )
+                        .layoutPriority(1)
                 }
             }
             .padding(CK.Space.m)

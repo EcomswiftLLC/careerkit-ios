@@ -61,6 +61,8 @@
 	<string>$(ADMOB_BANNER_UNIT_ID)</string>
 	<key>CKRewardedAdUnitID</key>
 	<string>$(ADMOB_REWARDED_UNIT_ID)</string>
+	<key>CKAppStoreID</key>
+	<string>6835751843</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict><key>SKAdNetworkIdentifier</key><string>cstr6suwn9.skadnetwork</string></dict>

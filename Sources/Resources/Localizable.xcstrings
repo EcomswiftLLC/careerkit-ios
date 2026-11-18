@@ -2853,6 +2853,36 @@
         }
       }
     },
+    "30 designs, free to browse": {
+      "comment": "Home, Templates section subtitle",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Designs, kostenlos zum Ansehen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 diseños, gratis para explorar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 designs, à parcourir gratuitement"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30款设计，可免费浏览"
+          }
+        }
+      }
+    },
     "A PDF with selectable text, up to 10 MB and 10 pages.": {
       "extractionState": "manual",
       "localizations": {
@@ -12413,6 +12443,36 @@
         }
       }
     },
+    "Editing and previewing are free. You can still save, share or print without buying anything.": {
+      "comment": "Export sheet, shown only when the App Store has no products to sell",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten und die Vorschau sind kostenlos. Du kannst trotzdem speichern, teilen oder drucken, ohne etwas zu kaufen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar y ver la vista previa es gratis. Aun así puedes guardar, compartir o imprimir sin comprar nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier et prévisualiser est gratuit. Vous pouvez quand même enregistrer, partager ou imprimer sans rien acheter."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑和预览均免费。无需购买，你仍然可以保存、分享或打印。"
+          }
+        }
+      }
+    },
     "Editor mode": {
       "extractionState": "manual",
       "localizations": {
@@ -20421,6 +20481,36 @@
         }
       }
     },
+    "No Premium purchase was found for this Apple Account. Your remaining exports are kept on this device.": {
+      "comment": "Restore purchases result while exports from a pack are still left",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diese Apple-ID wurde kein Premium-Kauf gefunden. Deine verbleibenden Exporte bleiben auf diesem Gerät gespeichert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró ninguna compra de Premium en este ID de Apple. Las exportaciones que te quedan se conservan en este dispositivo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun achat Premium n’a été trouvé pour ce compte Apple. Vos exports restants sont conservés sur cet appareil."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 Apple 账户下未找到 Premium 购买记录。你剩余的导出次数保存在这台设备上。"
+          }
+        }
+      }
+    },
     "No changes to suggest": {
       "extractionState": "manual",
       "localizations": {
@@ -25129,6 +25219,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "出版方或期刊"
+          }
+        }
+      }
+    },
+    "Purchases are not available right now": {
+      "comment": "Export sheet card title, shown only when the App Store has no products to sell",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe sind gerade nicht verfügbar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las compras no están disponibles en este momento"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les achats ne sont pas disponibles pour le moment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前无法购买"
           }
         }
       }
@@ -37905,6 +38025,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "你可以随时重命名并更换模板。"
+          }
+        }
+      }
+    },
+    "You can try again later. Nothing was charged.": {
+      "comment": "Export sheet card text under Purchases are not available right now",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst es später noch einmal versuchen. Es wurde nichts berechnet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puedes volver a intentarlo más tarde. No se ha cobrado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous pourrez réessayer plus tard. Rien n’a été débité."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你可以稍后再试。没有产生任何扣款。"
           }
         }
       }

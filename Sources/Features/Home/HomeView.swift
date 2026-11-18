@@ -237,7 +237,7 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: CK.Space.m) {
             CKSectionHeader(
                 title: String(localized: "Templates"),
-                subtitle: String(localized: "30 designs, all free"),
+                subtitle: String(localized: "30 designs, free to browse"),
                 actionTitle: String(localized: "Browse all"),
                 action: { appState.selectedTab = .templates }
             )

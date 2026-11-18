@@ -74,12 +74,23 @@ final class LandscapeTests: XCTestCase {
         shot("onboarding")
     }
 
+    /// Any element with this accessibility identifier.
+    private func element(_ identifier: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+    }
+
     func testMainTabs() {
         launch(seeded: true)
+        // Layout checks: every destination is reachable from the sidebar (or tab bar), and Home shows its greeting.
+        for name in ["Home", "My Resumes", "Templates", "Cover Letters", "Profile"] {
+            XCTAssertTrue(tab(name).waitForExistence(timeout: 8), "\(name) is missing from the sidebar")
+        }
+        XCTAssertTrue(homeGreetingVisible, "Home does not show its greeting")
         shot("home")
         for (name, label) in [("My Resumes", "my-resumes"), ("Templates", "templates"), ("Cover Letters", "cover-letters"), ("Profile", "profile")] {
             let item: XCUIElement = tab(name)
             XCTAssertTrue(item.waitForExistence(timeout: 5), "\(name) tab not found")
+            XCTAssertTrue(item.isHittable, "\(name) is in the sidebar but cannot be tapped")
             item.tap()
             RunLoop.current.run(until: Date().addingTimeInterval(1.5))
             XCTAssertFalse(homeGreetingVisible, "\(name): still showing Home after tapping the tab")
@@ -96,9 +107,13 @@ final class LandscapeTests: XCTestCase {
         resume.tap()
         shot("editor")
         let export: XCUIElement = app.buttons["Export"].firstMatch
-        if export.waitForExistence(timeout: 3) {
-            export.tap()
-            shot("export-sheet")
-        }
+        XCTAssertTrue(export.waitForExistence(timeout: 6), "The editor has no Export button in landscape")
+        XCTAssertTrue(export.isHittable, "The Export button is on screen but cannot be tapped")
+        guard export.exists else { return }
+        export.tap()
+        // Screenshot runs use sample prices, so the choices appear at once. The sheet must be usable in landscape.
+        XCTAssertTrue(element("export.paywall.buy.export_pack_3").waitForExistence(timeout: 8), "The export sheet shows no 3-export choice")
+        XCTAssertTrue(element("export.paywall.notnow").exists, "The export sheet has no Not now button")
+        shot("export-sheet")
     }
 }

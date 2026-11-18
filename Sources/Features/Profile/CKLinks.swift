@@ -8,7 +8,8 @@ enum CKLinks {
     static let supportEmail = "support@ecomswiftllc.com"
 
     /// App Store write-a-review page when `CKAppStoreID` exists in Info.plist, otherwise the product page.
-    /// StoreKit is deliberately not imported (project rule), so there is no in-app review prompt.
+    /// The id is the numeric Apple ID of the app in App Store Connect. The in-app purchases use StoreKit (see
+    /// `Sources/Purchases`), but the review link is a plain URL, so this file does not need StoreKit.
     static var reviewURL: URL {
         if let id = Bundle.main.object(forInfoDictionaryKey: "CKAppStoreID") as? String,
            !id.trimmingCharacters(in: .whitespaces).isEmpty,
