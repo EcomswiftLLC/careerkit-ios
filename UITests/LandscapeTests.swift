@@ -54,9 +54,19 @@ final class LandscapeTests: XCTestCase {
         XCTAssertEqual(app.state, .runningForeground, "\(name): app left the foreground")
     }
 
+    /// The tab bar on iPhone, or a sidebar row on iPad.
     private func tab(_ name: String) -> XCUIElement {
         let inBar: XCUIElement = app.tabBars.buttons[name]
-        return inBar.exists ? inBar : app.buttons[name].firstMatch
+        if inBar.exists { return inBar }
+        let button: XCUIElement = app.buttons[name].firstMatch
+        if button.exists { return button }
+        let row: XCUIElement = app.cells.containing(.staticText, identifier: name).firstMatch
+        return row.exists ? row : app.staticTexts[name].firstMatch
+    }
+
+    /// The Home screen greets the user, so no other tab shows a "Good morning/afternoon/evening" line.
+    private var homeGreetingVisible: Bool {
+        app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Good '")).firstMatch.exists
     }
 
     func testOnboarding() {
@@ -69,7 +79,10 @@ final class LandscapeTests: XCTestCase {
         shot("home")
         for (name, label) in [("My Resumes", "my-resumes"), ("Templates", "templates"), ("Cover Letters", "cover-letters"), ("Profile", "profile")] {
             let item: XCUIElement = tab(name)
-            if item.waitForExistence(timeout: 5) { item.tap() }
+            XCTAssertTrue(item.waitForExistence(timeout: 5), "\(name) tab not found")
+            item.tap()
+            RunLoop.current.run(until: Date().addingTimeInterval(1.5))
+            XCTAssertFalse(homeGreetingVisible, "\(name): still showing Home after tapping the tab")
             shot(label)
         }
     }
