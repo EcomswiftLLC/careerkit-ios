@@ -94,7 +94,7 @@ Localizations:
 1. **Paid Apps Agreement, bank account and tax forms.** The earlier checklist said these were not needed because the app was free. With in-app purchases they are required before products can be sold or reviewed. (Tax answers: see the open W-8BEN question in the CareerKit notes.)
 2. Create the two products above and attach them to the next app version.
 3. **Version.** CareerKit 1.0.0 (build 11) is in review without StoreKit. `project.yml` is already at `MARKETING_VERSION` 1.1.0, so the gate ships as 1.1.0 with a new build from `release.yml`. Do not wait for 1.0.0 to finish to start; products can be created now. Until the products exist and are attached to the version, the app behaves as described in the "no products" row above.
-4. Test with a sandbox Apple Account on TestFlight: buy 3 exports, cancel a share sheet (count must stay), finish an export (count drops by 1), buy Premium, delete and reinstall, tap Restore purchases, test Ask to Buy and a refund if possible. None of this could be run here (no Mac, no device); CI only compiles and runs unit tests.
+4. Test with a sandbox Apple Account on TestFlight: buy 3 exports, cancel a share sheet (count must stay), finish an export (count drops by 1), buy Premium, delete and reinstall (unused exports and Premium are kept in the Keychain and must still be there), tap Restore purchases, test Ask to Buy and a refund if possible. None of this could be run here (no Mac, no device); CI only compiles and runs unit tests.
 5. **Copy outside the app that says "no purchases".** The 1.1 wording is now written in the repository (nothing is published): `docs/store/metadata.md`, `docs/store/metadata-localized.md`, `docs/store/submission-checklist.md`, `docs/store/app-privacy.md`, `docs/legal/next-1.1/` (terms and privacy policy), `README.md`, `docs/handoff/ads.md`, and the website draft (`CAREERKIT_EDITION=1.1 python website/build_site.py` writes `website/draft-1.1/careerkit/`, the live `website/careerkit/` stays on the 1.0 text). The 1.0 listing text is kept in `docs/store/v1.0-in-review/`. Paste and publish them only when 1.1 is released. Where each item used to live:
    - `docs/store/metadata.md` and `docs/store/metadata-localized.md` (description, App Review notes: "There are no purchases and no StoreKit", "Export without video").
    - `docs/store/submission-checklist.md` (banking and tax "not needed", review risk 3.9 about the free export without a video).
@@ -102,7 +102,7 @@ Localizations:
    - `docs/legal/terms-of-use.md` ("There is no subscription and no in-app purchase") and `docs/legal/privacy-policy.md` (the paragraph about the free export when no video is available).
    - The website pages in `website/build_site.py` (FAQ: "no in-app purchase and no paid version", "export without a video", home page text), then rebuild and publish `EcomswiftLLC/careerkit`.
    - The App Store listing text and screenshots that show the old export sheet.
-   - `README.md` and `docs/handoff/ads.md` still describe the free export.
+   - `README.md` and `docs/handoff/ads.md` are updated for 1.1.0 and keep a note about the 1.0 behaviour.
 6. Age rating questionnaire: answer that the app now has in-app purchases (no change in rating expected).
 7. Decide the Premium price and whether Export backup should also be gated (see above).
 8. The reward unlock still allows one export per document for 24 hours. Premium does not remove ads (banners stay, as ordered).
