@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 
 /// Rotates an iPad to landscape and screenshots the main screens, failing when the window does not end up wider than tall.
 /// Only runs when CAREERKIT_LANDSCAPE=1 is set (the `ipad-landscape` CI job), so the other UI test runs skip it.
@@ -9,6 +10,20 @@ final class LandscapeTests: XCTestCase {
         continueAfterFailure = true
         try XCTSkipUnless(ProcessInfo.processInfo.environment["CAREERKIT_LANDSCAPE"] == "1", "CAREERKIT_LANDSCAPE not set")
         app = XCUIApplication()
+    }
+
+    /// The simulator hands back its portrait frame buffer with a landscape picture lying on its side, so turn it upright.
+    private func uprightScreenshot() -> UIImage {
+        let image: UIImage = XCUIScreen.main.screenshot().image
+        guard image.size.height > image.size.width else { return image }
+        let size = CGSize(width: image.size.height, height: image.size.width)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = image.scale
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            context.cgContext.translateBy(x: 0, y: size.height)
+            context.cgContext.rotate(by: -.pi / 2)
+            image.draw(at: .zero)
+        }
     }
 
     private func launch(seeded: Bool) {
@@ -28,7 +43,7 @@ final class LandscapeTests: XCTestCase {
 
     private func shot(_ name: String) {
         RunLoop.current.run(until: Date().addingTimeInterval(2))
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        let attachment = XCTAttachment(image: uprightScreenshot())
         attachment.name = "landscape-" + name
         attachment.lifetime = .keepAlways
         add(attachment)
