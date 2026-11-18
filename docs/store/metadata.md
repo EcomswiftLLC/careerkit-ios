@@ -1,6 +1,8 @@
 # App Store metadata: Resume & CV Maker: CareerKit
 
-Language: English (U.S.). Bundle id `com.ecomswift.careerkit`. Price: Free. No in-app purchases.
+**This file is the text for version 1.1.0 (export packs and Premium).** Version 1.0.0 (build 11) is in review with no in-app purchases; its listing text is kept unchanged in `v1.0-in-review/metadata.md`. Nothing below is pasted into App Store Connect until 1.1.0 is released.
+
+Language: English (U.S.). Bundle id `com.ecomswift.careerkit`. Price: Free, with two in-app purchases: `export_pack_3` (consumable, 3 exports) and `premium_unlimited` (non-consumable, unlimited exports). Product details are in `../EXPORT-GATE-IOS.md`.
 
 Character and byte limits are checked by `python design/check_store_metadata.py`. The script reads the first fenced block under each heading below, so keep one fenced block per field and re-run it after any edit.
 
@@ -31,7 +33,7 @@ builder,pdf,docx,ats,keywords,curriculum vitae,student,fresher,import,job,applic
 Limit 170 characters. Can be changed at any time without a new build.
 
 ```
-Pick from 30 templates, import your old resume, match it to a job ad, then export to PDF or Word. Free with ads, works offline, and your documents stay on your device.
+30 templates, resume import, a job ad keyword check and export to PDF or Word. Free to start, with ads and optional exports. Your documents stay on your device.
 ```
 
 ## Description
@@ -64,13 +66,19 @@ JOB AD KEYWORD CHECK: paste a job ad and see which of its key terms your resume 
 
 Writing, editing and previewing work offline. There is no account to create, and your resumes and letters are stored on your device only.
 
-FREE, WITH ADS
+FREE TO USE, WITH ADS AND OPTIONAL PURCHASES
 
-CareerKit is free. There is no subscription and nothing to buy.
+Writing, editing, previewing, cover letters and the ATS check are free. They have no limit and never need an ad or a purchase.
 
-The app is paid for by ads from Google AdMob. A banner ad can appear on browse screens such as Home, My Resumes, Templates, Cover Letters and Profile. There are no ads in the editor or the preview.
+Saving, sharing or printing a finished document uses one export. There are three ways to get exports:
+- Buy a pack of 3 exports. It is a one-time purchase, and each file you save, share or print uses one.
+- Buy Premium for unlimited exports. It is a single purchase, not a subscription, and Restore purchases brings it back on a new device.
+- Watch one short rewarded video to export one document once. That one video covers one export of that document, and the export stays unlocked for 24 hours.
+The App Store shows the price before you buy anything. Used-up export packs cannot be restored.
 
-To export a finished document you choose to watch one short rewarded video. That one video covers one export of that document, and the export stays unlocked for 24 hours. If no video is available, for example when you are offline, you can export without one. Writing, editing, previewing, cover letters and the ATS check never need an ad.
+The app is also supported by ads from Google AdMob. A banner ad can appear on browse screens such as Home, My Resumes, Templates, Cover Letters and Profile. There are no ads in the editor or the preview. Premium does not remove banner ads.
+
+If no video can be shown, for example when you are offline, the app says so and you can try again, or use an export pack or Premium.
 
 Where the law requires it, the app asks for your consent before showing personalised ads, and you can change your choice later in the Profile tab.
 
@@ -82,10 +90,10 @@ Questions or ideas? Visit https://ecomswiftllc.github.io/careerkit/support/ or w
 ```
 
 ## What's New
-Limit 4000 characters. Version 1.0.0.
+Limit 4000 characters. Version 1.1.0.
 
 ```
-First release. 30 resume templates, 10 matching cover letter templates, full style controls, an ATS check with general guidance, a job ad keyword check, resume import, and export to PDF, Word, Rich Text, plain text and web page. Free, with ads.
+New ways to export. Saving, sharing or printing a document now uses one export. Buy a pack of 3 exports, buy Premium for unlimited exports (one purchase, no subscription), or keep watching one short video to export once. Writing, editing, previewing and the ATS check stay free. Also: prices reload when you open the export sheet, a video that starts late still counts, Rate CareerKit opens the App Store review page, and several smaller reliability and layout fixes.
 ```
 
 ## Category
@@ -108,6 +116,7 @@ Answer the questionnaire in App Store Connect as follows. Apple has changed this
 | Messaging or chat | No |
 | Social media | No |
 | Advertising | **Yes** (Google AdMob banners on browse screens and an opt-in rewarded video for export) |
+| In-app purchases (shown by the form where it asks) | Yes: a consumable 3-export pack and a non-consumable Premium. No rating change is expected. |
 | Parental controls | No |
 | Age assurance | No |
 | Made for Kids | No. The app is for job seekers. |
@@ -142,7 +151,7 @@ google.com, pub-8621573128492952, DIRECT, f08c47fec0942fa0
 | Field | Value |
 |---|---|
 | SKU | `careerkit-ios` |
-| Price | Free (Tier 0) |
+| Price | Free (Tier 0), with in-app purchases `export_pack_3` and `premium_unlimited` |
 | Availability | All regions, but see the EU trader note in `submission-checklist.md` |
 | Content rights | No third-party content. Fonts are the ones that ship with iOS. |
 | Uses encryption | `ITSAppUsesNonExemptEncryption` is already `false` in Info.plist (standard system HTTPS only) |
@@ -157,12 +166,17 @@ Thank you for reviewing CareerKit. No sign-in or demo account is needed. There i
 
 What the app does: builds resumes and cover letters on device and exports them as PDF, Word, Rich Text, plain text or web page files. All documents stay on the device.
 
-Ads: the app is free and uses Google AdMob only. There are no purchases and no StoreKit. Two placements exist.
+Monetisation: the app is free to download. It has two in-app purchases (StoreKit 2) and Google AdMob ads. Everything except taking a file out of the app is free.
+- 3 Exports (export_pack_3, consumable, USD 0.99): adds 3 exports. One export is used up only after a file was really shared, saved to Files or printed.
+- Premium (premium_unlimited, non-consumable): unlimited exports. Restore purchases is on the export sheet and in Profile.
+Prices come from the App Store. Purchases use the sandbox during review.
+
+Ads: Google AdMob. Two placements exist.
 1. A banner on browse screens (Home, My Resumes, Templates, Cover Letters, Profile). Never in the editor or on the preview and export screens.
 2. One rewarded video that the user opts into before exporting a finished document. One completed video covers one export of that document. The export is unlocked only after the video has been watched to the end. Creating, editing, previewing, cover letters and the ATS check never show an ad.
 There are no interstitial ads and no app-open ads.
 
-Export always works. If no video can be shown (no ad available, offline, ads not allowed by the consent choice, or the video fails to load or start), the export sheet says "No video is available right now, so this export is free." and offers Export without video, which continues straight to Share, Save to Files and Print.
+If no rewarded video is available when you test (new ad units can have no fill, and fill varies by region), the sheet says "No video right now" and points to the other ways to export: the 3-export pack or Premium. Please use the sandbox purchase to test the export. If the App Store has none of the products for any reason, the app says "Purchases are not available right now", hides the purchase options, and the export sheet offers Export without video, so an export is never blocked.
 
 Consent: on first launch the app shows the Google User Messaging Platform consent form where required, then the App Tracking Transparency prompt. Everything stays usable if the user declines both. The Profile tab has an Ad privacy choices row (shown where the consent form requires it) to change the answer, and a Report an ad row.
 
@@ -172,10 +186,9 @@ How to test:
 3. Edit any field. The preview updates. No ad is shown while editing.
 4. Open the ATS check from the resume to see general guidance. It is not a score from any employer system.
 5. Create a cover letter from the Cover Letters tab.
-6. Tap Export on a resume. The sheet explains that one short video is needed. Tap Watch an ad to export, let the video finish, pick a file type (PDF, Word, Rich Text, plain text or web page), then choose Share, Save to Files or Print (Print is for PDF).
+6. Tap Export on a resume. The sheet offers 3 exports, Premium, and a short video. Buy 3 exports with a sandbox account (or watch the video to the end), pick a file type (PDF, Word, Rich Text, plain text or web page), then choose Share, Save to Files or Print (Print is for PDF). After the file is really shared or saved, the finished screen shows how many exports are left. Cancelling the share sheet uses nothing.
+6a. Profile > Restore purchases restores Premium. Used-up export packs are consumable and cannot be restored.
 7. Profile > Delete all local data (two confirmation steps, with an option to export a backup first) removes every resume and letter from the device.
-
-If no rewarded video is available when you test (new ad units can have no fill for the first days, and fill varies by region), the sheet offers Export without video after about 20 seconds at most. Tap it to finish the export.
 
 Contact: support@ecomswiftllc.com
 ```
@@ -201,7 +214,7 @@ Rules for every screenshot:
 | 5 | Matching cover letters | Cover letters that match | A cover letter preview next to its matching resume look (same accent and fonts) | Use the cover letter editor with the preview, same accent colour as shot 1. |
 | 6 | ATS check | Check your layout | The ATS check results list with a mix of good and warning findings | The general guidance disclaimer line should be visible in the capture. |
 | 7 | Manage multiple resumes | Keep one resume per job | My Resumes list with three or four documents, one with a progress ring | Titles such as "Product Designer" and "Teaching Roles" are fine. |
-| 8 | Export PDF | Share or save as PDF | The export sheet with the Share, Save to Files and Print options | Capture after a completed reward, never during or before an ad. |
+| 8 | Export PDF | Share or save as PDF | The unlocked export screen with the Share, Save to Files and Print options | Capture after a completed purchase (sandbox) or video, never during or before an ad. Do not capture the screen with prices (guideline 2.3.7). A separate screenshot of the export sheet with prices is uploaded only as the in-app purchase review screenshot, not in the store gallery. |
 
 Frame spec used by the script: ivory `#FAF7F0` background, caption in a serif (Georgia, falling back to DejaVu Serif) in charcoal `#1F2421`, a 4 px champagne `#B89B5E` rule under the caption, the raw capture at 88 percent of the canvas width with rounded corners and a soft shadow.
 

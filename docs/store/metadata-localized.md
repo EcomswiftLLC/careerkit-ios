@@ -1,5 +1,7 @@
 # App Store metadata: localized listings
 
+**These listings are the text for version 1.1.0 (export packs and Premium).** The 1.0.0 text, which is in review with no in-app purchases, is kept unchanged in `v1.0-in-review/metadata-localized.md`. Nothing here is pasted into App Store Connect until 1.1.0 is released. The in-app purchase names and descriptions for each language are in `../EXPORT-GATE-IOS.md`.
+
 Localized App Store Connect listings for Spanish (Spain), French (France), German and Chinese (Simplified). The English (U.S.) listing, category, age rating, URLs, review notes and screenshot rules are in `metadata.md` and apply unchanged to every language here. The app UI and the document language picker already ship in all five languages (English, Español, Français, Deutsch, 简体中文).
 
 Limits are checked by `python design/check_store_metadata.py`, together with the English file. Structure: every field is a heading `## <locale> > <Field>` followed by exactly one fenced block. The script reads the first fenced block under each heading, so keep one block per field and re-run it after any edit. Apple counts characters (not bytes) for every field, including Chinese.
@@ -69,13 +71,13 @@ EN TU IDIOMA: la app está en español, inglés, francés, alemán y chino simpl
 
 Escribir, editar y ver la vista previa funciona sin conexión. No necesitas crear una cuenta, y tus currículums y cartas se guardan solo en tu dispositivo.
 
-GRATIS, CON ANUNCIOS
+GRATIS, CON ANUNCIOS Y COMPRAS OPCIONALES
 
-CareerKit es gratis. No hay suscripción ni nada que comprar.
+Escribir, editar, ver la vista previa, las cartas de presentación y la revisión ATS son gratis, sin límite y sin anuncios.
 
-La app se financia con anuncios de Google AdMob. Puede aparecer un banner en pantallas de navegación como Inicio, Mis currículums, Plantillas, Cartas y Perfil. No hay anuncios en el editor ni en la vista previa.
+Guardar, compartir o imprimir un documento terminado usa una exportación. Puedes comprar un paquete de 3 exportaciones, comprar Premium (un solo pago, sin suscripción, exportaciones ilimitadas) o ver un vídeo corto con recompensa para exportar un documento una vez, con 24 horas de validez. La App Store muestra el precio antes de comprar. Los paquetes usados no se pueden restaurar.
 
-Para exportar un documento terminado, eliges ver un vídeo corto con recompensa. Un vídeo cubre una exportación de ese documento, y la exportación queda desbloqueada durante 24 horas. Si no hay ningún vídeo disponible, por ejemplo cuando no tienes conexión, puedes exportar sin vídeo. Escribir, editar, ver la vista previa, las cartas de presentación y la revisión ATS nunca necesitan un anuncio.
+La app también se financia con anuncios de Google AdMob. Puede aparecer un banner en pantallas de navegación como Inicio, Mis currículums, Plantillas, Cartas y Perfil. Nunca hay anuncios en el editor ni en la vista previa. Premium no elimina los banners.
 
 Donde la ley lo exige, la app te pide tu consentimiento antes de mostrar anuncios personalizados, y puedes cambiar tu elección más adelante en la pestaña Perfil.
 
@@ -156,13 +158,13 @@ DANS VOTRE LANGUE : l'app est disponible en français, anglais, espagnol, allema
 
 La rédaction, la modification et l'aperçu fonctionnent hors ligne. Aucun compte à créer : vos CV et vos lettres sont stockés uniquement sur votre appareil.
 
-GRATUIT, AVEC PUBLICITÉ
+GRATUIT, AVEC PUBLICITÉ ET ACHATS FACULTATIFS
 
-CareerKit est gratuit. Pas d'abonnement, rien à acheter.
+La rédaction, la modification, l'aperçu, les lettres de motivation et la vérification ATS sont gratuits, sans limite et sans publicité.
 
-L'app est financée par des publicités Google AdMob. Une bannière peut s'afficher sur les écrans de navigation comme Accueil, Mes CV, Modèles, Lettres et Profil. Aucune publicité dans l'éditeur ni dans l'aperçu.
+Enregistrer, partager ou imprimer un document terminé utilise un export. Choisissez un pack de 3 exports, Premium (achat unique, sans abonnement, exports illimités) ou une courte vidéo avec récompense pour exporter un document une fois (24 h). L'App Store affiche le prix avant l'achat. Les packs utilisés ne sont pas restaurables.
 
-Pour exporter un document terminé, vous choisissez de regarder une courte vidéo avec récompense. Une vidéo couvre un export de ce document, et l'export reste débloqué pendant 24 heures. Si aucune vidéo n'est disponible, par exemple hors connexion, vous pouvez exporter sans vidéo. La rédaction, la modification, l'aperçu, les lettres de motivation et la vérification ATS ne demandent jamais de publicité.
+L'app est aussi financée par des publicités Google AdMob. Une bannière peut s'afficher sur les écrans de navigation (Accueil, Mes CV, Modèles, Lettres, Profil), jamais dans l'éditeur ni l'aperçu. Premium ne supprime pas les bannières.
 
 Là où la loi l'exige, l'app vous demande votre consentement avant d'afficher des publicités personnalisées, et vous pouvez modifier votre choix plus tard dans l'onglet Profil.
 
@@ -243,13 +245,13 @@ IN IHRER SPRACHE: Die App gibt es auf Deutsch, Englisch, Spanisch, Französisch 
 
 Schreiben, Bearbeiten und Vorschau funktionieren offline. Es ist kein Konto nötig, und Lebensläufe und Anschreiben werden nur auf dem Gerät gespeichert.
 
-KOSTENLOS, MIT WERBUNG
+KOSTENLOS, MIT WERBUNG UND OPTIONALEN KÄUFEN
 
-CareerKit ist kostenlos. Es gibt kein Abo und nichts zu kaufen.
+Schreiben, Bearbeiten, Vorschau, Anschreiben und die ATS-Prüfung sind kostenlos, ohne Limit und ohne Werbung.
 
-Die App finanziert sich über Werbung von Google AdMob. Auf Übersichtsseiten wie Start, Meine Lebensläufe, Vorlagen, Anschreiben und Profil kann ein Werbebanner erscheinen. Im Editor und in der Vorschau gibt es keine Werbung.
+Ein fertiges Dokument zu speichern, zu teilen oder zu drucken verbraucht einen Export. Sie können ein Paket mit 3 Exporten kaufen, Premium kaufen (einmaliger Kauf, kein Abo, unbegrenzte Exporte) oder ein kurzes Video mit Belohnung ansehen und ein Dokument einmal exportieren, 24 Stunden gültig. Der App Store zeigt den Preis vor dem Kauf an. Verbrauchte Pakete lassen sich nicht wiederherstellen.
 
-Zum Exportieren eines fertigen Dokuments sehen Sie sich ein kurzes Video mit Belohnung an, wenn Sie das möchten. Ein Video deckt einen Export dieses Dokuments ab, und der Export bleibt 24 Stunden lang freigeschaltet. Ist kein Video verfügbar, zum Beispiel offline, ist der Export auch ohne Video möglich. Schreiben, Bearbeiten, Vorschau, Anschreiben und die ATS-Prüfung brauchen nie eine Werbung.
+Außerdem finanziert sich die App über Werbung von Google AdMob. Auf Übersichtsseiten wie Start, Meine Lebensläufe, Vorlagen, Anschreiben und Profil kann ein Werbebanner erscheinen, nie im Editor oder in der Vorschau. Premium entfernt die Banner nicht.
 
 Wo es gesetzlich vorgeschrieben ist, fragt die App vor personalisierter Werbung nach Ihrer Einwilligung. Die Auswahl lässt sich später im Tab Profil ändern.
 
@@ -330,13 +332,13 @@ ATS 检查：读取你的简历，就标题、联系方式、日期、版式和�
 
 撰写、编辑和预览均可离线使用。无需注册账户，你的简历和求职信只保存在你的设备上。
 
-免费使用，含广告
+免费使用，含广告和可选内购
 
-CareerKit 免费使用，没有订阅，也没有任何需要购买的内容。
+撰写、编辑、预览、求职信和 ATS 检查都是免费的，没有次数限制，也不需要看广告。
 
-应用通过 Google AdMob 广告维持运营。首页、我的简历、模板、求职信和个人资料等浏览页面可能会显示横幅广告。编辑器和预览中没有广告。
+保存、分享或打印一份已完成的文档会用掉一次导出。你可以购买 3 次导出包，购买 Premium（一次性购买，不是订阅，不限次数导出），或观看一段简短的激励视频，导出该文档一次，24 小时内有效。购买前 App Store 会显示价格。已用完的导出包无法恢复。
 
-导出已完成的文档时，你可以选择观看一段简短的激励视频。看完一段视频可导出该文档一次，并在 24 小时内保持解锁。如果暂时没有可用的视频，例如处于离线状态，你也可以不看视频直接导出。撰写、编辑、预览、求职信和 ATS 检查都不需要看广告。
+应用同时通过 Google AdMob 广告维持运营。首页、我的简历、模板、求职信和个人资料等浏览页面可能会显示横幅广告。编辑器和预览中没有广告。Premium 不会去掉横幅广告。
 
 在法律有要求的地区，应用会在展示个性化广告前征求你的同意，之后你可以在“个人资料”标签中更改选择。
 

@@ -10,6 +10,15 @@ mail setups and invites scraping). The same address is already printed in docs/l
 
 Optional: CAREERKIT_SITE_OUT=<folder> writes the pages somewhere else (used for review builds).
 
+Editions. The live site must always match the build that is released on the App Store.
+  default (edition 1.0)              build 11, no purchases. Reads docs/legal/*.md, writes website/careerkit/.
+  CAREERKIT_EDITION=1.1              version 1.1.0 (export packs and Premium). Reads docs/legal/next-1.1/*.md and
+                                     writes website/draft-1.1/careerkit/, NOT the live folder. Publish that
+                                     folder only on the day 1.1.0 is released. Then make 1.1 the default here
+                                     (and move docs/legal/next-1.1 over docs/legal), rebuild, and publish.
+The site is published by hand to the GitHub Pages repository EcomswiftLLC/careerkit; nothing in this
+repository deploys it.
+
 Writes index.html, privacy/index.html, terms/index.html, support/index.html, sitemap.xml, robots.txt.
 The privacy and terms pages are generated from docs/legal/*.md, so edit the Markdown and re-run this script.
 The draft notice block in those files (between the DRAFT-NOTICE markers) is stripped from the web pages.
@@ -25,9 +34,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+EDITION = os.environ.get("CAREERKIT_EDITION", "1.0").strip()
+if EDITION not in ("1.0", "1.1"):
+    sys.exit("CAREERKIT_EDITION must be 1.0 (the released build) or 1.1 (the draft for version 1.1.0).")
+NEXT = EDITION == "1.1"
 SRC_SITE = ROOT / "website" / "careerkit"
-OUT = Path(os.environ.get("CAREERKIT_SITE_OUT") or SRC_SITE)
-LEGAL = ROOT / "docs" / "legal"
+DEFAULT_OUT = ROOT / "website" / "draft-1.1" / "careerkit" if NEXT else SRC_SITE
+OUT = Path(os.environ.get("CAREERKIT_SITE_OUT") or DEFAULT_OUT)
+LEGAL = ROOT / "docs" / "legal" / "next-1.1" if NEXT else ROOT / "docs" / "legal"
 
 BASE = "https://ecomswiftllc.github.io/careerkit/"
 SUPPORT_EMAIL = os.environ.get("CAREERKIT_SUPPORT_EMAIL", "").strip()
@@ -128,6 +142,11 @@ def head(title, description, path, extra_head="", root=""):
 """
 
 
+NAV_FREE = "Exports and ads" if NEXT else "Free with ads"
+FOOTER_BLURB = ("A resume and cover letter maker for iPhone and iPad, free to start. Coming soon to the App Store." if NEXT
+                else "A free resume and cover letter maker for iPhone and iPad. Coming soon to the App Store.")
+
+
 def header(root, current=""):
     def a(href, text, key):
         cur = ' aria-current="page"' if key == current else ""
@@ -139,7 +158,7 @@ def header(root, current=""):
     <nav class="nav" aria-label="Main">
       {a(home + '#features', 'Features', 'f')}
       {a(home + '#templates', 'Templates', 't')}
-      {a(home + '#free', 'Free with ads', 'a')}
+      {a(home + '#free', NAV_FREE, 'a')}
       {a(home + '#faq', 'FAQ', 'q')}
       {a(root + 'support/', 'Support', 'support')}
     </nav>
@@ -154,7 +173,7 @@ def footer(root):
   <div class="wrap">
     <div>
       <h2>Resume & CV Maker: CareerKit</h2>
-      <p>A free resume and cover letter maker for iPhone and iPad. Coming soon to the App Store.</p>
+      <p>{FOOTER_BLURB}</p>
     </div>
     <nav aria-label="Footer">
       <h2>Pages</h2>
@@ -206,6 +225,19 @@ FAQ = [
      "<p>Ecom Swift LLC, a company registered in Wyoming, United States. You can reach us on the <a href=\"support/\">support page</a>.</p>"),
 ]
 
+if NEXT:
+    FAQ[0] = ("Is CareerKit free?",
+              "<p>CareerKit is free to download. Writing, editing, previewing, cover letters and the ATS check are free, with no limit. Saving, sharing or printing a finished document uses one export. You can watch one short rewarded video for one export, buy a pack of 3 exports, or buy Premium for unlimited exports. Premium is a single purchase and not a subscription, and the App Store shows the price before you buy. Ads from Google AdMob also support the app: a banner on browse screens and the video you choose to watch.</p>")
+    FAQ[1] = ("How do exports work?",
+              "<p>One completed video covers one export of that document, and that export stays unlocked for 24 hours. An export from a pack is used up only after a file was really saved, shared or printed, so cancelling the share sheet costs nothing. If no video can be shown, for example when you are offline or no ad is available, the app says so and you can try again or use a pack or Premium. Used-up packs cannot be restored. Premium can be restored with Restore purchases on the export sheet or in the Profile tab.</p>")
+    FAQ[5] = ("Does it work offline?",
+              "<p>Writing, editing and previewing work without a connection. Exporting offline works while you have exports left or Premium. A video and new purchases need a connection. Banner ads only appear when you are online.</p>")
+    FAQ.insert(2, ("Can I get a refund for a purchase?",
+                   "<p>Purchases are handled by Apple, so refund requests go to Apple, for example through reportaproblem.apple.com. We cannot refund a purchase ourselves because we do not receive the payment.</p>"))
+
+
+JSONLD_DESC = "A resume and cover letter maker for iPhone and iPad, free to start, with 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance, a job ad keyword check, resume import and export to PDF, Word, Rich Text, plain text and web page. Supported by ads and optional purchases (an export pack and Premium). Documents stay on the device."
+
 
 def jsonld_app():
     data = {
@@ -216,7 +248,7 @@ def jsonld_app():
         "url": BASE,
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "iOS 17.0 or later, iPadOS 17.0 or later",
-        "description": "A free resume and cover letter maker for iPhone and iPad with 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance, a job ad keyword check, resume import and export to PDF, Word, Rich Text, plain text and web page. Supported by ads. Documents stay on the device.",
+        "description": JSONLD_DESC if NEXT else "A free resume and cover letter maker for iPhone and iPad with 30 resume templates, 10 matching cover letter templates, an ATS check with general guidance, a job ad keyword check, resume import and export to PDF, Word, Rich Text, plain text and web page. Supported by ads. Documents stay on the device.",
         "image": BASE + "assets/icon-512.png",
         "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
         "publisher": {"@type": "Organization", "name": "Ecom Swift LLC", "url": "https://www.ecomswiftllc.com/",
@@ -244,9 +276,22 @@ def jsonld_faq():
     return '<script type="application/ld+json">\n' + json.dumps(data, indent=2) + "\n</script>\n"
 
 
+FREE_SECTION_10 = '  <section class="section" id="free" aria-labelledby="h-free">\n    <div class="wrap">\n      <h2 id="h-free">Free, and paid for by ads</h2>\n      <div class="section-body">\n        <p>CareerKit has no subscription, no in-app purchase and no paid tier. Ads from Google AdMob pay for it, and they appear in two places only.</p>\n        <div class="split">\n          <div>\n            <h3>Where you will see ads</h3>\n            <ul>\n              <li>A banner on browse screens: Home, My Resumes, Templates, Cover Letters and Profile.</li>\n              <li>One short rewarded video that you choose to watch before you export a finished document. One video covers one export of that document.</li>\n            </ul>\n          </div>\n          <div>\n            <h3>Where you will not</h3>\n            <ul>\n              <li>In the editor or the preview.</li>\n              <li>While you create, edit or preview a document, write a cover letter or run the ATS check.</li>\n              <li>As a full-screen ad that pops up, or when you open the app.</li>\n            </ul>\n          </div>\n        </div>\n        <p>Where the law asks for it, the app shows a consent form before personalised ads, and iOS may ask whether the app may track you. You can say no to the iOS tracking prompt and still use everything. If you decline a consent form that applies in your region, ads may not load, and the export sheet lets you export without a video. You can change that choice later in the Profile tab. The <a href="privacy/">privacy policy</a> explains what the ad network collects.</p>\n      </div>\n    </div>\n  </section>'
+
+FREE_SECTION_11 = '  <section class="section" id="free" aria-labelledby="h-free">\n    <div class="wrap">\n      <h2 id="h-free">Free to start, with optional exports</h2>\n      <div class="section-body">\n        <p>Writing, editing, previewing, cover letters and the ATS check are free and never need an ad or a purchase. Saving, sharing or printing a finished document uses one export, and there are three ways to get one. There is no subscription.</p>\n        <div class="split">\n          <div>\n            <h3>Ways to export</h3>\n            <ul>\n              <li>Watch one short rewarded video, if you choose to. One video covers one export of that document.</li>\n              <li>Buy a pack of 3 exports, a one-time purchase. Each file you save, share or print uses one.</li>\n              <li>Buy Premium for unlimited exports. It is a single purchase, and Restore purchases brings it back on a new device.</li>\n            </ul>\n            <p class="small">The App Store shows the price before you buy. Used-up packs cannot be restored.</p>\n          </div>\n          <div>\n            <h3>Where you will not see ads</h3>\n            <ul>\n              <li>In the editor or the preview.</li>\n              <li>While you create, edit or preview a document, write a cover letter or run the ATS check.</li>\n              <li>As a full-screen ad that pops up, or when you open the app.</li>\n            </ul>\n          </div>\n        </div>\n        <p>Ads from Google AdMob also support the app. A banner can appear on browse screens: Home, My Resumes, Templates, Cover Letters and Profile. Premium does not remove banners.</p>\n        <p>Where the law asks for it, the app shows a consent form before personalised ads, and iOS may ask whether the app may track you. You can say no to the iOS tracking prompt and still use everything. If you decline a consent form that applies in your region, ads may not load. The app tells you when no video is available, and you can still export with a pack or Premium. You can change that choice later in the Profile tab. The <a href="privacy/">privacy policy</a> explains what the ad network collects.</p>\n      </div>\n    </div>\n  </section>'
+
+FREE_SECTION = FREE_SECTION_11 if NEXT else FREE_SECTION_10
+
+LEDE_TAIL = ("It is free to start, there is no account, and your documents stay on your device." if NEXT
+             else "It is free, there is no account, and your documents stay on your device.")
+
+
 def build_index():
     title = "Resume & CV Maker: CareerKit | Free resume maker for iPhone and iPad"
     desc = "Free resume and cover letter maker for iPhone and iPad. 30 templates, general ATS guidance, job ad keyword check and export to PDF or Word. Your documents stay on your device. Coming soon."
+    if NEXT:
+        title = "Resume & CV Maker: CareerKit | Resume maker for iPhone and iPad"
+        desc = "Resume and cover letter maker for iPhone and iPad, free to start. 30 templates, general ATS guidance, job ad keyword check and export to PDF or Word. Optional export packs. Your documents stay on your device. Coming soon."
     faq_html = "\n".join(
         f'        <details><summary>{html.escape(q)}</summary><div class="answer">{a}</div></details>' for q, a in FAQ)
     structures = [
@@ -266,7 +311,7 @@ def build_index():
       <div>
         <img class="appicon" src="assets/icon-512.png" width="512" height="512" alt="CareerKit app icon: a folded page corner and a rising stroke forming the letter K, on forest green">
         <h1 id="h1">A resume and cover letter, finished on your phone.</h1>
-        <p class="lede">CareerKit gives you 30 resume templates, 10 matching cover letter templates and export to PDF, Word and more. It is free, there is no account, and your documents stay on your device.</p>
+        <p class="lede">CareerKit gives you 30 resume templates, 10 matching cover letter templates and export to PDF, Word and more. {LEDE_TAIL}</p>
         <p class="status">Coming soon to the App Store</p>
         <p class="small hero-note">The app has not been released yet, so there is no download link. Questions before launch are welcome on the <a href="support/">support page</a>.</p>
       </div>
@@ -339,32 +384,7 @@ def build_index():
     </div>
   </section>
 
-  <section class="section" id="free" aria-labelledby="h-free">
-    <div class="wrap">
-      <h2 id="h-free">Free, and paid for by ads</h2>
-      <div class="section-body">
-        <p>CareerKit has no subscription, no in-app purchase and no paid tier. Ads from Google AdMob pay for it, and they appear in two places only.</p>
-        <div class="split">
-          <div>
-            <h3>Where you will see ads</h3>
-            <ul>
-              <li>A banner on browse screens: Home, My Resumes, Templates, Cover Letters and Profile.</li>
-              <li>One short rewarded video that you choose to watch before you export a finished document. One video covers one export of that document.</li>
-            </ul>
-          </div>
-          <div>
-            <h3>Where you will not</h3>
-            <ul>
-              <li>In the editor or the preview.</li>
-              <li>While you create, edit or preview a document, write a cover letter or run the ATS check.</li>
-              <li>As a full-screen ad that pops up, or when you open the app.</li>
-            </ul>
-          </div>
-        </div>
-        <p>Where the law asks for it, the app shows a consent form before personalised ads, and iOS may ask whether the app may track you. You can say no to the iOS tracking prompt and still use everything. If you decline a consent form that applies in your region, ads may not load, and the export sheet lets you export without a video. You can change that choice later in the Profile tab. The <a href="privacy/">privacy policy</a> explains what the ad network collects.</p>
-      </div>
-    </div>
-  </section>
+{FREE_SECTION}
 
   <section class="section" id="private" aria-labelledby="h-private">
     <div class="wrap">
@@ -393,6 +413,8 @@ def build_index():
 def build_support():
     title = "Support | Resume & CV Maker: CareerKit"
     desc = "Get help with CareerKit: contact details, what to include in a message, and answers to common questions about exports, ads and your data."
+    if NEXT:
+        desc = "Get help with CareerKit: contact details, what to include in a message, and answers to common questions about exports, purchases, ads and your data."
     items = [
         ("The export sheet says no video is available",
          "<p>Tap Export without video to finish that export. Ad availability changes by country and by time of day, and no video can load while you are offline or when your ad privacy choice does not allow ads. You can also tap Try the video again.</p>"),
@@ -405,12 +427,27 @@ def build_support():
         ("I deleted the app and my resumes are gone",
          "<p>Documents are stored only on your device, so deleting the app deletes them, and we cannot recover them. Keep an exported copy of anything important. A full backup of your device may still contain the app's data if you made one before deleting it.</p>"),
         ("How do I delete all of my data?",
-         "<p>Open the Profile tab and choose Delete all local data. We hold no personal data about your use of the app, so there is nothing to delete on our side.</p>"),
+         "<p>Open the Profile tab and choose Delete all local data. We hold no personal data about your use of the app, so there is nothing to delete on our side." + (" Delete all local data does not remove purchases: unused exports and Premium are kept so you do not lose what you paid for." if NEXT else "") + "</p>"),
         ("Something looks wrong in a template or an exported file",
          "<p>Tell us the template name, the page size you chose (A4 or US Letter), what you expected and what you got. A screenshot of the problem helps. Please do not send a full resume with real personal details unless we ask for it.</p>"),
         ("I have an idea for a template or a feature",
          "<p>Send it. We read every message, though we cannot promise to build every idea.</p>"),
     ]
+    if NEXT:
+        items[0:2] = [
+            ("The export sheet says no video is available",
+             "<p>Ad availability changes by country and by time of day, and no video can load while you are offline or when your ad privacy choice does not allow ads. Tap Try the video again, or use a 3-export pack or Premium instead.</p>"),
+            ("I closed the video early and nothing was exported",
+             "<p>A video unlocks the export only when it has played to the end. Tap Watch again on the export sheet to start another one. If a video started late and you watched it to the end, the export is still unlocked.</p>"),
+            ("The export sheet says prices cannot be reached",
+             "<p>The App Store could not be contacted. Check your connection and tap Try again. Prices also reload each time you open the export sheet. The app never treats this as a free export.</p>"),
+            ("The export sheet says purchases are not available right now",
+             "<p>The App Store has no purchases for the app at the moment. The purchase options are hidden, and the sheet lets you export without a video so you are never stuck. Please write to us if this lasts.</p>"),
+            ("I bought something and it is missing",
+             "<p>Open the Profile tab and tap Restore purchases (also on the export sheet). Premium comes back for the same Apple Account. A pack of exports is consumable: exports you already used are not restored, and unused ones stay on your device. If the App Store charged you and nothing arrived, write to us and include the date of the purchase.</p>"),
+            ("How do I get a refund?",
+             "<p>Apple handles payments and refunds, so use reportaproblem.apple.com or the receipt email from Apple. We cannot refund a purchase ourselves.</p>"),
+        ]
     faq_html = "\n".join(f'          <details><summary>{html.escape(q)}</summary><div class="answer">{a}</div></details>' for q, a in items)
     body = head(title, desc, "support/", root="../") + header("../", "support") + f"""
 <main id="main">
@@ -471,6 +508,7 @@ def inline(text):
 
 def md_to_html(md):
     md = re.sub(r"<!-- DRAFT-NOTICE-START -->.*?<!-- DRAFT-NOTICE-END -->", "", md, flags=re.S)
+    md = re.sub(r"<!-- NEXT-VERSION-NOTICE-START -->.*?<!-- NEXT-VERSION-NOTICE-END -->", "", md, flags=re.S)
     out, para, items = [], [], []
     title = ""
     meta_open = False
@@ -559,12 +597,18 @@ def main():
         shutil.copytree(SRC_SITE / "assets", OUT / "assets", dirs_exist_ok=True)
     build_index()
     build_support()
-    build_legal("privacy-policy.md", "privacy", "Privacy Policy",
-                "How Resume & CV Maker: CareerKit handles information: documents stay on your device, there is no account, and ads come from Google AdMob with your consent where required.")
-    build_legal("terms-of-use.md", "terms", "Terms of Use",
-                "The terms for using Resume & CV Maker: CareerKit, a free resume and cover letter app supported by ads.")
+    if NEXT:
+        build_legal("privacy-policy.md", "privacy", "Privacy Policy",
+                    "How Resume & CV Maker: CareerKit handles information: documents stay on your device, there is no account, ads come from Google AdMob with your consent where required, and purchases are handled by Apple.")
+        build_legal("terms-of-use.md", "terms", "Terms of Use",
+                    "The terms for using Resume & CV Maker: CareerKit, a resume and cover letter app that is free to start, supported by ads and optional purchases.")
+    else:
+        build_legal("privacy-policy.md", "privacy", "Privacy Policy",
+                    "How Resume & CV Maker: CareerKit handles information: documents stay on your device, there is no account, and ads come from Google AdMob with your consent where required.")
+        build_legal("terms-of-use.md", "terms", "Terms of Use",
+                    "The terms for using Resume & CV Maker: CareerKit, a free resume and cover letter app supported by ads.")
     build_misc()
-    print("site built in", OUT)
+    print("site built in", OUT, "(edition " + EDITION + ")")
 
 
 if __name__ == "__main__":

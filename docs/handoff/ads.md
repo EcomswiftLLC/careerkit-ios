@@ -1,6 +1,8 @@
 # Ads module handoff
 
-Owner: ads. Nothing here was compiled or run (no Mac). macOS CI is the first compile. Expect to fix small typos or SDK signature drift on the first run (see "Compile risks" below).
+Owner: ads. Written for the first CI build. Since then CI has built and tested the module many times, but it was never run on a device in development (no Mac); the "Honest gaps" below still apply.
+
+**Two versions.** Build 11 (version 1.0.0, in App Store review) has no StoreKit: the video is the only path and "Export without video" is the fallback whenever no video can play. That is what sections "Export: behaviour and the fallback decision" below describe, kept as the 1.0 record. The unreleased 1.1.0 on `main` adds StoreKit 2 (`Sources/Purchases/`): a consumable 3-export pack and Premium. In 1.1.0 a missing video no longer opens a free export. The free "Export without video" path is only for an **empty product catalog** ("Purchases are not available right now"), never for an unreachable store, and a video that starts late after the 6 s watchdog still counts (`RewardedAdController.lateRewardCount`). See `docs/EXPORT-GATE-IOS.md` for the 1.1.0 rules.
 
 ## Files
 
@@ -19,7 +21,7 @@ Owner: ads. Nothing here was compiled or run (no Mac). macOS CI is the first com
 | `Sources/Resources/Info.plist` | `SKAdNetworkItems` (50 ids) and the ad id keys |
 | `Tests/AdsExportGateLogicTests.swift`, `Tests/AdsHelpersTests.swift`, `Tests/AdsFallbackAndBannerTests.swift` | Unit tests |
 
-No StoreKit anywhere. No ids in Swift.
+No ad ids in Swift. (Build 11 has no StoreKit; 1.1.0 has StoreKit in `Sources/Purchases/`, outside this module.)
 
 ## API implemented (and deviations from the contract)
 
@@ -71,7 +73,7 @@ Grant semantics are unchanged: one grant per document, one export, valid 24 hour
 
 ## Privacy manifest
 
-`NSPrivacyTrackingDomains` was removed. iOS blocks declared tracking domains for people who deny ATT, and the old entries came from memory, not from the SDK. `NSPrivacyTracking` is `false`: App Store Connect (ITMS-91064) rejects `true` without tracking domains, and domains are deliberately not declared. The ATT prompt and consent flow are unaffected. Collected data types match `docs/store/app-privacy.md` exactly (Device ID: linked, tracking, Third-Party Advertising and Analytics; Advertising Data: linked, tracking; Product Interaction: linked, not tracking; Coarse Location: not linked; Performance Data: linked; Crash Data: not linked). After the first archive, check Xcode's privacy report.
+`NSPrivacyTrackingDomains` was removed. iOS blocks declared tracking domains for people who deny ATT, and the old entries came from memory, not from the SDK. `NSPrivacyTracking` is `false` on purpose: App Store Connect (ITMS-91064) rejects `true` without tracking domains, and domains are deliberately not declared. **This does not mean the app never tracks.** AdMob can use the advertising identifier for tracking after the person allows it in the ATT prompt, so the App Store Connect App Privacy answer must be "Yes, tracking" for Device ID and Advertising Data. The manifest flag and that label are separate declarations. Do not flip the flag. The reasoning is written out in `docs/store/app-privacy.md`. The ATT prompt and consent flow are unaffected. Collected data types match `docs/store/app-privacy.md` exactly (Device ID: linked, tracking, Third-Party Advertising and Analytics; Advertising Data: linked, tracking; Product Interaction: linked, not tracking; Coarse Location: not linked; Performance Data: linked; Crash Data: not linked). After the first archive, check Xcode's privacy report.
 
 ## AdMob console steps
 
@@ -95,6 +97,6 @@ Grant semantics are unchanged: one grant per document, one export, valid 24 hour
 
 - Never compiled. Never seen on a device or simulator. Check on a small iPhone with the largest Dynamic Type size, on iPad (share popover anchoring), in dark mode, and with VoiceOver and Reduce Motion on.
 - Not tested: the real consent form, the ATT prompt, offline start, consent withdrawal while a video is loading, reward and dismiss callback ordering, inline banner heights.
-- `HowExportsWorkView` (Profile, worker B) still says "If none loads you can try again in a moment" and describes banners as sitting "at the bottom". Suggested text for the lead: "If a video is not available: videos need a connection and an ad to be available. If none can play, the export sheet lets you export without one, so your document is never locked." and "A small banner can appear after the content on Home, My Resumes, Templates, Cover Letters and Profile."
-- The generated pages in `website/careerkit/` were not rebuilt. Run `python website/build_site.py` (with `CAREERKIT_SUPPORT_EMAIL` set) to refresh support, FAQ, privacy and terms.
+- `HowExportsWorkView` (Profile) was rewritten for 1.1.0 and now describes the video, the pack, Premium and Restore purchases, and switches to the "purchases are not available" wording when the catalog is empty. The old suggested 1.0 text (that the export sheet lets you export without a video if none can play) is true only for build 11.
+- The live pages in `website/careerkit/` match build 11. The 1.1.0 wording is built separately with `CAREERKIT_EDITION=1.1 python website/build_site.py` into `website/draft-1.1/careerkit/` and published only when 1.1.0 is released (with `CAREERKIT_SUPPORT_EMAIL` set).
 - Unit tests cover the pure logic (gate rules and persistence, fallback policy, banner slot rules, request policy, presentation timing, file names, id normaliser, retry policy). The SDK-facing code has no unit tests.

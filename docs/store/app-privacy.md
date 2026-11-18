@@ -1,5 +1,7 @@
 # App privacy (App Store Connect "App Privacy" answers)
 
+**This file is written for version 1.1.0 (export packs and Premium through StoreKit).** The text for version 1.0.0 (build 11, in review, no purchases) is kept unchanged in `v1.0-in-review/app-privacy.md`. The App Privacy answers in App Store Connect are the same for both versions: adding StoreKit changes no row in the table below. What changed in 1.1.0 is the wording around purchases, the export fallback, and the explanation of the tracking flag (see "Privacy manifest notes").
+
 These are the exact answers to enter in App Store Connect > App Privacy. `Sources/Resources/PrivacyInfo.xcprivacy` declares the same data types with the same linked and tracking flags. If one changes, change both. Google's page "Apple's App privacy details" for the Mobile Ads SDK is the source of truth for what the SDK collects; re-check it against the SDK version that ships (`from: 12.0.0` in `project.yml`) before each submission.
 
 ## What the app itself does with data
@@ -11,9 +13,10 @@ These are the exact answers to enter in App Store Connect > App Privacy. `Source
 | Exported files (PDF, Word, Rich Text, plain text, web page), imported PDFs and backup files | Created or read on the device and handed to the share sheet, Files or Print. The user decides where they go. Not collected. |
 | Optional writing help (iOS 26 or later with Apple Intelligence) | Text the person chooses to improve is processed by Apple's on-device model and never leaves the device; it is not sent to Ecom Swift LLC, Apple or anyone else. Not collected. |
 | Export unlock record | A document id and a time, stored on the device only, used to allow one export. Not collected. |
+| Export credits and Premium record (1.1.0) | The number of exports left and whether Premium is active, stored on the device only. Not collected. |
 | Account data | None. There is no account. |
 | Analytics, crash reporting | None from the app. No analytics SDK. |
-| Purchases | None. No StoreKit. |
+| Purchases (1.1.0) | Payment is handled entirely by Apple through StoreKit. Ecom Swift LLC receives no card details, name, email or purchase history, and sends none anywhere. The app only reads the signed transaction result from the App Store on the device to know which exports and Premium the person has. Not collected, so the "Purchases" data type stays "Not collected". |
 
 "Do you or your third-party partners collect data from this app?" **Yes**, only because of the Google Mobile Ads SDK (AdMob) and Google's User Messaging Platform.
 
@@ -40,7 +43,9 @@ Every other data type is **Not collected**: Contact Info, Health and Fitness, Fi
 
 ## Privacy manifest notes
 
-- `NSPrivacyTracking` is `false` (ITMS-91064: `true` requires declared tracking domains, which we deliberately omit). ATT still runs. The collected data types match the table above.
+- `NSPrivacyTracking` is `false` **on purpose, and it must stay false.** Apple rejects an app whose manifest says `NSPrivacyTracking = true` without a non-empty `NSPrivacyTrackingDomains` list (ITMS-91064), and we deliberately declare no tracking domains (see the next point). This does not mean the app never tracks: when the person allows it in the ATT prompt, AdMob uses the advertising identifier for tracking. That is why the App Store Connect answers below say **Yes, tracking** for Device ID and Advertising Data, and why the ATT prompt exists. The manifest flag and the App Store Connect label are two separate declarations and they do not have to match. Any sentence in the listing, the privacy policy or the website must therefore not say "the app declares no tracking". Say instead: the app asks for permission before tracking, and tracking happens only if the person allows it.
+- **App Store Connect requirement:** in App Privacy, "Do you or your third-party partners use data for tracking purposes?" must be answered **Yes**, with Device ID and Advertising Data marked "Used to track you" exactly as in the table above. Answering No while the app shows the ATT prompt is a likely rejection (guideline 5.1.2). Check this answer in App Store Connect before submitting 1.1.0.
+- The collected data types in `PrivacyInfo.xcprivacy` match the table above.
 - `NSPrivacyTrackingDomains` is **not declared**. iOS blocks requests to declared tracking domains for people who deny ATT, and the earlier entries were written from memory, not taken from the SDK. The Google Mobile Ads SDK ships its own privacy manifest. After the first archive, open Xcode's privacy report (Organizer > Archive > Generate Privacy Report) to see the merged result. Do not add domains by hand.
 - Required-reason APIs declared by the app: UserDefaults `CA92.1`, file timestamp `C617.1`.
 
@@ -49,12 +54,12 @@ Every other data type is **Not collected**: Contact Info, Health and Fitness, Fi
 1. First launch, after onboarding: Google User Messaging Platform (UMP) shows the consent form where the person's region requires it (for example the EEA and the UK).
 2. After the consent step, and only if consent allows ads, iOS shows the App Tracking Transparency prompt. The purpose string in Info.plist (`NSUserTrackingUsageDescription`) reads: "Your data is used to show you more relevant ads. You can use CareerKit fully without allowing this."
 3. Ads are requested only when UMP says `canRequestAds` and the SDK has started. Ad requests are limited to general-audience content (`maxAdContentRating = .general`). Child-directed tags are not set: the app is not directed to children.
-4. If consent does not allow ads, no banner appears. Export still works: when the person asks for a video and none can play, the export sheet offers "Export without video" for that one export.
+4. If consent does not allow ads, no banner appears and the rewarded video is not offered; the person can still export with a 3-export pack or Premium. In 1.0.0 (build 11, no purchases) the export sheet instead offers "Export without video" whenever no video can play. In 1.1.0 that free export appears only when the App Store reports no products at all ("Purchases are not available right now"), never when the store is simply unreachable. See `../EXPORT-GATE-IOS.md`.
 5. The Profile tab has an Ad privacy choices row (shown where UMP says it is required) that reopens the UMP form, and a "Report an ad" row that writes to support.
 
 ## Files that must agree with this document
 
 - `Sources/Resources/PrivacyInfo.xcprivacy` (same rows, linked and tracking flags, no tracking domains).
 - `Sources/Resources/Info.plist`: `NSUserTrackingUsageDescription`, `GADApplicationIdentifier`, `SKAdNetworkItems` (Google's list of 50 SKAdNetwork ids, fetched 2026-11-16; re-check Google's current list before each release).
-- `docs/legal/privacy-policy.md` and the website privacy page (same wording about AdMob, UMP, ATT and the export without video).
+- `docs/legal/privacy-policy.md` and the website privacy page (same wording about AdMob, UMP, ATT and the export without video). The 1.0.0 pages are live; the 1.1.0 wording is drafted in `docs/legal/next-1.1/` and published only when 1.1.0 is released.
 - Data deletion: all resume data is deleted in Profile > Delete all local data. Ad identifiers are controlled by iOS (Settings > Privacy & Security > Tracking, and "Reset Advertising Identifier").
